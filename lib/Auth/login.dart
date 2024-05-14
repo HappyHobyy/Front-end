@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/Auth/forgot.dart';
+import 'package:hobbyhobby/Auth/user_model.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/explanation.dart';
 import 'package:hobbyhobby/root_page.dart';
+
+import 'auth_repository.dart';
+import 'jwt_token_model.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,12 +19,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   var _emailInputText = TextEditingController();
   var _passInputText = TextEditingController();
+  late AuthRepository _authRepository;
   bool _obscurePassword = true;
 
   void dispose() {
     _emailInputText.dispose();
     _passInputText.dispose();
     super.dispose();
+  }
+
+  @override
+  // 초기화
+  void initState() {
+    super.initState();
+    _authRepository = AuthRepository();
   }
 
   @override
@@ -116,7 +128,9 @@ class _LoginPageState extends State<LoginPage> {
                       });
                     },
                     child: Icon(
-                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: Constants.primaryColor,
                     ),
                   ),
@@ -160,19 +174,47 @@ class _LoginPageState extends State<LoginPage> {
                     );
                     return;
                   }
+
                   setState(() {
                     _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                   });
-                  // 여기에 토큰 호출 설정
-                Navigator.pushReplacement(
-                  context,
-                  PageTransition(
-                    child: RootPage(),
-                    type: PageTransitionType.rightToLeftWithFade,
-                    duration: Duration(milliseconds: 300),
-                  ),
-                );
-  },
+                  // 여기에 토큰 호출 설정//디바이스 토큰 예시
+                  User user = User.withDefaultUserLogin(
+                      userEmail: _emailInputText.text,
+                      userType: UserType.DEFAULT,
+                      password: _passInputText.text,
+                      deviceToken: '123');
+                  try {
+                    JwtToken jwtToken =
+                        await _authRepository.postDefaultLogin(user);
+                    await _authRepository.saveAllToken(jwtToken);
+                    // 회원가입 요청 완료 후 페이지 전환
+                    Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                        child: RootPage(),
+                        type: PageTransitionType.rightToLeftWithFade,
+                        duration: Duration(milliseconds: 300),
+                      ),
+                    );
+                  } catch (error) {
+                    if (error.toString() == "USER_TYPE_IS_NOT_VALIDATE") {
+                      // 에러 처리 해주세용!
+                      print("회원가입한 유저와 다른 유저타입");
+                    } else if (error.toString() == "USER_LOGIN_PASSWORD_FAIL") {
+                      // 에러 처리 해주세용!
+                      print("비밀번호가 틀림");
+                    } else if (error.toString() == "USER_EMAIL_NOT_FOUND") {
+                      // 에러 처리 해주세용!
+                      print("저장된 정보가 없습니다");
+                    }
+                    setState(() {
+                      _isLoading = false; // 에러 발생 시 대기 상태 해제
+                      _loginFailed = true; // 로그인 실패 상태로 설정
+                    });
+                    print('Error during registration: $error');
+                  }
+                },
                 child: Container(
                   width: size.width,
                   decoration: BoxDecoration(
@@ -180,22 +222,23 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Center(
-                    child: _isLoading ? SizedBox(
-                      width: 26,
-                      height: 26,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                    )
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 26,
+                            height: 26,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
                         : Text(
-                      '로그인',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                      ),
-                    ),
+                            '로그인',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                            ),
+                          ),
                   ),
                 ),
               ),

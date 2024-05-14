@@ -1,23 +1,16 @@
 class JwtToken {
-  final String? access_token;
-  final String? refresh_token;// 사용자 정보
+  final String? accessToken;
+  final String? refreshToken;
 
   JwtToken({
-    required this.access_token,
-    required this.refresh_token,
+    required this.accessToken,
+    required this.refreshToken,
   });
 
   factory JwtToken.fromJson(Map<String, dynamic> json) {
     return JwtToken(
-      access_token: json['access_token'],
-      refresh_token: json['refresh_token'],
+      accessToken: json['accessToken'],
+      refreshToken: json['refreshToken'],
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'userEmail': access_token,
-      'password': refresh_token,
-    };
   }
 }

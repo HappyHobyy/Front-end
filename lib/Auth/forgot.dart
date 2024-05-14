@@ -106,10 +106,10 @@ class _ForgotPageState extends State<ForgotPage> {
                 onTap: () async {
                   if (_emailInputText.text.isEmpty ||
                       _passInputText.text.isEmpty) return;
-
                   setState(() {
                     _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                   });
+
                   // 여기에 토큰 호출 설정
                 },
                 child: Container(
