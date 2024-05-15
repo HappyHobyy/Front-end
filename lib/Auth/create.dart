@@ -9,7 +9,9 @@ import 'package:hobbyhobby/Auth/create_detail.dart';
 import 'auth_repository.dart';
 
 class CreatePage extends StatefulWidget {
-  const CreatePage({super.key});
+
+  const CreatePage({Key? key, required this.authRepository}) : super(key: key);
+  final AuthRepository authRepository;
 
   @override
   State<CreatePage> createState() => _CreatePageState();
@@ -19,6 +21,15 @@ class _CreatePageState extends State<CreatePage> {
   var _emailInputText = TextEditingController();
   var _passInputText = TextEditingController();
   bool _obscurePassword = true;
+  late AuthRepository _authRepository;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _authRepository = widget.authRepository;
+  }
+
 
   void dispose() {
     _emailInputText.dispose();
@@ -39,7 +50,7 @@ class _CreatePageState extends State<CreatePage> {
             Navigator.pushReplacement(
                 context,
                 PageTransition(
-                    child: ExplanationPage(),
+                    child: ExplanationPage(authRepository: _authRepository),
                     type: PageTransitionType.leftToRightWithFade,
                     duration: Duration(milliseconds: 300),
                 ),
@@ -128,7 +139,7 @@ class _CreatePageState extends State<CreatePage> {
                   Navigator.pushReplacement(
                       context,
                       PageTransition(
-                          child: LoginPage(),
+                          child: LoginPage(authRepository: _authRepository),
                           type: PageTransitionType.rightToLeftWithFade,
                           duration: Duration(milliseconds: 300),));
                 },
@@ -165,7 +176,7 @@ class _CreatePageState extends State<CreatePage> {
                   Navigator.pushReplacement(
                     context,
                     PageTransition(
-                      child: CreateDetailPage(password: _passInputText.text, email: _emailInputText.text,userType: UserType.DEFAULT),
+                      child: CreateDetailPage(password: _passInputText.text, email: _emailInputText.text,userType: UserType.DEFAULT, authRepository: _authRepository,),
                       type: PageTransitionType.rightToLeftWithFade,
                       duration: Duration(milliseconds: 300),
                     ),

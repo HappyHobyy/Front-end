@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_remote_api.dart';
 import 'package:hobbyhobby/Auth/forgot.dart';
 import 'package:hobbyhobby/Auth/user_model.dart';
+import 'package:hobbyhobby/DataSource/local_data_storage.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/explanation.dart';
 import 'package:hobbyhobby/root_page.dart';
 
+import '../Community/community_remote_api.dart';
+import '../Community/community_repository.dart';
 import 'auth_repository.dart';
 import 'jwt_token_model.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  
+  final AuthRepository authRepository;
+  const LoginPage({Key? key, required this.authRepository}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -19,6 +25,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   var _emailInputText = TextEditingController();
   var _passInputText = TextEditingController();
+  late CommunityRepository _communityRepository;
   late AuthRepository _authRepository;
   bool _obscurePassword = true;
 
@@ -32,7 +39,8 @@ class _LoginPageState extends State<LoginPage> {
   // 초기화
   void initState() {
     super.initState();
-    _authRepository = AuthRepository();
+    _authRepository = widget.authRepository;
+    _communityRepository = CommunityRepository(CommunityRemoteApi());
   }
 
   @override
@@ -50,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.pushReplacement(
               context,
               PageTransition(
-                child: ExplanationPage(),
+                child: ExplanationPage(authRepository: _authRepository),
                 type: PageTransitionType.leftToRight,
                 duration: Duration(milliseconds: 300),
               ),
@@ -141,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.pushReplacement(
                       context,
                       PageTransition(
-                          child: ForgotPage(),
+                          child: ForgotPage(authRepository: _authRepository),
                           type: PageTransitionType.rightToLeftWithFade,
                           duration: Duration(milliseconds: 300)));
                 },
@@ -188,6 +196,9 @@ class _LoginPageState extends State<LoginPage> {
                     JwtToken jwtToken =
                         await _authRepository.postDefaultLogin(user);
                     await _authRepository.saveAllToken(jwtToken);
+                    jwtToken = await _authRepository.loadAccessToken();
+                    await _communityRepository.getCommunityPopularContents(jwtToken);
+
                     // 회원가입 요청 완료 후 페이지 전환
                     Navigator.pushReplacement(
                       context,

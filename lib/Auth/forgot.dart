@@ -3,8 +3,12 @@ import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/login.dart';
 
+import 'auth_repository.dart';
+
 class ForgotPage extends StatefulWidget {
-  const ForgotPage({super.key});
+
+  final AuthRepository authRepository;
+  const ForgotPage({Key? key, required this.authRepository}) : super(key: key);
 
   @override
   State<ForgotPage> createState() => _ForgotPageState();
@@ -13,6 +17,14 @@ class ForgotPage extends StatefulWidget {
 class _ForgotPageState extends State<ForgotPage> {
   var _emailInputText = TextEditingController();
   var _passInputText = TextEditingController();
+  late AuthRepository _authRepository;
+
+  @override
+  void initState() {
+    super.initState();
+    _authRepository = widget.authRepository;
+  }
+
 
   void dispose() {
     _emailInputText.dispose();
@@ -35,7 +47,7 @@ class _ForgotPageState extends State<ForgotPage> {
               Navigator.pushReplacement(
                 context,
                 PageTransition(
-                  child: LoginPage(),
+                  child: LoginPage(authRepository: _authRepository,),
                   type: PageTransitionType.leftToRightWithFade,
                   duration: Duration(milliseconds: 300),
                 ),

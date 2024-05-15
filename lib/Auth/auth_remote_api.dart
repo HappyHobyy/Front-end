@@ -88,4 +88,20 @@ class AuthRemoteApi {
       throw data['error'];
     }
   }
+  Future<JwtToken> getAccessToken(JwtToken jwtToken) async {
+    var uri = Uri.http('52.79.143.36:8000', 'user-service/api/auth/register/oAuth');
+    final http.Response response = await httpClient.post(
+      uri,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.refreshToken}'
+      },
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      return JwtToken.fromJson(data);
+    } else {
+      throw Exception();
+    }
+  }
 }

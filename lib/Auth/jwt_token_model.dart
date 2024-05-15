@@ -9,8 +9,8 @@ class JwtToken {
 
   factory JwtToken.fromJson(Map<String, dynamic> json) {
     return JwtToken(
-      accessToken: json['accessToken'],
-      refreshToken: json['refreshToken'],
+      accessToken: json['data']['accessToken'],
+      refreshToken: json['data']['refreshToken'],
     );
   }
 }

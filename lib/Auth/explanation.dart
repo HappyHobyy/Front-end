@@ -14,12 +14,15 @@ import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hobbyhobby/Auth/user_model.dart';
 
+import '../DataSource/local_data_storage.dart';
 import '../root_page.dart';
+import 'auth_remote_api.dart';
 import 'create_detail.dart';
 
 class ExplanationPage extends StatefulWidget {
-  const ExplanationPage({super.key});
+  const ExplanationPage({Key? key, required this.authRepository}) : super(key: key);
 
+  final AuthRepository authRepository;
   @override
   State<ExplanationPage> createState() => _ExplanationPageState();
 }
@@ -37,13 +40,12 @@ class _ExplanationPageState extends State<ExplanationPage> {
   late bool isInstalled;
   late OAuthToken token; // 토큰
   late AuthRepository _authRepository;
-
   @override
   // 초기화
   void initState() {
     super.initState();
     initIsInstalled();
-    _authRepository = AuthRepository();
+    _authRepository = widget.authRepository;
   }
 
   Future<void> postSocialLogin(
@@ -68,7 +70,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
         Navigator.push(
           context,
           PageTransition(
-            child: CreateDetailPage(email: email, password: '',userType: userType),
+            child: CreateDetailPage(email: email, password: '',userType: userType,authRepository: _authRepository,),
             type: PageTransitionType.rightToLeftWithFade,
             duration: Duration(milliseconds: 300),
           ),
@@ -236,7 +238,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
               onTap: () async {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CreatePage()),
+                  MaterialPageRoute(builder: (context) => CreatePage(authRepository: _authRepository,)),
                 );
               },
               child: Container(
@@ -274,7 +276,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
                     Navigator.pushReplacement(
                         context,
                         PageTransition(
-                            child: LoginPage(),
+                            child: LoginPage(authRepository: _authRepository,),
                             type: PageTransitionType.bottomToTop,
                             duration: Duration(milliseconds: 300)));
                   },

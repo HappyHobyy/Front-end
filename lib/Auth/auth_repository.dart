@@ -5,12 +5,10 @@ import '../DataSource/local_data_storage.dart';
 import 'auth_remote_api.dart';
 
 class AuthRepository {
-  late final LocalDataStorage _localDataStorage;
-  late final AuthRemoteApi _authRemoteApi;
+  final LocalDataStorage _localDataStorage;
+  final AuthRemoteApi _authRemoteApi;
 
-  AuthRepository(){
-    _authRemoteApi = AuthRemoteApi();
-    _localDataStorage = LocalDataStorage();}
+  AuthRepository(this._localDataStorage, this._authRemoteApi);
 
   //인증을 위한 엑세스 토큰 로드
   Future<JwtToken> loadAccessToken() async {
@@ -26,6 +24,7 @@ class AuthRepository {
   Future<void> saveAccessToken(JwtToken jwtToken) async {
     _localDataStorage.saveAccessToken(jwtToken);
   }
+
   // 모든 토큰 저장
   Future<void> saveAllToken(JwtToken jwtToken) async {
     _localDataStorage.saveAllToken(jwtToken);
@@ -54,5 +53,9 @@ class AuthRepository {
   //소셜 회원가입
   Future<bool> postSocialRegister(User user) async {
     return await _authRemoteApi.postSocialRegister(user);
+  }
+
+  Future<JwtToken> getAccessToken(JwtToken jwtToken) async {
+    return await _authRemoteApi.getAccessToken(jwtToken);
   }
 }
