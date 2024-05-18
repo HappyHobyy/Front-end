@@ -72,87 +72,130 @@ class _MyPageState extends State<MyPage> {
               SizedBox(
                 width: MediaQuery.of(context).size.width - 20,
                 child: Card(
-                  color: const Color(0xFFfffbfe),
-                  // color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("게시물"),
-                            SizedBox(height: 3),
-                            Text(postsNum.toString())
-                          ],
+                  surfaceTintColor: Color(0xFFfffbfe),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "게시물",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 3),
+                              Text(
+                                postsNum.toString(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Constants.primaryColor,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      const VerticalDivider(),
-                      Container(
-                          padding: EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              Text("좋아요"),
-                              SizedBox(height: 3),
-                              Text(likesNum.toString())
-                            ],
-                          )),
-                      const VerticalDivider(),
-                      Container(
-                          padding: EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              Text("댓글"),
-                              SizedBox(height: 3),
-                              Text(commentsNum.toString())
-                            ],
-                          )),
-                    ],
+                        const VerticalDivider(),
+                        Container(
+                            padding: EdgeInsets.all(16),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "좋아요",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  likesNum.toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Constants.primaryColor,
+                                  ),
+                                )
+                              ],
+                            )),
+                        const VerticalDivider(),
+                        Container(
+                            padding: EdgeInsets.all(16),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "댓글",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  commentsNum.toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Constants.primaryColor,
+                                  ),
+                                )
+                              ],
+                            )),
+                      ],
+                    ),
                   ),
                 ),
               ),
               SizedBox(height: 12), // Add some space before the ListView
-              Expanded(
-                child: ListView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: <Widget>[
-                    ListTile(
-                      leading: Icon(CupertinoIcons.person),
-                      title: Text('프로필 수정'),
-                      onTap: () {
-                        // Handle Edit Profile tap
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(CupertinoIcons.star),
-                      title: Text('즐겨찾기 커뮤니티'),
-                      onTap: () {
-                        // Handle Edit Profile tap
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(CupertinoIcons.question_circle),
-                      title: Text('고객센터'),
-                      onTap: () {
-                        // Handle Questions tap
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(CupertinoIcons.exclamationmark_bubble),
-                      title: Text('공지사항'),
-                      onTap: () {
-                        // Handle Questions tap
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.logout),
-                      title: Text('로그아웃'),
-                      onTap: () {
-                        // Handle Logout tap
-                      },
-                    ),
-                  ],
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 20,
+                child: Card(
+                  surfaceTintColor: Colors.white,
+                  child: Column(
+                    children: ListTile.divideTiles(context: context, tiles: [
+                      ListTile(
+                        leading: Icon(CupertinoIcons.person),
+                        title: Text('프로필 수정'),
+                        trailing: const Icon(Icons.navigate_next),
+                        onTap: () {
+                          // Handle Edit Profile tap
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(CupertinoIcons.star),
+                        title: Text('즐겨찾기 커뮤니티'),
+                        trailing: const Icon(Icons.navigate_next),
+                        onTap: () {
+                          // Handle Favorite Community tap
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(CupertinoIcons.question_circle),
+                        trailing: const Icon(Icons.navigate_next),
+                        title: Text('고객센터'),
+                        onTap: () {
+                          // Handle Customer Support tap
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(CupertinoIcons.exclamationmark_bubble),
+                        trailing: const Icon(Icons.navigate_next),
+                        title: Text('공지사항'),
+                        onTap: () {
+                          // Handle Announcements tap
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.logout),
+                        trailing: const Icon(Icons.navigate_next),
+                        title: Text('로그아웃'),
+                        onTap: () {
+                          // Handle Logout tap
+                        },
+                      ),
+                    ]).toList(),
+                  ),
                 ),
               ),
             ],
