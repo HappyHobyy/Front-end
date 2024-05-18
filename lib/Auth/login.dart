@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_remote_api.dart';
 import 'package:hobbyhobby/Auth/forgot.dart';
+import 'package:hobbyhobby/Auth/user_model.dart';
+import 'package:hobbyhobby/DataSource/local_data_storage.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/explanation.dart';
 import 'package:hobbyhobby/root_page.dart';
 
+import '../Community/community_remote_api.dart';
+import '../Community/community_repository.dart';
+import 'auth_repository.dart';
+import 'jwt_token_model.dart';
+
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+
+  final AuthRepository authRepository;
+  const LoginPage({Key? key, required this.authRepository}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _emailInputText = TextEditingController();
-  final _passInputText = TextEditingController();
+  var _emailInputText = TextEditingController();
+  var _passInputText = TextEditingController();
+  late CommunityRepository _communityRepository;
+  late AuthRepository _authRepository;
   bool _obscurePassword = true;
 
-  @override
   void dispose() {
     _emailInputText.dispose();
     _passInputText.dispose();
@@ -25,31 +36,38 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-  bool _isLoading = false;
-  final bool _loginFailed = false;
+  // 초기화
+  void initState() {
+    super.initState();
+    _authRepository = widget.authRepository;
+    _communityRepository = CommunityRepository(CommunityRemoteApi());
+  }
 
   @override
+  bool _isLoading = false;
+  bool _loginFailed = false;
+
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
+          icon: Icon(Icons.arrow_back_ios_new),
           onPressed: () {
             Navigator.pushReplacement(
               context,
               PageTransition(
-                child: const ExplanationPage(),
+                child: ExplanationPage(authRepository: _authRepository),
                 type: PageTransitionType.leftToRight,
-                duration: const Duration(milliseconds: 300),
+                duration: Duration(milliseconds: 300),
               ),
             );
           },
         ),
-        title: const Row(
+        title: Row(
           children: [
-            SizedBox(width: 90),
+            const SizedBox(width: 90),
             Text(
               '로그인',
               style: TextStyle(
@@ -118,7 +136,9 @@ class _LoginPageState extends State<LoginPage> {
                       });
                     },
                     child: Icon(
-                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: Constants.primaryColor,
                     ),
                   ),
@@ -129,9 +149,9 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.pushReplacement(
                       context,
                       PageTransition(
-                          child: const ForgotPage(),
+                          child: ForgotPage(authRepository: _authRepository),
                           type: PageTransitionType.rightToLeftWithFade,
-                          duration: const Duration(milliseconds: 300)));
+                          duration: Duration(milliseconds: 300)));
                 },
                 child: Column(
                   children: [
@@ -153,28 +173,68 @@ class _LoginPageState extends State<LoginPage> {
                       _passInputText.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text(
+                        content: Text(
                           ' 이메일과 비밀번호를 입력해주세요.',
                         ),
                         backgroundColor: Constants.primaryColor,
-                        duration: const Duration(seconds: 1),
+                        duration: Duration(seconds: 1),
                       ),
                     );
                     return;
                   }
+
                   setState(() {
                     _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                   });
-                  // 여기에 토큰 호출 설정
-                Navigator.pushReplacement(
-                  context,
-                  PageTransition(
-                    child: const RootPage(),
-                    type: PageTransitionType.rightToLeftWithFade,
-                    duration: const Duration(milliseconds: 300),
-                  ),
-                );
-  },
+                  // 여기에 토큰 호출 설정//디바이스 토큰 예시
+                  /*** User user = User.withDefaultUserLogin(
+                      userEmail: _emailInputText.text,
+                      userType: UserType.DEFAULT,
+                      password: _passInputText.text,
+                      deviceToken: '123');
+                      try {
+                      JwtToken jwtToken =
+                      await _authRepository.postDefaultLogin(user);
+                      await _authRepository.saveAllToken(jwtToken);
+                      jwtToken = await _authRepository.loadAccessToken();
+                      await _communityRepository.getCommunityPopularContents(jwtToken);
+
+                      // 회원가입 요청 완료 후 페이지 전환
+                      Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                      child: RootPage(),
+                      type: PageTransitionType.rightToLeftWithFade,
+                      duration: Duration(milliseconds: 300),
+                      ),
+                      );
+                      } catch (error) {
+                      if (error.toString() == "USER_TYPE_IS_NOT_VALIDATE") {
+                      // 에러 처리 해주세용!
+                      print("회원가입한 유저와 다른 유저타입");
+                      } else if (error.toString() == "USER_LOGIN_PASSWORD_FAIL") {
+                      // 에러 처리 해주세용!
+                      print("비밀번호가 틀림");
+                      } else if (error.toString() == "USER_EMAIL_NOT_FOUND") {
+                      // 에러 처리 해주세용!
+                      print("저장된 정보가 없습니다");
+                      }
+                      setState(() {
+                      _isLoading = false; // 에러 발생 시 대기 상태 해제
+                      _loginFailed = true; // 로그인 실패 상태로 설정
+                      });
+                      print('Error during registration: $error');
+                      }
+                      }, ***/
+                  Navigator.pushReplacement(
+                    context,
+                    PageTransition(
+                      child: RootPage(),
+                      type: PageTransitionType.rightToLeftWithFade,
+                      duration: Duration(milliseconds: 300),
+                    ),
+                  );
+                },
                 child: Container(
                   width: size.width,
                   decoration: BoxDecoration(
@@ -182,22 +242,23 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Center(
-                    child: _isLoading ? const SizedBox(
-                      width: 26,
-                      height: 26,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                    )
-                        : const Text(
-                      '로그인',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 26,
+                            height: 26,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            '로그인',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                            ),
+                          ),
                   ),
                 ),
               ),

@@ -3,18 +3,29 @@ import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/login.dart';
 
+import 'auth_repository.dart';
+
 class ForgotPage extends StatefulWidget {
-  const ForgotPage({super.key});
+
+  final AuthRepository authRepository;
+  const ForgotPage({Key? key, required this.authRepository}) : super(key: key);
 
   @override
   State<ForgotPage> createState() => _ForgotPageState();
 }
 
 class _ForgotPageState extends State<ForgotPage> {
-  final _emailInputText = TextEditingController();
-  final _passInputText = TextEditingController();
+  var _emailInputText = TextEditingController();
+  var _passInputText = TextEditingController();
+  late AuthRepository _authRepository;
 
   @override
+  void initState() {
+    super.initState();
+    _authRepository = widget.authRepository;
+  }
+
+
   void dispose() {
     _emailInputText.dispose();
     _passInputText.dispose();
@@ -23,30 +34,29 @@ class _ForgotPageState extends State<ForgotPage> {
 
   @override
   bool _isLoading = false;
-  final bool _loginFailed = false;
+  bool _loginFailed = false;
 
-  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
+          icon: Icon(Icons.arrow_back_ios_new),
           onPressed: () {
               Navigator.pushReplacement(
                 context,
                 PageTransition(
-                  child: const LoginPage(),
+                  child: LoginPage(authRepository: _authRepository,),
                   type: PageTransitionType.leftToRightWithFade,
-                  duration: const Duration(milliseconds: 300),
+                  duration: Duration(milliseconds: 300),
                 ),
               );
           },
         ),
-        title: const Row(
+        title: Row(
           children: [
-            SizedBox(width: 45),
+            const SizedBox(width: 45),
             Text(
               'Reset Password',
               style: TextStyle(
@@ -64,7 +74,7 @@ class _ForgotPageState extends State<ForgotPage> {
           child: Column(
             children: [
               Container(
-                child: const Column(
+                child: Column(
                   children: [
                     Text(
                       '귀하의 이메일로',
@@ -108,10 +118,10 @@ class _ForgotPageState extends State<ForgotPage> {
                 onTap: () async {
                   if (_emailInputText.text.isEmpty ||
                       _passInputText.text.isEmpty) return;
-
                   setState(() {
                     _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                   });
+
                   // 여기에 토큰 호출 설정
                 },
                 child: Container(
@@ -124,10 +134,10 @@ class _ForgotPageState extends State<ForgotPage> {
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Center(
                     child: _isLoading ?
-                    const CircularProgressIndicator(
+                    CircularProgressIndicator(
                       color: Colors.white,
                     )
-                        : const Text(
+                        : Text(
                       '확인',
                       style: TextStyle(
                         color: Colors.white,
@@ -157,7 +167,7 @@ class _ForgotPageState extends State<ForgotPage> {
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Center(
                     child: _isLoading ?
-                    const CircularProgressIndicator(
+                    CircularProgressIndicator(
                       color: Colors.white,
                     )
                         : Text(

@@ -4,20 +4,30 @@ import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/explanation.dart';
 import 'package:hobbyhobby/Auth/login.dart';
 import 'package:hobbyhobby/Auth/create_detail.dart';
+import 'auth_repository.dart';
 
 class CreatePage extends StatefulWidget {
-  const CreatePage({super.key});
+
+  const CreatePage({Key? key, required this.authRepository}) : super(key: key);
+  final AuthRepository authRepository;
 
   @override
   State<CreatePage> createState() => _CreatePageState();
 }
 
 class _CreatePageState extends State<CreatePage> {
-  final _emailInputText = TextEditingController();
-  final _passInputText = TextEditingController();
+  var _emailInputText = TextEditingController();
+  var _passInputText = TextEditingController();
   bool _obscurePassword = true;
+  late AuthRepository _authRepository;
 
   @override
+  void initState() {
+    super.initState();
+    _authRepository = widget.authRepository;
+  }
+
+
   void dispose() {
     _emailInputText.dispose();
     _passInputText.dispose();
@@ -25,31 +35,30 @@ class _CreatePageState extends State<CreatePage> {
   }
 
   @override
-  final bool _isLoading = false;
-  final bool _loginFailed = false;
+  bool _isLoading = false;
+  bool _loginFailed = false;
 
-  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
+          icon: Icon(Icons.arrow_back_ios_new),
           onPressed: () {
             Navigator.pushReplacement(
                 context,
                 PageTransition(
-                    child: const ExplanationPage(),
+                    child: ExplanationPage(authRepository: _authRepository),
                     type: PageTransitionType.leftToRightWithFade,
-                    duration: const Duration(milliseconds: 300),
+                    duration: Duration(milliseconds: 300),
                 ),
             );
           },
         ),
-        title: const Row(
+        title: Row(
           children: [
-            SizedBox(width: 80),
+            const SizedBox(width: 80),
             Text(
               '회원가입',
               style: TextStyle(
@@ -129,9 +138,9 @@ class _CreatePageState extends State<CreatePage> {
                   Navigator.pushReplacement(
                       context,
                       PageTransition(
-                          child: const LoginPage(),
+                          child: LoginPage(authRepository: _authRepository),
                           type: PageTransitionType.rightToLeftWithFade,
-                          duration: const Duration(milliseconds: 300),));
+                          duration: Duration(milliseconds: 300),));
                 },
                 child: Column(
                   children: [
@@ -153,11 +162,11 @@ class _CreatePageState extends State<CreatePage> {
                     // 이메일 또는 비밀번호가 비어 있는 경우에 대한 처리
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text(
+                        content: Text(
                           ' 이메일과 비밀번호를 입력해주세요.',
                         ),
                           backgroundColor: Constants.primaryColor,
-                          duration: const Duration(seconds: 1),
+                          duration: Duration(seconds: 1),
                         ),
                     );
                     return;
@@ -166,9 +175,9 @@ class _CreatePageState extends State<CreatePage> {
                   Navigator.pushReplacement(
                     context,
                     PageTransition(
-                      child: const CreateDetailPage(),
+                      child: CreateDetailPage(password: _passInputText.text, email: _emailInputText.text,userType: UserType.DEFAULT, authRepository: _authRepository,),
                       type: PageTransitionType.rightToLeftWithFade,
-                      duration: const Duration(milliseconds: 300),
+                      duration: Duration(milliseconds: 300),
                     ),
                   );
                 },
@@ -179,7 +188,7 @@ class _CreatePageState extends State<CreatePage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       '다음',
                       style: TextStyle(
