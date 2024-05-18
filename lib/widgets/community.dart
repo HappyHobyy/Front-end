@@ -10,12 +10,7 @@ class CommunityPage extends StatefulWidget {
   State<CommunityPage> createState() => _CommunityPageState();
 }
 
-// TextStyle titleTextStyle = const TextStyle(
-//   fontSize: 20,
-//   fontWeight: FontWeight.w700,
-//   letterSpacing: 0.3,
-// );
-
+/* 임시 placeholder 탭 정보 */
 const List<Tab> hobbyTabs = <Tab>[
   Tab(text: "내 취미"),
   Tab(text: "추천 취미"),
@@ -74,12 +69,6 @@ List<AssetImage> allHobbiesListIcons = const <AssetImage>[
   AssetImage("assets/community_icons/Reading.png"),
   AssetImage("assets/community_icons/TV Show.png"),
   AssetImage("assets/community_icons/Trust.png"),
-  // Icon(Icons.directions_run),
-  // Icon(CupertinoIcons.pencil),
-  // Icon(Icons.directions_run),
-  // Icon(Icons.book),
-  // Icon(Icons.youtube_searched_for),
-  // Icon(Icons.directions_run),
 ];
 
 ListView toListView(List<String> strings) {
@@ -133,7 +122,6 @@ class _CommunityPageState extends State<CommunityPage> {
                   splashFactory: NoSplash.splashFactory,
                   overlayColor: MaterialStateProperty.resolveWith<Color?>(
                       (Set<MaterialState> states) {
-                    // Use the default focused overlay color
                     return states.contains(MaterialState.focused)
                         ? null
                         : Colors.transparent;
