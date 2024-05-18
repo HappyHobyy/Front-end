@@ -24,7 +24,9 @@ class _SecondRootPageState extends State<SecondRootPage> {
         communityName: widget.communityName,
       ),
       const HboardPage(),
-      const ReviewPage(),
+      ReviewPage(
+        communityName: widget.communityName,
+      ),
       const RentalPage(),
     ];
   }
