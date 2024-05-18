@@ -10,11 +10,11 @@ class CommunityPage extends StatefulWidget {
   State<CommunityPage> createState() => _CommunityPageState();
 }
 
-TextStyle titleTextStyle = const TextStyle(
-  fontSize: 20,
-  fontWeight: FontWeight.w700,
-  letterSpacing: 0.3,
-);
+// TextStyle titleTextStyle = const TextStyle(
+//   fontSize: 20,
+//   fontWeight: FontWeight.w700,
+//   letterSpacing: 0.3,
+// );
 
 const List<Tab> hobbyTabs = <Tab>[
   Tab(text: "내 취미"),
@@ -127,7 +127,7 @@ class _CommunityPageState extends State<CommunityPage> {
             appBar: AppBar(
                 title: Text(
                   '커뮤니티',
-                  style: titleTextStyle,
+                  style: Constants.titleTextStyle,
                 ),
                 bottom: TabBar(
                   splashFactory: NoSplash.splashFactory,
@@ -184,24 +184,6 @@ class _CommunityPageState extends State<CommunityPage> {
   }
 }
 
-class SpecificCommunityPage extends StatelessWidget {
-  final String content;
-
-  const SpecificCommunityPage({super.key, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          content,
-          style: titleTextStyle,
-        ),
-      ),
-    );
-  }
-}
-
 class GroupedCommunityPage extends StatelessWidget {
   final String content;
   final ImageIcon icon;
@@ -225,7 +207,7 @@ class GroupedCommunityPage extends StatelessWidget {
               const SizedBox(width: 8), // space between icon and title
               Text(
                 content,
-                style: titleTextStyle,
+                style: Constants.titleTextStyle,
               ),
             ],
           ),

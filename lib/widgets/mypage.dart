@@ -2,10 +2,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/constants.dart';
 
 int postsNum = 0;
 int likesNum = 0;
 int commentsNum = 0;
+String userName = 'John Doe';
+String userEmail = 'johndoe@example.com';
+NetworkImage userImage = NetworkImage('https://via.placeholder.com/150');
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -24,13 +28,9 @@ class _MyPageState extends State<MyPage> {
           ),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
+          title: Text(
             '마이페이지',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.3,
-            ),
+            style: Constants.titleTextStyle,
           ),
           actions: const [
             Padding(
@@ -47,13 +47,12 @@ class _MyPageState extends State<MyPage> {
               SizedBox(height: 16),
               CircleAvatar(
                 radius: 50,
-                backgroundImage:
-                    NetworkImage('https://via.placeholder.com/150'),
+                backgroundImage: userImage,
               ),
               SizedBox(height: 7),
 
               Text(
-                'John Doe',
+                userName,
                 style: TextStyle(
                   fontSize: 24,
                   // fontWeight: FontWeight.bold,
@@ -61,7 +60,7 @@ class _MyPageState extends State<MyPage> {
               ),
               SizedBox(height: 0),
               Text(
-                'johndoe@example.com',
+                userEmail,
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[600],
@@ -70,76 +69,53 @@ class _MyPageState extends State<MyPage> {
               SizedBox(
                 height: 32,
               ),
-              Card(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        children: [Text("게시물"), Text(postsNum.toString())],
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 20,
+                child: Card(
+                  color: const Color(0xFFfffbfe),
+                  // color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("게시물"),
+                            SizedBox(height: 3),
+                            Text(postsNum.toString())
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          children: [Text("좋아요"), Text(likesNum.toString())],
-                        )),
-                    Container(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          children: [Text("댓글"), Text(commentsNum.toString())],
-                        )),
-                  ],
+                      const VerticalDivider(),
+                      Container(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              Text("좋아요"),
+                              SizedBox(height: 3),
+                              Text(likesNum.toString())
+                            ],
+                          )),
+                      const VerticalDivider(),
+                      Container(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              Text("댓글"),
+                              SizedBox(height: 3),
+                              Text(commentsNum.toString())
+                            ],
+                          )),
+                    ],
+                  ),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: Text('게시물', textAlign: TextAlign.center),
-                          onTap: () {
-                            // Handle Posts tap
-                          },
-                        ),
-                        Text(postsNum.toString()),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: Text('좋아요', textAlign: TextAlign.center),
-                          onTap: () {
-                            // Handle Likes tap
-                          },
-                        ),
-                        Text(likesNum.toString()),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: Text('댓글', textAlign: TextAlign.center),
-                          onTap: () {
-                            // Handle Comments tap
-                          },
-                        ),
-                        Text(commentsNum.toString()),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 32), // Add some space before the ListView
+              SizedBox(height: 12), // Add some space before the ListView
               Expanded(
                 child: ListView(
+                  physics: const NeverScrollableScrollPhysics(),
                   children: <Widget>[
                     ListTile(
                       leading: Icon(CupertinoIcons.person),
