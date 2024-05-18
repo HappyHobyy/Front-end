@@ -14,7 +14,7 @@ import 'auth_repository.dart';
 import 'jwt_token_model.dart';
 
 class LoginPage extends StatefulWidget {
-  
+
   final AuthRepository authRepository;
   const LoginPage({Key? key, required this.authRepository}) : super(key: key);
 

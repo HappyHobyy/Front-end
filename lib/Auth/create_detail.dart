@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_remote_api.dart';
+import 'package:hobbyhobby/Auth/user_model.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/explanation.dart';
@@ -6,21 +8,42 @@ import 'package:hobbyhobby/Auth/login.dart';
 import 'package:hobbyhobby/Auth/create.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../DataSource/local_data_storage.dart';
+import 'auth_repository.dart';
+
 class CreateDetailPage extends StatefulWidget {
-  const CreateDetailPage({super.key});
+  final String password;
+  final String email;
+  final UserType userType;
+  final AuthRepository authRepository;
+
+  const CreateDetailPage({Key? key, required this.password, required this.email, required this.userType,required this.authRepository}) : super(key: key);
 
   @override
   State<CreateDetailPage> createState() => _CreateDetailPageState();
 }
 
 class _CreateDetailPageState extends State<CreateDetailPage> {
+  late String _password;
+  late String _email;
+  late UserType _userType;
   var _emailInputText = TextEditingController();
   var _passInputText = TextEditingController();
   var _nicknameInputText = TextEditingController();
   var _nameInputText = TextEditingController();
   var _birthInputText = TextEditingController();
   var _phoneInputText = TextEditingController();
+  late AuthRepository _authRepository;
   DateTime? _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _authRepository = widget.authRepository;
+    _password = widget.password;
+    _email = widget.email;
+    _userType = widget.userType;
+  }
 
   void dispose() {
     _emailInputText.dispose();
@@ -45,7 +68,8 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
             onDateTimeChanged: (DateTime newDateTime) {
               setState(() {
                 _selectedDate = newDateTime;
-                _birthInputText.text = "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day}";
+                _birthInputText.text =
+                    "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day}";
               });
             },
           ),
@@ -53,7 +77,6 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
       },
     );
   }
-
 
   @override
   bool _isLoading = false;
@@ -70,7 +93,7 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
             Navigator.pushReplacement(
               context,
               PageTransition(
-                child: CreatePage(),
+                child: CreatePage(authRepository: _authRepository,),
                 type: PageTransitionType.leftToRightWithFade,
                 duration: Duration(milliseconds: 300),
               ),
@@ -211,14 +234,39 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
                   setState(() {
                     _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                   });
-                  Navigator.pushReplacement(
-                    context,
-                    PageTransition(
-                      child: LoginPage(),
-                      type: PageTransitionType.rightToLeftWithFade,
-                      duration: Duration(milliseconds: 300),
-                    ),
+                  User user = User.withUserRegister(
+                    userEmail: _email,
+                    userType: _userType,
+                    userNickName: _nicknameInputText.text,
+                    phoneNumber: int.parse(_phoneInputText.text),
+                    userName: _nameInputText.text,
+                    // 문자열을 정수로 변환
+                    birth: _birthInputText.text,
+                    password: _password,
+                    gender: Gender.MAN,
+                    nationality: Nationality.DOMESTIC,
                   );
+                  try {
+                    await _authRepository.postDefaultRegister(user);
+                    // 회원가입 요청 완료 후 페이지 전환
+                    Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                        child: LoginPage(authRepository: _authRepository,),
+                        type: PageTransitionType.rightToLeftWithFade,
+                        duration: Duration(milliseconds: 300),
+                      ),
+                    );
+                  } catch (error) {
+                    if (error.toString() == 'USER_EMAIL_DUPLICATED') {
+                      // 에러 처리 해주세용!
+                    }
+                    setState(() {
+                      _isLoading = false; // 에러 발생 시 대기 상태 해제
+                      _loginFailed = true; // 로그인 실패 상태로 설정
+                    });
+                    print('Error during registration: $error');
+                  }
                 },
                 child: Container(
                   width: size.width,
@@ -227,22 +275,23 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Center(
-                child: _isLoading ? SizedBox(
-                width: 26,
-                  height: 26,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                )
-                    : Text(
-                      '회원가입',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 26,
+                            height: 26,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            '회원가입',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                            ),
+                          ),
                   ),
                 ),
               ),

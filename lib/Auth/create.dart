@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hobbyhobby/Auth/user_model.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/explanation.dart';
@@ -38,8 +37,10 @@ class _CreatePageState extends State<CreatePage> {
   @override
   bool _isLoading = false;
   bool _loginFailed = false;
+
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
