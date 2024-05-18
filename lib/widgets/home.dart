@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(width: 10),
               Image.asset(
                   'assets/logo.png',
-              width: 130),
+                  width: 130),
             ]
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -43,8 +43,8 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             Row(
-                children: [
-                  TextButton(
+              children: [
+                TextButton(
                   onPressed: () {},
                   child: Text(
                     'AI 추천',
@@ -56,13 +56,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Text(
-                    '으로 새로운 취미를',
+                  '으로 새로운 취미를',
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 20,
                   ),
                 ),
-        ],
+              ],
             ),
           ],
         ),
