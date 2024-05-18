@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/Auth/create.dart';
@@ -49,44 +48,38 @@ class _ExplanationPageState extends State<ExplanationPage> {
   // 카카오톡 로그인
   Future<void> signInWithKakao() async {
     try {
-      if (isInstalled == null) {
-        isInstalled = await isKakaoTalkInstalled();
-      }
+      isInstalled ??= await isKakaoTalkInstalled();
 
-      if (isInstalled!) {
+      if (isInstalled) {
         token = await UserApi.instance.loginWithKakaoTalk();
       } else {
         token = await UserApi.instance.loginWithKakaoAccount();
       }
 
       // token 값이 null이 아닌지 확인한 후 사용
-      if (token != null) {
-        final url = Uri.https('kapi.kakao.com', '/v2/user/me');
-        final response = await http.get(
-          url,
-          headers: {
-            HttpHeaders.authorizationHeader: 'Bearer ${token!.accessToken}'
-          },
-        );
+      final url = Uri.https('kapi.kakao.com', '/v2/user/me');
+      final response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer ${token.accessToken}'
+        },
+      );
 
-        final profileInfo = json.decode(response.body);
-        final email = profileInfo['kakao_account']['email'];
-        final name = profileInfo['properties']['nickname'];
-        String oAuth = 'OAUTH_KAKAO';
+      final profileInfo = json.decode(response.body);
+      final email = profileInfo['kakao_account']['email'];
+      final name = profileInfo['properties']['nickname'];
+      String oAuth = 'OAUTH_KAKAO';
 
-        /**
-        if (email != null && name != null) {
-          sendUserInfoToServer(email, name, oAuth);
-        }
-            **/
-
-        setState(() {
-          _loginPlatform = LoginPlatform.kakao;
-        });
-      } else {
-        print('토큰이 초기화되지 않았습니다.');
+      /**
+      if (email != null && name != null) {
+        sendUserInfoToServer(email, name, oAuth);
       }
-    } catch (error) {
+          **/
+
+      setState(() {
+        _loginPlatform = LoginPlatform.kakao;
+      });
+        } catch (error) {
       print('카카오톡으로 로그인 실패 $error');
     }
   }
@@ -168,7 +161,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Hobby',
                     style: TextStyle(
                         fontSize: 25,
@@ -187,10 +180,10 @@ class _ExplanationPageState extends State<ExplanationPage> {
                   ),
                 ]
             ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Column(
             children: [
-              Container(
+              SizedBox(
                 height: 300,
                 child: PageView(
                   onPageChanged: (index) {
@@ -209,7 +202,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
               const SizedBox(height: 30),
               Text(
                 pageTexts[currentPage], // 현재 페이지에 해당하는 텍스트 표시
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 25,
                 ),
@@ -220,7 +213,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
                 children: [
                   for (int i = 0; i < 4; i++)
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 5),
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
                       width: 10,
                       height: 10,
                       decoration: BoxDecoration(
@@ -239,7 +232,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
             onTap: () async {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CreatePage()),
+                MaterialPageRoute(builder: (context) => const CreatePage()),
               );
             },
             child: Container(
@@ -249,7 +242,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
                 borderRadius: BorderRadius.circular(30),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              child: Center(
+              child: const Center(
                 child: Text(
                   '회원가입',
                   style: TextStyle(
@@ -264,7 +257,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 '이미 계정이 있으신가요?',
                 style: TextStyle(
                   fontSize: 15,
@@ -276,9 +269,9 @@ class _ExplanationPageState extends State<ExplanationPage> {
                   Navigator.pushReplacement(
                       context,
                       PageTransition(
-                          child: LoginPage(),
+                          child: const LoginPage(),
                           type: PageTransitionType.bottomToTop,
-                          duration: Duration(milliseconds: 300)));
+                          duration: const Duration(milliseconds: 300)));
                 },
                 child: Text(
                 '로그인',
@@ -291,7 +284,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
             ],
           ),
           const SizedBox(height: 15),
-          Row(
+          const Row(
             children: [
               Expanded(child: Divider()),
               Padding(

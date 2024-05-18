@@ -11,9 +11,10 @@ class ForgotPage extends StatefulWidget {
 }
 
 class _ForgotPageState extends State<ForgotPage> {
-  var _emailInputText = TextEditingController();
-  var _passInputText = TextEditingController();
+  final _emailInputText = TextEditingController();
+  final _passInputText = TextEditingController();
 
+  @override
   void dispose() {
     _emailInputText.dispose();
     _passInputText.dispose();
@@ -22,29 +23,30 @@ class _ForgotPageState extends State<ForgotPage> {
 
   @override
   bool _isLoading = false;
-  bool _loginFailed = false;
+  final bool _loginFailed = false;
 
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new),
+          icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
               Navigator.pushReplacement(
                 context,
                 PageTransition(
-                  child: LoginPage(),
+                  child: const LoginPage(),
                   type: PageTransitionType.leftToRightWithFade,
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                 ),
               );
           },
         ),
-        title: Row(
+        title: const Row(
           children: [
-            const SizedBox(width: 45),
+            SizedBox(width: 45),
             Text(
               'Reset Password',
               style: TextStyle(
@@ -62,7 +64,7 @@ class _ForgotPageState extends State<ForgotPage> {
           child: Column(
             children: [
               Container(
-                child: Column(
+                child: const Column(
                   children: [
                     Text(
                       '귀하의 이메일로',
@@ -122,10 +124,10 @@ class _ForgotPageState extends State<ForgotPage> {
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Center(
                     child: _isLoading ?
-                    CircularProgressIndicator(
+                    const CircularProgressIndicator(
                       color: Colors.white,
                     )
-                        : Text(
+                        : const Text(
                       '확인',
                       style: TextStyle(
                         color: Colors.white,
@@ -155,7 +157,7 @@ class _ForgotPageState extends State<ForgotPage> {
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Center(
                     child: _isLoading ?
-                    CircularProgressIndicator(
+                    const CircularProgressIndicator(
                       color: Colors.white,
                     )
                         : Text(

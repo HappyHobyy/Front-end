@@ -10,6 +10,6 @@ class UnionPage extends StatefulWidget {
 class _UnionPageState extends State<UnionPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return const Scaffold();
   }
 }

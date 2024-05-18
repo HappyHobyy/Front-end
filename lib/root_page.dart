@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/widgets/community.dart';
 import 'package:hobbyhobby/widgets/home.dart';
 import 'package:hobbyhobby/widgets/mypage.dart';
@@ -51,66 +50,66 @@ class _RootPageState extends State<RootPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
-            children: [
-              const SizedBox(width: 20),
-              Text(
-                'Hobby',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              Text(
-                'Hobby',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Constants.primaryColor,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ]
-        ),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0.0,
-        actions: [
-          IconButton(
-            onPressed: () {
-              // 알림 버튼을 눌렀을 때 액션
-            },
-            icon: Icon(
-              Icons.notifications_none,
-              color: Colors.black,
-              size: 30.0,
-            ),
-          ),
-          const SizedBox(width: 15),
-        ],
-      ),
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   title: Row(
+      //       children: [
+      //         const SizedBox(width: 20),
+      //         Text(
+      //           'Hobby',
+      //           style: TextStyle(
+      //             fontSize: 24,
+      //             fontWeight: FontWeight.w700,
+      //             letterSpacing: 0.3,
+      //           ),
+      //         ),
+      //         Text(
+      //           'Hobby',
+      //           style: TextStyle(
+      //             fontSize: 24,
+      //             fontWeight: FontWeight.w700,
+      //             color: Constants.primaryColor,
+      //             letterSpacing: 0.3,
+      //           ),
+      //         ),
+      //       ]
+      //   ),
+      //   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      //   elevation: 0.0,
+      //   actions: [
+      //     IconButton(
+      //       onPressed: () {
+      //         // 알림 버튼을 눌렀을 때 액션
+      //       },
+      //       icon: Icon(
+      //         Icons.notifications_none,
+      //         color: Colors.black,
+      //         size: 30.0,
+      //       ),
+      //     ),
+      //     const SizedBox(width: 15),
+      //   ],
+      // ),
       body: _widgetOptions()[_bottomNavIndex],
       bottomNavigationBar: Theme(
-    data: ThemeData(
-    splashColor: Colors.transparent,
-    highlightColor: Colors.transparent,
-    ),
-    child: BottomNavigationBar(
-        currentIndex: _bottomNavIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        unselectedIconTheme: IconThemeData(color: Colors.black),
-        selectedIconTheme: IconThemeData(color: Constants.primaryColor),
-        items: List.generate(
-          iconList.length,
-              (index) => BottomNavigationBarItem(
-            icon: Icon(iconList[index]),
-            label: titleList[index],
+        data: ThemeData(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _bottomNavIndex,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          unselectedIconTheme: const IconThemeData(color: Colors.black),
+          selectedIconTheme: IconThemeData(color: Constants.primaryColor),
+          items: List.generate(
+            iconList.length,
+            (index) => BottomNavigationBarItem(
+              icon: Icon(iconList[index]),
+              label: titleList[index],
+            ),
           ),
         ),
-      ),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/Auth/explanation.dart';
-import 'package:hobbyhobby/Auth/login.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -21,11 +20,11 @@ class MyApp extends StatelessWidget {
       home: ExplanationPage(),
 
       // 아래 코드들은 회원가입 창(생년월일)에서 한국어 설정을 위한 코드입니다.
-      localizationsDelegates: const [
+      localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
+      supportedLocales: [
         Locale('en', ''), // English, no country code
         Locale('ko', ''), // Korean, no country code
       ],
