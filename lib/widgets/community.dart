@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/communitys/second_root_page.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/widgets/like_button.dart';
 
@@ -67,13 +67,19 @@ List<String> allHobbiesList = const <String>[
   "엔터테인먼트",
   "봉사활동"
 ];
-List<Icon> allHobbiesListIcons = const <Icon>[
-  Icon(Icons.directions_run),
-  Icon(CupertinoIcons.pencil),
-  Icon(Icons.directions_run),
-  Icon(Icons.book),
-  Icon(Icons.youtube_searched_for),
-  Icon(Icons.directions_run),
+List<AssetImage> allHobbiesListIcons = const <AssetImage>[
+  AssetImage("assets/community_icons/Exercise.png"),
+  AssetImage("assets/community_icons/Drawing.png"),
+  AssetImage("assets/community_icons/Noodles.png"),
+  AssetImage("assets/community_icons/Reading.png"),
+  AssetImage("assets/community_icons/TV Show.png"),
+  AssetImage("assets/community_icons/Trust.png"),
+  // Icon(Icons.directions_run),
+  // Icon(CupertinoIcons.pencil),
+  // Icon(Icons.directions_run),
+  // Icon(Icons.book),
+  // Icon(Icons.youtube_searched_for),
+  // Icon(Icons.directions_run),
 ];
 
 ListView toListView(List<String> strings) {
@@ -89,7 +95,6 @@ ListView toListView(List<String> strings) {
         } else {
           return ListTile(
             leading: CircleAvatar(
-              // child: Text('A'),
               backgroundImage: hobbyImageMap[strings[index]],
             ),
             title: Text(strings[index]),
@@ -99,7 +104,7 @@ ListView toListView(List<String> strings) {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      SpecificCommunityPage(content: strings[index]),
+                      SecondRootPage(communityName: strings[index]),
                 ),
               );
             },
@@ -154,7 +159,8 @@ class _CommunityPageState extends State<CommunityPage> {
                       return Container(); // zero height: not visible
                     } else {
                       return ListTile(
-                          leading: allHobbiesListIcons[index],
+                          // leading: ImageIcon(allHobbiesListIcons[index]),
+                          leading: ImageIcon(allHobbiesListIcons[index]),
                           title: Text(allHobbiesList[index]),
                           trailing: const Icon(Icons.navigate_next),
                           onTap: () {
@@ -163,7 +169,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               MaterialPageRoute(
                                 builder: (context) => GroupedCommunityPage(
                                   content: allHobbiesList[index],
-                                  icon: allHobbiesListIcons[index],
+                                  icon: ImageIcon((allHobbiesListIcons[index])),
                                 ),
                               ),
                             );
@@ -198,27 +204,34 @@ class SpecificCommunityPage extends StatelessWidget {
 
 class GroupedCommunityPage extends StatelessWidget {
   final String content;
-  final Icon icon;
+  final ImageIcon icon;
 
   const GroupedCommunityPage(
       {super.key, required this.content, required this.icon});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            icon,
-            Text(
-              content,
-              style: titleTextStyle,
-            ),
-          ],
-        ),
+    return Theme(
+      data: ThemeData(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
       ),
-      body: toListView(myHobbiesList),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              icon,
+              const SizedBox(width: 8), // space between icon and title
+              Text(
+                content,
+                style: titleTextStyle,
+              ),
+            ],
+          ),
+        ),
+        body: toListView(myHobbiesList),
+      ),
     );
   }
 }
