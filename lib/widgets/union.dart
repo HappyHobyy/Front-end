@@ -1,7 +1,7 @@
 import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hobbyhobby/Auth/create_union.dart';
+import 'package:hobbyhobby/Union/create_union.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 
