@@ -111,5 +111,9 @@
 		<string>hobbyhobby</string>
 		<key>naverServiceAppUrlScheme</key>
 		<string>com.example.naverlogin</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+        <string>Access to your photo library</string>
+        <key>NSCameraUsageDescription</key>
+        <string>Access to your camera</string>
 	</dict>
 </plist>
