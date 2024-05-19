@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/root_page.dart';
+import 'package:hobbyhobby/widgets/union.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../communitys/hlog_write.dart';
 import '../constants.dart';
@@ -34,6 +37,8 @@ class _CreateUnionPageState extends State<CreateUnion> {
   var _timeInputText = TextEditingController();
   var _locationInputText = TextEditingController();
   var _maxInputText = TextEditingController();
+  var _opentalkInputText = TextEditingController();
+  var _textEditingInputText = TextEditingController();
   DateTime? _selectedDate;
 
   @override
@@ -43,6 +48,8 @@ class _CreateUnionPageState extends State<CreateUnion> {
     _timeInputText.dispose();
     _locationInputText.dispose();
     _maxInputText.dispose();
+    _opentalkInputText.dispose();
+    _textEditingInputText.dispose();
     super.dispose();
   }
 
@@ -88,7 +95,139 @@ class _CreateUnionPageState extends State<CreateUnion> {
         ),
         actions: [
           TextButton(
-            onPressed: (){},
+            onPressed: (){
+              if (_titleInputText.text.isEmpty ||
+                  _dateInputText.text.isEmpty ||
+                  _locationInputText.text.isEmpty ||
+                  _maxInputText.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      ' 모든 항목에 입력해주세요.',
+                    ),
+                    backgroundColor: Constants.primaryColor,
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+                return;
+              }
+              setState(() {
+                _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute<Widget>(builder: (BuildContext context) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text(
+                        '모임 생성',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: (){
+                            if (_opentalkInputText.text.isEmpty ||
+                                _textEditingInputText.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    ' 모든 항목에 입력해주세요.',
+                                  ),
+                                  backgroundColor: Constants.primaryColor,
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                              return;
+                            }
+                            setState(() {
+                              _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
+                            });
+                            Navigator.pushReplacement(
+                              context,
+                              PageTransition(
+                                child: RootPage(),
+                                type: PageTransitionType.rightToLeftWithFade,
+                                duration: Duration(milliseconds: 300),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Done',
+                            style: TextStyle(
+                              color: Constants.primaryColor,
+                              fontSize: 15,
+                            )
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    body: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10),
+                          Text(
+                            '오픈톡 링크',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: _opentalkInputText,
+                            obscureText: false,
+                            decoration: InputDecoration(
+                              hintText: ' 오픈톡 링크',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey.withOpacity(0.3), // 변경할 색상 설정
+                                  width: 2.0, // 테두리 두께 설정
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Constants.primaryColor, // 변경할 색상 설정
+                                  width: 2.0, // 테두리 두께 설정
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            '모임 설명',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: _textEditingInputText,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              hintText: '내용을 입력하세요.',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              );
+            },
             child: Text(
               'Next',
               style: TextStyle(
@@ -253,24 +392,25 @@ class _CreateUnionPageState extends State<CreateUnion> {
                   width: 2.0,
                 ),
               ),
-              child: _image == null
-                  ? IconButton(
-                onPressed: _pickImage,
-                icon: const Icon(
+              child: InkWell(
+                onTap: _pickImage,
+                child: _image == null
+                    ? Icon(
                   Icons.add_circle_outline,
                   size: 50,
-                ),
-              )
-                  : InkWell(
-                onTap: _pickImage,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    _image!,
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
+                )
+                    : _image is File
+                    ? Image.file(
+                  _image,
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                )
+                    : Image(
+                  image: _image,
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
