@@ -35,7 +35,6 @@ class _HlogPageState extends State<HlogPage> {
     final Size screenSize = MediaQuery.of(context).size;
 
     return Container(
-      color: Colors.grey.withOpacity(0.1),// 배경색 설정
       child: Padding(
         padding: const EdgeInsets.all(25),
         child: Container(
