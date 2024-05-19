@@ -52,24 +52,24 @@ class _RootPageState extends State<RootPage> {
     return Scaffold(
       body: _widgetOptions()[_bottomNavIndex],
       bottomNavigationBar: Theme(
-    data: ThemeData(
-    splashColor: Colors.transparent,
-    highlightColor: Colors.transparent,
-    ),
-    child: BottomNavigationBar(
-        currentIndex: _bottomNavIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        unselectedIconTheme: IconThemeData(color: Colors.black),
-        selectedIconTheme: IconThemeData(color: Constants.primaryColor),
-        items: List.generate(
-          iconList.length,
-              (index) => BottomNavigationBarItem(
-            icon: Icon(iconList[index]),
-            label: titleList[index],
+        data: ThemeData(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _bottomNavIndex,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          unselectedIconTheme: const IconThemeData(color: Colors.black),
+          selectedIconTheme: IconThemeData(color: Constants.primaryColor),
+          items: List.generate(
+            iconList.length,
+            (index) => BottomNavigationBarItem(
+              icon: Icon(iconList[index]),
+              label: titleList[index],
+            ),
           ),
         ),
-      ),
       ),
     );
   }

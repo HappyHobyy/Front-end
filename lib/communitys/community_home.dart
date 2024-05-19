@@ -5,7 +5,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class CommunityHomePage extends StatefulWidget {
-  const CommunityHomePage({super.key});
+  final String communityName;
+
+  const CommunityHomePage({super.key, required this.communityName});
 
   @override
   _CommunityHomePageState createState() => _CommunityHomePageState();
@@ -17,7 +19,8 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
     final pickedFiles = await picker.pickMultiImage();
 
     if (pickedFiles != null && pickedFiles.isNotEmpty) {
-      List<File> images = pickedFiles.map((pickedFile) => File(pickedFile.path)).toList();
+      List<File> images =
+          pickedFiles.map((pickedFile) => File(pickedFile.path)).toList();
 
       Navigator.push(
         context,
@@ -33,15 +36,15 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '풋살',
+      appBar: AppBar(
+        title: Text(
+          widget.communityName,
           style: TextStyle(
             fontWeight: FontWeight.w700,
           ),
-          ),
-            scrolledUnderElevation: 0,
         ),
+        scrolledUnderElevation: 0,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -72,10 +75,9 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
   Widget _body() {
     return ListView.builder(
       itemCount: 50,
-      itemBuilder: (context, index) =>
-      const HlogPage(
+      itemBuilder: (context, index) => const HlogPage(
         userUrl:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnnnObTCNg1QJoEd9Krwl3kSUnPYTZrxb5Ig&usqp=CAU',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnnnObTCNg1QJoEd9Krwl3kSUnPYTZrxb5Ig&usqp=CAU',
         userName: '_ugsxng99',
         images: [
           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnnnObTCNg1QJoEd9Krwl3kSUnPYTZrxb5Ig&usqp=CAU',

@@ -6,7 +6,10 @@ import 'package:hobbyhobby/communitys/review.dart';
 import 'package:hobbyhobby/communitys/rental.dart';
 
 class SecondRootPage extends StatefulWidget {
-  const SecondRootPage({Key? key}) : super(key: key);
+  final String communityName;
+
+  const SecondRootPage({Key? key, required this.communityName})
+      : super(key: key);
 
   @override
   _SecondRootPageState createState() => _SecondRootPageState();
@@ -17,9 +20,13 @@ class _SecondRootPageState extends State<SecondRootPage> {
 
   List<Widget> _widgetOptions() {
     return [
-      const CommunityHomePage(),
+      CommunityHomePage(
+        communityName: widget.communityName,
+      ),
       const HboardPage(),
-      const ReviewPage(),
+      ReviewPage(
+        communityName: widget.communityName,
+      ),
       const RentalPage(),
     ];
   }
@@ -61,7 +68,7 @@ class _SecondRootPageState extends State<SecondRootPage> {
           selectedIconTheme: IconThemeData(color: Constants.primaryColor),
           items: List.generate(
             secondiconList.length,
-                (index) => BottomNavigationBarItem(
+            (index) => BottomNavigationBarItem(
               icon: Icon(secondiconList[index]),
               label: secondtitleList[index],
             ),
