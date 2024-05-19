@@ -38,6 +38,8 @@ class _CreateUnionPageState extends State<CreateUnion> {
   var _locationInputText = TextEditingController();
   var _maxInputText = TextEditingController();
   var _opentalkInputText = TextEditingController();
+  var _tag1InputText = TextEditingController();
+  var _tag2InputText = TextEditingController();
   var _textEditingInputText = TextEditingController();
   DateTime? _selectedDate;
 
@@ -49,6 +51,8 @@ class _CreateUnionPageState extends State<CreateUnion> {
     _locationInputText.dispose();
     _maxInputText.dispose();
     _opentalkInputText.dispose();
+    _tag1InputText.dispose();
+    _tag2InputText.dispose();
     _textEditingInputText.dispose();
     super.dispose();
   }
@@ -131,7 +135,9 @@ class _CreateUnionPageState extends State<CreateUnion> {
                         TextButton(
                           onPressed: (){
                             if (_opentalkInputText.text.isEmpty ||
-                                _textEditingInputText.text.isEmpty) {
+                                _textEditingInputText.text.isEmpty ||
+                                _tag1InputText.text.isEmpty ||
+                                _tag2InputText.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -202,6 +208,72 @@ class _CreateUnionPageState extends State<CreateUnion> {
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            '커뮤니티 태그',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0), // 오른쪽에 패딩 추가
+                                  child: TextField(
+                                    controller: _tag1InputText, // 첫 번째 TextField의 컨트롤러
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      hintText: '커뮤니티 태그 1',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey.withOpacity(0.3),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.blue, // 예시 색상
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0), // 왼쪽에 패딩 추가
+                                  child: TextField(
+                                    controller: _tag2InputText, // 두 번째 TextField의 컨트롤러
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      hintText: '커뮤니티 태그 2',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey.withOpacity(0.3),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.blue, // 예시 색상
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 20),
                           Text(
