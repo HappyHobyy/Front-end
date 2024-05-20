@@ -26,6 +26,7 @@ List<String> myTabsString = <String>[
 ];
 
 List<String> myHobbiesList = <String>["자전거", "풋살", "배드민턴"];
+
 const hobbyImageMap = <String, AssetImage>{
   "낭독 봉사": AssetImage("assets/hobby/낭독 봉사.jpg"),
   "가죽 공예": AssetImage("assets/hobby/가죽공예.jpg"),
