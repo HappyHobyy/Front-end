@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/constants.dart';
 
 class HobbiesGrid extends StatelessWidget {
   final List<String> items;
   final List<String> selectedTags;
   final void Function(String) toggleTag;
-  final Map<String, String> itemImages = const {
-    "영화": "assets/hobby/영화.jpg",
-    "낚시": "assets/hobby/낚시.jpg",
-    "등산": "assets/hobby/등산.jpg",
-    "풋살": "assets/hobby/풋살.jpg",
-    "러닝": "assets/hobby/러닝.jpg",
-    "사진": "assets/hobby/사진.jpg",
-    "클라이밍": "assets/hobby/클라이밍.jpg",
-    "음악": "assets/hobby/음악.jpg",
-  };
 
   const HobbiesGrid({
     Key? key,
@@ -35,7 +26,8 @@ class HobbiesGrid extends StatelessWidget {
       ),
       itemBuilder: (BuildContext context, int index) {
         final String item = items[index];
-        final String imagePath = itemImages[item] ?? 'assets/default.jpg';
+        final AssetImage image = Constants.hobbyImageMap[item] ??
+            const AssetImage('assets/icon.jpg');
 
         return GestureDetector(
           onTap: () {
@@ -45,7 +37,7 @@ class HobbiesGrid extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 25,
-                backgroundImage: AssetImage(imagePath),
+                backgroundImage: image,
               ),
               const SizedBox(height: 2),
               Text(
