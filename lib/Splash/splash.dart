@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashPage> {
     super.initState();
     authRepository = AuthRepository(LocalDataStorage(), AuthRemoteApi());
     communityRepository = CommunityRepository(CommunityRemoteApi());
-    authManager = AuthManager(authRepository);
+    authManager = AuthManager(AuthRepository(LocalDataStorage(), AuthRemoteApi()));
     _splashViewModel =
         SplashViewModel(authRepository, authManager, communityRepository);
     _splashViewModel.addListener(_onAuthStateChanged);

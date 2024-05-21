@@ -34,7 +34,6 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _emailInputText.dispose();
     _passInputText.dispose();
-    _authManager = widget.authManager;
     super.dispose();
   }
 
@@ -43,6 +42,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _authRepository = widget.authRepository;
+    _authManager = widget.authManager;
     _communityRepository = CommunityRepository(CommunityRemoteApi());
   }
 

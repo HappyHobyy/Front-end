@@ -6,6 +6,7 @@ import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/Auth/auth_repository.dart';
 import 'package:hobbyhobby/Auth/explanation.dart';
 import 'package:hobbyhobby/constants.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../Auth/auth_remote_api.dart';
 import '../DataSource/local_data_storage.dart';
@@ -211,13 +212,15 @@ class _MyPageState extends State<MyPage> {
                         onTap: () {
                           _authManager.removeToken();
                           Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ExplanationPage(
-                                        authRepository: _authRepository,
-                                        authManager: _authManager,
-                                      )));
-                        },
+                            context,
+                            PageTransition(
+                              child: ExplanationPage(
+                                  authRepository: _authRepository,
+                                  authManager: _authManager),
+                              type: PageTransitionType.rightToLeftWithFade,
+                              duration: Duration(milliseconds: 300),
+                            ),
+                          );},
                       ),
                     ]).toList(),
                   ),
