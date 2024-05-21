@@ -7,9 +7,9 @@ import 'package:hobbyhobby/Auth/explanation.dart';
 import 'package:hobbyhobby/Auth/login.dart';
 import 'package:hobbyhobby/Auth/create.dart';
 import 'package:flutter/cupertino.dart';
-
 import '../DataSource/local_data_storage.dart';
 import 'auth_repository.dart';
+import 'package:flutter/services.dart';
 
 class CreateDetailPage extends StatefulWidget {
   final String password;
@@ -27,12 +27,11 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
   late String _password;
   late String _email;
   late UserType _userType;
-  var _emailInputText = TextEditingController();
-  var _passInputText = TextEditingController();
   var _nicknameInputText = TextEditingController();
   var _nameInputText = TextEditingController();
   var _birthInputText = TextEditingController();
   var _phoneInputText = TextEditingController();
+  var _phoneAuthText = TextEditingController();
   late AuthRepository _authRepository;
   DateTime? _selectedDate;
 
@@ -46,12 +45,11 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
   }
 
   void dispose() {
-    _emailInputText.dispose();
-    _passInputText.dispose();
     _nicknameInputText.dispose();
     _nameInputText.dispose();
     _phoneInputText.dispose();
     _birthInputText.dispose();
+    _phoneAuthText.dispose();
     super.dispose();
   }
 
@@ -141,6 +139,27 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
+                  suffixIcon: InkWell(
+                    onTap: () {
+                      // 중복 확인 기능 추가
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 5),
+                      child: Container(
+                        padding: EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Constants.primaryColor,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Text(
+                          '중복 확인',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -194,9 +213,71 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
               const SizedBox(height: 10),
               TextField(
                 controller: _phoneInputText,
-                obscureText: false,
+                onChanged: (value) {
+                  // 입력된 문자열에서 숫자만 필터링하여 새로운 문자열을 만듭니다.
+                  String digitsOnly = value.replaceAll(RegExp(r'\D'), '');
+
+                  // '-'가 있는 휴대폰 번호 형식으로 변환합니다.
+                  if (digitsOnly.length >= 3 && digitsOnly.length <= 6) {
+                    // 010-xxxx 형식
+                    _phoneInputText.text = '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3)}';
+                  } else if (digitsOnly.length >= 7) {
+                    // 010-xxxx-xxxx 형식
+                    _phoneInputText.text = '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3, 7)}-${digitsOnly.substring(7)}';
+                  }
+                  // 커서의 위치를 문자열 끝으로 이동시킵니다.
+                  _phoneInputText.selection = TextSelection.fromPosition(TextPosition(offset: _phoneInputText.text.length));
+                },
+                keyboardType: TextInputType.phone,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(13), // 전화번호 최대 길이 제한
+                ],
                 decoration: InputDecoration(
                   hintText: ' 휴대폰 번호',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey.withOpacity(0.3), // 변경할 색상 설정
+                      width: 2.0, // 테두리 두께 설정
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Constants.primaryColor, // 변경할 색상 설정
+                      width: 2.0, // 테두리 두께 설정
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: () {
+                      // 중복 확인 기능 추가
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 5),
+                      child: Container(
+                        padding: EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Constants.primaryColor,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Text(
+                          '  인증  ',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _phoneAuthText,
+                obscureText: false,
+                decoration: InputDecoration(
+                  hintText: ' 인증번호',
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.grey.withOpacity(0.3), // 변경할 색상 설정
