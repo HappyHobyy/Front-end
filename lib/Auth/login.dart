@@ -7,7 +7,6 @@ import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/explanation.dart';
 import 'package:hobbyhobby/root_page.dart';
-
 import '../Community/community_remote_api.dart';
 import '../Community/community_repository.dart';
 import 'auth_repository.dart';
@@ -186,8 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                   setState(() {
                     _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                   });
-                  // 여기에 토큰 호출 설정//디바이스 토큰 예시
-                  /*** User user = User.withDefaultUserLogin(
+                  User user = User.withDefaultUserLogin(
                       userEmail: _emailInputText.text,
                       userType: UserType.DEFAULT,
                       password: _passInputText.text,
@@ -225,7 +223,6 @@ class _LoginPageState extends State<LoginPage> {
                       });
                       print('Error during registration: $error');
                       }
-                      }, ***/
                   Navigator.pushReplacement(
                     context,
                     PageTransition(

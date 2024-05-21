@@ -213,26 +213,6 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
               const SizedBox(height: 10),
               TextField(
                 controller: _phoneInputText,
-                onChanged: (value) {
-                  // 입력된 문자열에서 숫자만 필터링하여 새로운 문자열을 만듭니다.
-                  String digitsOnly = value.replaceAll(RegExp(r'\D'), '');
-
-                  // '-'가 있는 휴대폰 번호 형식으로 변환합니다.
-                  if (digitsOnly.length >= 3 && digitsOnly.length <= 6) {
-                    // 010-xxxx 형식
-                    _phoneInputText.text = '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3)}';
-                  } else if (digitsOnly.length >= 7) {
-                    // 010-xxxx-xxxx 형식
-                    _phoneInputText.text = '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3, 7)}-${digitsOnly.substring(7)}';
-                  }
-                  // 커서의 위치를 문자열 끝으로 이동시킵니다.
-                  _phoneInputText.selection = TextSelection.fromPosition(TextPosition(offset: _phoneInputText.text.length));
-                },
-                keyboardType: TextInputType.phone,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(13), // 전화번호 최대 길이 제한
-                ],
                 decoration: InputDecoration(
                   hintText: ' 휴대폰 번호',
                   enabledBorder: OutlineInputBorder(

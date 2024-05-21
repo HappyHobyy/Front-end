@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/Recommendation/recommend.dart';
+import 'package:hobbyhobby/Recommendation/animation.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({super.key});
@@ -120,7 +121,7 @@ class _TestPageState extends State<TestPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RecommendationPage(),
+                          builder: (context) => AnimationPage(),
                         ),
                       );
                     },
