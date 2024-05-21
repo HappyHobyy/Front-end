@@ -26,6 +26,7 @@ class CommunityRemoteApi {
     //나중에 수정
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
+      print(data);
       return true;
     } else {
       Map<String, dynamic> data = jsonDecode(response.body);

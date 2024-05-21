@@ -202,7 +202,6 @@ class _LoginPageState extends State<LoginPage> {
                     JwtToken jwtToken =
                         await _authRepository.postDefaultLogin(user);
                     await _authRepository.saveAllToken(jwtToken);
-                    jwtToken = await _authRepository.loadAccessToken();
                     await _communityRepository
                         .getCommunityPopularContents(jwtToken);
 
