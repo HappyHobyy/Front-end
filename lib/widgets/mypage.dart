@@ -2,7 +2,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
+import 'package:hobbyhobby/Auth/auth_repository.dart';
+import 'package:hobbyhobby/Auth/explanation.dart';
 import 'package:hobbyhobby/constants.dart';
+import 'package:page_transition/page_transition.dart';
+
+import '../Auth/auth_remote_api.dart';
+import '../DataSource/local_data_storage.dart';
 
 int postsNum = 0;
 int likesNum = 0;
@@ -12,13 +19,25 @@ String userEmail = 'johndoe@example.com';
 NetworkImage userImage = NetworkImage('https://via.placeholder.com/150');
 
 class MyPage extends StatefulWidget {
-  const MyPage({super.key});
+  final AuthManager authManager;
+
+  const MyPage({Key? key, required this.authManager}) : super(key: key);
 
   @override
   State<MyPage> createState() => _MyPageState();
 }
 
 class _MyPageState extends State<MyPage> {
+  late AuthManager _authManager;
+  late AuthRepository _authRepository;
+
+  @override
+  void initState() {
+    super.initState();
+    _authRepository = AuthRepository(LocalDataStorage(), AuthRemoteApi());
+    _authManager = widget.authManager;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -191,8 +210,17 @@ class _MyPageState extends State<MyPage> {
                         trailing: const Icon(Icons.navigate_next),
                         title: Text('로그아웃'),
                         onTap: () {
-                          // Handle Logout tap
-                        },
+                          _authManager.removeToken();
+                          Navigator.pushReplacement(
+                            context,
+                            PageTransition(
+                              child: ExplanationPage(
+                                  authRepository: _authRepository,
+                                  authManager: _authManager),
+                              type: PageTransitionType.rightToLeftWithFade,
+                              duration: Duration(milliseconds: 300),
+                            ),
+                          );},
                       ),
                     ]).toList(),
                   ),

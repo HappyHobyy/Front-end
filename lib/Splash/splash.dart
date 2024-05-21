@@ -29,12 +29,11 @@ class _SplashScreenState extends State<SplashPage> {
     super.initState();
     authRepository = AuthRepository(LocalDataStorage(), AuthRemoteApi());
     communityRepository = CommunityRepository(CommunityRemoteApi());
-    authManager = AuthManager(authRepository);
+    authManager = AuthManager(AuthRepository(LocalDataStorage(), AuthRemoteApi()));
     _splashViewModel =
         SplashViewModel(authRepository, authManager, communityRepository);
     _splashViewModel.addListener(_onAuthStateChanged);
     _splashViewModel.checkAuthentication();
-
   }
 
   @override
@@ -49,13 +48,13 @@ class _SplashScreenState extends State<SplashPage> {
     }
     if (_splashViewModel.authState == AuthState.authenticated) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => RootPage()),
+        MaterialPageRoute(builder: (context) => RootPage(authManager: authManager)),
       );
     } else if (_splashViewModel.authState == AuthState.unauthenticated) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
             builder: (context) =>
-                ExplanationPage(authRepository: authRepository)),
+                ExplanationPage(authRepository: authRepository, authManager: authManager)),
       );
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:hobbyhobby/Auth/login.dart';
@@ -8,7 +9,8 @@ import 'auth_repository.dart';
 class ForgotPage extends StatefulWidget {
 
   final AuthRepository authRepository;
-  const ForgotPage({Key? key, required this.authRepository}) : super(key: key);
+  final AuthManager authManager;
+  const ForgotPage({Key? key, required this.authRepository, required this.authManager}) : super(key: key);
 
   @override
   State<ForgotPage> createState() => _ForgotPageState();
@@ -18,11 +20,13 @@ class _ForgotPageState extends State<ForgotPage> {
   var _emailInputText = TextEditingController();
   var _passInputText = TextEditingController();
   late AuthRepository _authRepository;
+  late AuthManager _authManager;
 
   @override
   void initState() {
     super.initState();
     _authRepository = widget.authRepository;
+    _authManager = widget.authManager;
   }
 
 
@@ -47,7 +51,7 @@ class _ForgotPageState extends State<ForgotPage> {
               Navigator.pushReplacement(
                 context,
                 PageTransition(
-                  child: LoginPage(authRepository: _authRepository,),
+                  child: LoginPage(authRepository: _authRepository,authManager: _authManager,),
                   type: PageTransitionType.leftToRightWithFade,
                   duration: Duration(milliseconds: 300),
                 ),
