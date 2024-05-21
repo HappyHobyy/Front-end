@@ -57,6 +57,8 @@
 			<string>naversearchthirdlogin</string>
 			<string>kakaokompassauth</string>
 			<string>kakaolink</string>
+			<string>http</string>
+            <string>https</string>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>

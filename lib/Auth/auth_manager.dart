@@ -7,6 +7,8 @@ class AuthManager {
 
   AuthManager(this._authRepository);
 
+  get currentUserName => null;
+
   //access token 오류시 refresh 토큰으로 retry 하는 함수
   Future<JwtToken> authorizeRefreshToken() async {
     try {
