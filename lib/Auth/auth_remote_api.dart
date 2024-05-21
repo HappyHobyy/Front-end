@@ -14,6 +14,7 @@ class AuthRemoteApi {
 
   Future<JwtToken> postSocialLogin(User user) async {
     var uri = Uri.http('52.79.143.36:8000', 'user-service/api/auth/login/oAuth');
+
     String jsonData = jsonEncode(user.toSocialLoginJson());
     final http.Response response = await httpClient.post(
       uri,

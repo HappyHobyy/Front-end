@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/Auth/user_model.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
@@ -9,8 +10,9 @@ import 'auth_repository.dart';
 
 class CreatePage extends StatefulWidget {
 
-  const CreatePage({Key? key, required this.authRepository}) : super(key: key);
+  const CreatePage({Key? key, required this.authRepository, required this.authManager}) : super(key: key);
   final AuthRepository authRepository;
+  final AuthManager authManager;
 
   @override
   State<CreatePage> createState() => _CreatePageState();
@@ -19,20 +21,29 @@ class CreatePage extends StatefulWidget {
 class _CreatePageState extends State<CreatePage> {
   var _emailInputText = TextEditingController();
   var _passInputText = TextEditingController();
+  var _confirmPassInputText = TextEditingController(); // 추가
   bool _obscurePassword = true;
   late AuthRepository _authRepository;
+  late AuthManager _authManager;
 
   @override
   void initState() {
     super.initState();
     _authRepository = widget.authRepository;
+    _authManager = widget.authManager;
+    _confirmPassInputText.addListener(_confirmPasswordTextChanged);
   }
-
 
   void dispose() {
     _emailInputText.dispose();
     _passInputText.dispose();
+    _confirmPassInputText.removeListener(_confirmPasswordTextChanged);
+    _confirmPassInputText.dispose();
     super.dispose();
+  }
+
+  void _confirmPasswordTextChanged() {
+    setState(() {});
   }
 
   @override
@@ -48,12 +59,12 @@ class _CreatePageState extends State<CreatePage> {
           icon: Icon(Icons.arrow_back_ios_new),
           onPressed: () {
             Navigator.pushReplacement(
-                context,
-                PageTransition(
-                    child: ExplanationPage(authRepository: _authRepository),
-                    type: PageTransitionType.leftToRightWithFade,
-                    duration: Duration(milliseconds: 300),
-                ),
+              context,
+              PageTransition(
+                child: ExplanationPage(authRepository: _authRepository,authManager: _authManager),
+                type: PageTransitionType.leftToRightWithFade,
+                duration: Duration(milliseconds: 300),
+              ),
             );
           },
         ),
@@ -86,21 +97,22 @@ class _CreatePageState extends State<CreatePage> {
                   hintText: ' Email',
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.grey.withOpacity(0.3), // 변경할 색상 설정
-                      width: 2.0, // 테두리 두께 설정
+                      color: Colors.grey.withOpacity(0.3),
+                      width: 2.0,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Constants.primaryColor, // 변경할 색상 설정
-                      width: 2.0, // 테두리 두께 설정
+                      color: Constants.primaryColor,
+                      width: 2.0,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
               ),
               const SizedBox(height: 10),
+              // 비밀번호 텍스트 필드
               TextField(
                 controller: _passInputText,
                 obscureText: _obscurePassword,
@@ -108,22 +120,57 @@ class _CreatePageState extends State<CreatePage> {
                   hintText: ' Password',
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.grey.withOpacity(0.3), // 변경할 색상 설정
-                      width: 2.0, // 테두리 두께 설정
+                      color: Colors.grey.withOpacity(0.3),
+                      width: 2.0,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Constants.primaryColor, // 변경할 색상 설정
-                      width: 2.0, // 테두리 두께 설정
+                      color: Constants.primaryColor,
+                      width: 2.0,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   suffixIcon: GestureDetector(
                     onTap: () {
                       setState(() {
-                        // 비밀번호를 숨기거나 보이게 토글
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                    child: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      color: Constants.primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              // 비밀번호 확인 텍스트 필드
+              TextField(
+                controller: _confirmPassInputText,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  hintText: ' Confirm Password',
+                  filled: true, // 수정된 부분
+                  fillColor: _passInputText.text != _confirmPassInputText.text ? Colors.red.withOpacity(0.1) : Colors.white, // 수정된 부분
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: _passInputText.text != _confirmPassInputText.text ? Colors.red : Colors.grey.withOpacity(0.3),
+                      width: 2.0,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: _passInputText.text != _confirmPassInputText.text ? Colors.red : Constants.primaryColor,
+                      width: 2.0,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      setState(() {
                         _obscurePassword = !_obscurePassword;
                       });
                     },
@@ -137,11 +184,13 @@ class _CreatePageState extends State<CreatePage> {
               GestureDetector(
                 onTap: () {
                   Navigator.pushReplacement(
-                      context,
-                      PageTransition(
-                          child: LoginPage(authRepository: _authRepository),
-                          type: PageTransitionType.rightToLeftWithFade,
-                          duration: Duration(milliseconds: 300),));
+                    context,
+                    PageTransition(
+                      child: LoginPage(authRepository: _authRepository,authManager: _authManager),
+                      type: PageTransitionType.rightToLeftWithFade,
+                      duration: Duration(milliseconds: 300),
+                    ),
+                  );
                 },
                 child: Column(
                   children: [
@@ -159,24 +208,35 @@ class _CreatePageState extends State<CreatePage> {
               const SizedBox(height: 50),
               InkWell(
                 onTap: () async {
-                  if (_emailInputText.text.isEmpty || _passInputText.text.isEmpty) {
-                    // 이메일 또는 비밀번호가 비어 있는 경우에 대한 처리
+                  if (_emailInputText.text.isEmpty || _passInputText.text.isEmpty || _confirmPassInputText.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          ' 이메일과 비밀번호를 입력해주세요.',
+                          '이메일과 비밀번호를 입력해주세요.',
                         ),
-                          backgroundColor: Constants.primaryColor,
-                          duration: Duration(seconds: 1),
-                        ),
+                        backgroundColor: Constants.primaryColor,
+                        duration: Duration(seconds: 1),
+                      ),
                     );
                     return;
                   }
-                  // 텍스트 필드가 비어 있지 않은 경우에만 다음 단계로 진행
+                  if (_passInputText.text != _confirmPassInputText.text) { // 추가: 비밀번호 일치 여부 확인
+                    setState(() {}); // 추가: 테두리 색을 변경하기 위해 setState 호출
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '비밀번호가 일치하지 않습니다.',
+                        ),
+                        backgroundColor: Constants.primaryColor,
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                    return;
+                  }
                   Navigator.pushReplacement(
                     context,
                     PageTransition(
-                      child: CreateDetailPage(password: _passInputText.text, email: _emailInputText.text,userType: UserType.DEFAULT, authRepository: _authRepository,),
+                      child: CreateDetailPage(password: _passInputText.text, email: _emailInputText.text,userType: UserType.DEFAULT, authRepository: _authRepository,authManager: _authManager),
                       type: PageTransitionType.rightToLeftWithFade,
                       duration: Duration(milliseconds: 300),
                     ),

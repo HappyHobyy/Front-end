@@ -18,4 +18,10 @@ class AuthManager {
       throw error;
     }
   }
+  Future<JwtToken> loadAccessToken() async {
+      return await _authRepository.loadAccessToken();
+  }
+  void removeToken() async {
+    return await _authRepository.deleteToken();
+  }
 }

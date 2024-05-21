@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/root_page.dart';
 import 'package:hobbyhobby/widgets/union.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,14 +12,16 @@ import '../communitys/hlog_write.dart';
 import '../constants.dart';
 
 class CreateUnion extends StatefulWidget {
-
+  final AuthManager authManager;
   @override
   State<CreateUnion> createState() => _CreateUnionPageState();
+  const CreateUnion({Key? key,required this.authManager}) : super(key: key);
+
 }
 
 class _CreateUnionPageState extends State<CreateUnion> {
   dynamic _image; // 선택한 이미지의 파일을 저장할 변수
-
+  late AuthManager _authManager;
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -32,12 +35,20 @@ class _CreateUnionPageState extends State<CreateUnion> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
+  }
+
   var _titleInputText = TextEditingController();
   var _dateInputText = TextEditingController();
   var _timeInputText = TextEditingController();
   var _locationInputText = TextEditingController();
   var _maxInputText = TextEditingController();
   var _opentalkInputText = TextEditingController();
+  var _tag1InputText = TextEditingController();
+  var _tag2InputText = TextEditingController();
   var _textEditingInputText = TextEditingController();
   DateTime? _selectedDate;
 
@@ -49,6 +60,8 @@ class _CreateUnionPageState extends State<CreateUnion> {
     _locationInputText.dispose();
     _maxInputText.dispose();
     _opentalkInputText.dispose();
+    _tag1InputText.dispose();
+    _tag2InputText.dispose();
     _textEditingInputText.dispose();
     super.dispose();
   }
@@ -131,7 +144,9 @@ class _CreateUnionPageState extends State<CreateUnion> {
                         TextButton(
                           onPressed: (){
                             if (_opentalkInputText.text.isEmpty ||
-                                _textEditingInputText.text.isEmpty) {
+                                _textEditingInputText.text.isEmpty ||
+                                _tag1InputText.text.isEmpty ||
+                                _tag2InputText.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -146,10 +161,10 @@ class _CreateUnionPageState extends State<CreateUnion> {
                             setState(() {
                               _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                             });
-                            Navigator.pushReplacement(
+                            Navigator.pop(
                               context,
                               PageTransition(
-                                child: RootPage(),
+                                child: RootPage(authManager: _authManager),
                                 type: PageTransitionType.rightToLeftWithFade,
                                 duration: Duration(milliseconds: 300),
                               ),
@@ -202,6 +217,72 @@ class _CreateUnionPageState extends State<CreateUnion> {
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            '커뮤니티 태그',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0), // 오른쪽에 패딩 추가
+                                  child: TextField(
+                                    controller: _tag1InputText, // 첫 번째 TextField의 컨트롤러
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      hintText: '커뮤니티 태그 1',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey.withOpacity(0.3),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.blue, // 예시 색상
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0), // 왼쪽에 패딩 추가
+                                  child: TextField(
+                                    controller: _tag2InputText, // 두 번째 TextField의 컨트롤러
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      hintText: '커뮤니티 태그 2',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey.withOpacity(0.3),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.blue, // 예시 색상
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 20),
                           Text(

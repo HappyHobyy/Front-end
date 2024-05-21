@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/widgets/community.dart';
 import 'package:hobbyhobby/widgets/home.dart';
 import 'package:hobbyhobby/widgets/mypage.dart';
@@ -6,7 +7,8 @@ import 'package:hobbyhobby/widgets/union.dart';
 import 'package:hobbyhobby/constants.dart';
 
 class RootPage extends StatefulWidget {
-  const RootPage({Key? key}) : super(key: key);
+  final AuthManager authManager;
+  const RootPage({Key? key,required this.authManager}) : super(key: key);
 
   @override
   State<RootPage> createState() => _RootPageState();
@@ -14,17 +16,23 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   int _bottomNavIndex = 0;
+  late AuthManager _authManager;
 
   // 페이지 리스트
   List<Widget> _widgetOptions() {
     return [
       const HomePage(),
       const CommunityPage(),
-      const UnionPage(),
-      const MyPage(),
+      UnionPage(authManager: _authManager),
+      MyPage(authManager: _authManager),
     ];
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
+  }
   // 페이지 아이콘 리스트
   List<IconData> iconList = [
     Icons.home,
