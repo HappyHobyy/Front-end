@@ -79,11 +79,8 @@ class RecommendationPage extends StatelessWidget {
             child: Center(
               child: InkWell(
                 onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RootPage(),
-                      ),
+                    Navigator.pop(
+                      context
                     );
                 },
                 child: Container(

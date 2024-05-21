@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/Auth/auth_repository.dart';
 import 'package:hobbyhobby/Auth/jwt_token_model.dart';
 import 'package:hobbyhobby/constants.dart';
@@ -20,9 +21,10 @@ import 'auth_remote_api.dart';
 import 'create_detail.dart';
 
 class ExplanationPage extends StatefulWidget {
-  const ExplanationPage({Key? key, required this.authRepository}) : super(key: key);
+  const ExplanationPage({Key? key, required this.authRepository, required this.authManager}) : super(key: key);
 
   final AuthRepository authRepository;
+  final AuthManager authManager;
   @override
   State<ExplanationPage> createState() => _ExplanationPageState();
 }
@@ -40,12 +42,14 @@ class _ExplanationPageState extends State<ExplanationPage> {
   late bool isInstalled;
   late OAuthToken token; // 토큰
   late AuthRepository _authRepository;
+  late AuthManager _authManager;
   @override
   // 초기화
   void initState() {
     super.initState();
     initIsInstalled();
     _authRepository = widget.authRepository;
+    _authManager = widget.authManager;
   }
 
   Future<void> postSocialLogin(
@@ -58,7 +62,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
       Navigator.pushReplacement(
         context,
         PageTransition(
-          child: RootPage(),
+          child: RootPage(authManager: _authManager),
           type: PageTransitionType.rightToLeftWithFade,
           duration: Duration(milliseconds: 300),
         ),
@@ -70,7 +74,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
         Navigator.push(
           context,
           PageTransition(
-            child: CreateDetailPage(email: email, password: '',userType: userType,authRepository: _authRepository,),
+            child: CreateDetailPage(email: email, password: '',userType: userType,authRepository: _authRepository,authManager: _authManager,),
             type: PageTransitionType.rightToLeftWithFade,
             duration: Duration(milliseconds: 300),
           ),
@@ -238,7 +242,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
               onTap: () async {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CreatePage(authRepository: _authRepository,)),
+                  MaterialPageRoute(builder: (context) => CreatePage(authRepository: _authRepository,authManager: _authManager,)),
                 );
               },
               child: Container(
@@ -276,7 +280,7 @@ class _ExplanationPageState extends State<ExplanationPage> {
                     Navigator.pushReplacement(
                         context,
                         PageTransition(
-                            child: LoginPage(authRepository: _authRepository,),
+                            child: LoginPage(authRepository: _authRepository,authManager: _authManager),
                             type: PageTransitionType.bottomToTop,
                             duration: Duration(milliseconds: 300)));
                   },

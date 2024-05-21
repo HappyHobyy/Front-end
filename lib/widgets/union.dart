@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/Union/create_union.dart';
 import 'package:hobbyhobby/Union/tag_page.dart';
 import 'package:hobbyhobby/Union/union_detail.dart';
@@ -9,7 +10,8 @@ import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
 
 class UnionPage extends StatefulWidget {
-  const UnionPage({super.key});
+  final AuthManager authManager;
+  const UnionPage({super.key,required this.authManager});
 
   @override
   State<UnionPage> createState() => _UnionPageState();
@@ -18,6 +20,7 @@ class UnionPage extends StatefulWidget {
 class _UnionPageState extends State<UnionPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late AuthManager _authManager;
   List<UnionMeeting> unionMeetings = [];
   List<SingleMeeting> singleMeetings = [];
 
@@ -25,6 +28,7 @@ class _UnionPageState extends State<UnionPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _authManager = widget.authManager;
     loadUnions();
   }
 
@@ -166,7 +170,7 @@ class _UnionPageState extends State<UnionPage>
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => CreateUnion()),
+                                          builder: (context) => CreateUnion(authManager: _authManager,)),
                                     );
                                   },
                                   child: Container(

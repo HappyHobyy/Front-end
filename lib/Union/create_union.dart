@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/root_page.dart';
 import 'package:hobbyhobby/widgets/union.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,14 +12,16 @@ import '../communitys/hlog_write.dart';
 import '../constants.dart';
 
 class CreateUnion extends StatefulWidget {
-
+  final AuthManager authManager;
   @override
   State<CreateUnion> createState() => _CreateUnionPageState();
+  const CreateUnion({Key? key,required this.authManager}) : super(key: key);
+
 }
 
 class _CreateUnionPageState extends State<CreateUnion> {
   dynamic _image; // 선택한 이미지의 파일을 저장할 변수
-
+  late AuthManager _authManager;
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -30,6 +33,12 @@ class _CreateUnionPageState extends State<CreateUnion> {
         _image = AssetImage('assets/logo.png'); // 사용자가 이미지를 선택하지 않았을 경우 기본 이미지로 설정
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
   }
 
   var _titleInputText = TextEditingController();
@@ -152,10 +161,10 @@ class _CreateUnionPageState extends State<CreateUnion> {
                             setState(() {
                               _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                             });
-                            Navigator.pushReplacement(
+                            Navigator.pop(
                               context,
                               PageTransition(
-                                child: RootPage(),
+                                child: RootPage(authManager: _authManager),
                                 type: PageTransitionType.rightToLeftWithFade,
                                 duration: Duration(milliseconds: 300),
                               ),

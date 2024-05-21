@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/Auth/auth_remote_api.dart';
 import 'package:hobbyhobby/Auth/user_model.dart';
 import 'package:hobbyhobby/constants.dart';
@@ -16,8 +17,9 @@ class CreateDetailPage extends StatefulWidget {
   final String email;
   final UserType userType;
   final AuthRepository authRepository;
+  final AuthManager authManager;
 
-  const CreateDetailPage({Key? key, required this.password, required this.email, required this.userType,required this.authRepository}) : super(key: key);
+  const CreateDetailPage({Key? key, required this.password, required this.email, required this.userType,required this.authRepository, required this.authManager}) : super(key: key);
 
   @override
   State<CreateDetailPage> createState() => _CreateDetailPageState();
@@ -33,6 +35,7 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
   var _phoneInputText = TextEditingController();
   var _phoneAuthText = TextEditingController();
   late AuthRepository _authRepository;
+  late AuthManager _authManager;
   DateTime? _selectedDate;
 
   @override
@@ -42,6 +45,7 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
     _password = widget.password;
     _email = widget.email;
     _userType = widget.userType;
+    _authManager = widget.authManager;
   }
 
   void dispose() {
@@ -91,7 +95,7 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
             Navigator.pushReplacement(
               context,
               PageTransition(
-                child: CreatePage(authRepository: _authRepository,),
+                child: CreatePage(authRepository: _authRepository,authManager: _authManager),
                 type: PageTransitionType.leftToRightWithFade,
                 duration: Duration(milliseconds: 300),
               ),
@@ -333,7 +337,7 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
                     Navigator.pushReplacement(
                       context,
                       PageTransition(
-                        child: LoginPage(authRepository: _authRepository,),
+                        child: LoginPage(authRepository: _authRepository,authManager: _authManager),
                         type: PageTransitionType.rightToLeftWithFade,
                         duration: Duration(milliseconds: 300),
                       ),

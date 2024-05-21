@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/Auth/user_model.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:page_transition/page_transition.dart';
@@ -9,8 +10,9 @@ import 'auth_repository.dart';
 
 class CreatePage extends StatefulWidget {
 
-  const CreatePage({Key? key, required this.authRepository}) : super(key: key);
+  const CreatePage({Key? key, required this.authRepository, required this.authManager}) : super(key: key);
   final AuthRepository authRepository;
+  final AuthManager authManager;
 
   @override
   State<CreatePage> createState() => _CreatePageState();
@@ -22,11 +24,13 @@ class _CreatePageState extends State<CreatePage> {
   var _confirmPassInputText = TextEditingController(); // 추가
   bool _obscurePassword = true;
   late AuthRepository _authRepository;
+  late AuthManager _authManager;
 
   @override
   void initState() {
     super.initState();
     _authRepository = widget.authRepository;
+    _authManager = widget.authManager;
     _confirmPassInputText.addListener(_confirmPasswordTextChanged);
   }
 
@@ -57,7 +61,7 @@ class _CreatePageState extends State<CreatePage> {
             Navigator.pushReplacement(
               context,
               PageTransition(
-                child: ExplanationPage(authRepository: _authRepository),
+                child: ExplanationPage(authRepository: _authRepository,authManager: _authManager),
                 type: PageTransitionType.leftToRightWithFade,
                 duration: Duration(milliseconds: 300),
               ),
@@ -182,7 +186,7 @@ class _CreatePageState extends State<CreatePage> {
                   Navigator.pushReplacement(
                     context,
                     PageTransition(
-                      child: LoginPage(authRepository: _authRepository),
+                      child: LoginPage(authRepository: _authRepository,authManager: _authManager),
                       type: PageTransitionType.rightToLeftWithFade,
                       duration: Duration(milliseconds: 300),
                     ),
@@ -232,7 +236,7 @@ class _CreatePageState extends State<CreatePage> {
                   Navigator.pushReplacement(
                     context,
                     PageTransition(
-                      child: CreateDetailPage(password: _passInputText.text, email: _emailInputText.text,userType: UserType.DEFAULT, authRepository: _authRepository,),
+                      child: CreateDetailPage(password: _passInputText.text, email: _emailInputText.text,userType: UserType.DEFAULT, authRepository: _authRepository,authManager: _authManager),
                       type: PageTransitionType.rightToLeftWithFade,
                       duration: Duration(milliseconds: 300),
                     ),
