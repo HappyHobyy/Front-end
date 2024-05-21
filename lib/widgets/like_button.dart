@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LikeButton extends StatefulWidget {
-  const LikeButton({super.key});
+  final ValueChanged<bool>? onLikedChanged; // Make the callback optional
+  const LikeButton({Key? key, this.onLikedChanged}) : super(key: key);
 
   @override
   State<LikeButton> createState() => _LikeButtonState();
@@ -13,6 +14,10 @@ class _LikeButtonState extends State<LikeButton> {
   void toggleButton() {
     setState(() {
       liked = !liked;
+      if (widget.onLikedChanged != null) {
+        widget.onLikedChanged!(
+            liked); // Notify the parent about the state change if the callback is provided
+      }
     });
   }
 
