@@ -29,7 +29,6 @@ class Constants {
     "보드게임": AssetImage("assets/hobby/보드게임.jpg"),
     "볼링": AssetImage("assets/hobby/볼링.jpg"),
     "비디오게임": AssetImage("assets/hobby/비디오게임.jpg"),
-    "사진 찍기": AssetImage("assets/hobby/사진.jpg"),
     "사진": AssetImage("assets/hobby/사진.jpg"),
     "산책": AssetImage("assets/hobby/산책.jpg"),
     "서핑": AssetImage("assets/hobby/서핑.jpg"),

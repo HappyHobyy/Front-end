@@ -32,28 +32,6 @@ List<String> myTabsString = <String>[
   "전체",
 ];
 
-// temporary
-List<String> myHobbiesList = <String>["자전거", "풋살", "배드민턴"];
-List<String> suggestedHobbiesList = <String>[
-  "러닝",
-  "클라이밍",
-  "스케이트 보드",
-  "등산",
-  "크로스핏",
-  "필라테스",
-  "자전거",
-];
-List<String> popularHobbiesList = <String>[
-  "영화",
-  "낚시",
-  "등산",
-  "풋살",
-  "러닝",
-  "사진",
-  "클라이밍",
-  "음악",
-];
-
 // 전체 취미
 List<String> allHobbiesList = const <String>[
   "운동 및 스포츠",
@@ -101,7 +79,7 @@ List<String> sports = [
 
 // 창작 및 예술
 List<String> arts = [
-  "사진 찍기",
+  "사진",
   "미술",
   "캘리그라피",
   "전시회",
@@ -121,14 +99,14 @@ List<String> learning = ["코딩", "천체관측"];
 
 // 엔터테인먼트
 List<String> entertainment = [
-  "보드 게임",
-  "비디오 게임",
+  "보드게임",
+  "비디오게임",
   "영화",
   "마술",
   "캠핑",
   "낚시",
   "여행",
-  "음악 감상",
+  "음악감상",
   "타로"
 ];
 
@@ -160,8 +138,10 @@ ListView toListView(List<String> strings) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      SecondRootPage(communityName: strings[index]),
+                  builder: (context) => SecondRootPage(
+                    communityName: strings[index],
+                    communityID: index,
+                  ),
                 ),
               );
             },
@@ -263,8 +243,9 @@ class _CommunityPageState extends State<CommunityPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    SecondRootPage(communityName: community.communityName),
+                builder: (context) => SecondRootPage(
+                    communityName: community.communityName,
+                    communityID: community.communityId),
               ),
             );
           },

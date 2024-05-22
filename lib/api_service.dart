@@ -20,14 +20,15 @@ class ApiService {
     final response = await http.get(
       Uri.parse('$baseUrl/$basePath/$endpoint'),
       headers: <String, String>{
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': accessToken,
       },
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> responseBody = jsonDecode(response.body);
-      final List<dynamic> data = responseBody['data'];
+      final responseBody = utf8.decode(response.bodyBytes);
+      final Map<String, dynamic> decodedJson = jsonDecode(responseBody);
+      final List<dynamic> data = decodedJson['data'];
       return data.map((json) => fromJson(json)).toList();
     } else {
       print('Failed to load data: ${response.statusCode}');
@@ -64,7 +65,7 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$baseUrl/$basePath/$endpoint'),
       headers: <String, String>{
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': accessToken,
       },
       body: jsonEncode(body),
