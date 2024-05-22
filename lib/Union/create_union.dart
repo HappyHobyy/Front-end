@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/Auth/auth_manager.dart';
@@ -7,16 +6,15 @@ import 'package:hobbyhobby/root_page.dart';
 import 'package:hobbyhobby/widgets/union.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
-
-import '../communitys/hlog_write.dart';
 import '../constants.dart';
 
 class CreateUnion extends StatefulWidget {
   final AuthManager authManager;
+  final Function(dynamic) onMeetingCreated;
+  const CreateUnion({Key? key, required this.authManager, required this.onMeetingCreated}) : super(key: key);
+
   @override
   State<CreateUnion> createState() => _CreateUnionPageState();
-  const CreateUnion({Key? key,required this.authManager}) : super(key: key);
-
 }
 
 class _CreateUnionPageState extends State<CreateUnion> {
@@ -51,6 +49,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
   var _tag2InputText = TextEditingController();
   var _textEditingInputText = TextEditingController();
   DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
 
   @override
   void dispose() {
@@ -79,7 +78,8 @@ class _CreateUnionPageState extends State<CreateUnion> {
             onDateTimeChanged: (DateTime newDateTime) {
               setState(() {
                 _selectedDate = newDateTime;
-                _dateInputText.text = "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day}";
+                _dateInputText.text =
+                "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day}";
               });
             },
           ),
@@ -88,11 +88,71 @@ class _CreateUnionPageState extends State<CreateUnion> {
     );
   }
 
-
-
-  @override
+  void _showTimePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext builder) {
+        return Container(
+          height: MediaQuery.of(context).copyWith().size.height / 3,
+          child: CupertinoTimerPicker(
+            mode: CupertinoTimerPickerMode.hm,
+            minuteInterval: 10,
+            initialTimerDuration: Duration(hours: 0, minutes: 0),
+            onTimerDurationChanged: (Duration newDuration) {
+              setState(() {
+                _selectedTime = TimeOfDay(
+                    hour: newDuration.inHours, minute: newDuration.inMinutes % 60);
+                _timeInputText.text =
+                "${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}";
+              });
+            },
+          ),
+        );
+      },
+    );
+  }
   bool _isLoading = false;
   bool _loginFailed = false;
+
+  void _createMeeting() {
+    if (_tag1InputText.text.isNotEmpty && _tag2InputText.text.isEmpty) {
+      // SingleMeeting 추가
+      SingleMeeting newMeeting = SingleMeeting(
+        imageUrl: _image is File ? (_image as File).path : 'assets/logo.png',
+        userName: _authManager.currentUserName ?? 'Unknown',
+        tag1: _tag1InputText.text,
+        tag2: '',
+        title: _titleInputText.text,
+        maxPeople: _maxInputText.text,
+        date: "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day} ${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}",
+        openTalkLink: _opentalkInputText.text,
+      );
+      widget.onMeetingCreated(newMeeting);
+    } else if (_tag1InputText.text.isNotEmpty && _tag2InputText.text.isNotEmpty) {
+      // UnionMeeting 추가
+      UnionMeeting newMeeting = UnionMeeting(
+        imageUrl: _image is File ? (_image as File).path : 'assets/logo.png',
+        userName: _authManager.currentUserName ?? 'Unknown',
+        tag1: _tag1InputText.text,
+        tag2: _tag2InputText.text,
+        title: _titleInputText.text,
+        maxPeople: _maxInputText.text,
+        date: "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day} ${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}",
+        openTalkLink: _opentalkInputText.text,
+      );
+      widget.onMeetingCreated(newMeeting);
+    }
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      PageTransition(
+        child: RootPage(authManager: _authManager, initialIndex: 2),
+        type: PageTransitionType.rightToLeftWithFade,
+        duration: Duration(milliseconds: 300),
+      ),
+          (Route<dynamic> route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,13 +171,12 @@ class _CreateUnionPageState extends State<CreateUnion> {
             onPressed: (){
               if (_titleInputText.text.isEmpty ||
                   _dateInputText.text.isEmpty ||
+                  _timeInputText.text.isEmpty ||
                   _locationInputText.text.isEmpty ||
                   _maxInputText.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(
-                      ' 모든 항목에 입력해주세요.',
-                    ),
+                    content: Text(' 모든 항목에 입력해주세요.'),
                     backgroundColor: Constants.primaryColor,
                     duration: Duration(seconds: 1),
                   ),
@@ -145,13 +204,10 @@ class _CreateUnionPageState extends State<CreateUnion> {
                           onPressed: (){
                             if (_opentalkInputText.text.isEmpty ||
                                 _textEditingInputText.text.isEmpty ||
-                                _tag1InputText.text.isEmpty ||
-                                _tag2InputText.text.isEmpty) {
+                                _tag1InputText.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(
-                                    ' 모든 항목에 입력해주세요.',
-                                  ),
+                                  content: Text(' 모든 항목에 입력해주세요.'),
                                   backgroundColor: Constants.primaryColor,
                                   duration: Duration(seconds: 1),
                                 ),
@@ -161,21 +217,15 @@ class _CreateUnionPageState extends State<CreateUnion> {
                             setState(() {
                               _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                             });
-                            Navigator.pop(
-                              context,
-                              PageTransition(
-                                child: RootPage(authManager: _authManager),
-                                type: PageTransitionType.rightToLeftWithFade,
-                                duration: Duration(milliseconds: 300),
-                              ),
-                            );
+
+                            _createMeeting();
                           },
                           child: Text(
-                            'Done',
-                            style: TextStyle(
-                              color: Constants.primaryColor,
-                              fontSize: 15,
-                            )
+                              'Done',
+                              style: TextStyle(
+                                color: Constants.primaryColor,
+                                fontSize: 15,
+                              )
                           ),
                         ),
                       ],
@@ -375,6 +425,41 @@ class _CreateUnionPageState extends State<CreateUnion> {
               obscureText: false,
               decoration: InputDecoration(
                 hintText: '모임 날짜',
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey.withOpacity(0.3),
+                    width: 2.0,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Constants.primaryColor,
+                    width: 2.0,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '모임 시간',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              onTap: () {
+                _showTimePicker(context);
+              },
+              readOnly: true,
+              controller: _timeInputText,
+              obscureText: false,
+              decoration: InputDecoration(
+                hintText: '모임 시간',
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Colors.grey.withOpacity(0.3),
