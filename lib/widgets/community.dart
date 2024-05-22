@@ -17,6 +17,9 @@ class CommunityPage extends StatefulWidget {
   State<CommunityPage> createState() => _CommunityPageState();
 }
 
+List<String> allHobbiesMaptoList = Constants.hobbyImageMap.keys
+    .toList(); // to find index of each community in map, map is converted into a list.
+
 /* 임시 placeholder 탭 정보 */
 const List<Tab> hobbyTabs = <Tab>[
   Tab(text: "내 취미"),
@@ -140,7 +143,7 @@ ListView toListView(List<String> strings) {
                 MaterialPageRoute(
                   builder: (context) => SecondRootPage(
                     communityName: strings[index],
-                    communityID: index,
+                    communityID: allHobbiesMaptoList.indexOf(strings[index]),
                   ),
                 ),
               );
