@@ -1,13 +1,21 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/Union/create_union.dart';
 import 'package:hobbyhobby/Union/tag_page.dart';
 import 'package:hobbyhobby/Union/union_detail.dart';
+import 'package:hobbyhobby/Union/union_model.dart';
+import 'package:hobbyhobby/Union/union_repository.dart';
+import 'package:hobbyhobby/Union/union_view_model.dart';
 import 'package:hobbyhobby/constants.dart';
+import 'package:provider/provider.dart';
 
 class UnionPage extends StatefulWidget {
   final AuthManager authManager;
-  const UnionPage({super.key, required this.authManager});
+  final UnionRepository unionRepository;
+
+  const UnionPage({super.key, required this.authManager, required this.unionRepository});
 
   @override
   State<UnionPage> createState() => _UnionPageState();
@@ -16,74 +24,37 @@ class UnionPage extends StatefulWidget {
 class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late AuthManager _authManager;
+  late UnionRepository _unionRepository;
+  late UnionViewModel _unionViewModel;
   List<UnionMeeting> unionMeetings = [];
   List<SingleMeeting> singleMeetings = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _authManager = widget.authManager;
+    _unionRepository = widget.unionRepository;
+    _unionViewModel = UnionViewModel(_unionRepository, _authManager);
     loadUnions();
   }
 
-  void loadUnions() {
-    setState(() {
-      unionMeetings = [
-        UnionMeeting(
-          imageUrl: 'https://example.com/image1.jpg',
-          userName: '천재사진작가',
-          tag1: '천체',
-          tag2: '사진',
-          title: '천체 관측 같이 즐겨요!',
-          maxPeople: '12',
-          date: '09:41',
-          openTalkLink: 'https://open.kakao.com/o/sVWNA0sg'
-        ),
-        UnionMeeting(
-          imageUrl: 'https://example.com/image1.jpg',
-          userName: 'user_2',
-          tag1: 'tag2-1',
-          tag2: 'tag2-2',
-          title: '연합 모임 예시_2',
-          maxPeople: 'max',
-          date: '09:41',
-          openTalkLink: 'https://open.kakao.com/o/sample1',
-        ),
-        UnionMeeting(
-          imageUrl: 'https://example.com/image1.jpg',
-          userName: 'user_3',
-          tag1: 'tag3-1',
-          tag2: 'tag3-2',
-          title: '연합 모임 예시_3',
-          maxPeople: 'max',
-          date: '09:41',
-          openTalkLink: 'https://open.kakao.com/o/sample3',
-        ),
-      ];
-      singleMeetings = [
-        SingleMeeting(
-          imageUrl: 'https://example.com/image1.jpg',
-          userName: 'user_4',
-          tag1: 'tag_4-1',
-          tag2: 'tag_4-2',
-          title: '단일 모임 예시_1',
-          maxPeople: '5',
-          date: '09:41',
-          openTalkLink: 'https://open.kakao.com/o/sample4',
-        ),
-        SingleMeeting(
-          imageUrl: 'https://example.com/image1.jpg',
-          userName: 'user_5',
-          tag1: 'tag_5-1',
-          tag2: 'tag_5-2',
-          title: '단일 모임 예시_2',
-          maxPeople: 'max',
-          date: '09:41',
-          openTalkLink: 'https://open.kakao.com/o/sample5',
-        ),
-      ];
-    });
+  void loadUnions() async{
+    try {
+      final fetchedUnionMeetings = await _unionViewModel.getUnionMeeting();
+      final fetchedSingleMeetings = await _unionViewModel.getSingleMeeting();
+      setState(() {
+        unionMeetings = fetchedUnionMeetings as List<UnionMeeting>;
+        singleMeetings = fetchedSingleMeetings as List<SingleMeeting>;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Failed to load meetings: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void addMeeting(dynamic meeting) {
@@ -122,7 +93,7 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
               Navigator.push(
                 context,
                 MaterialPageRoute<Widget>(builder: (BuildContext context) {
-                  return CreateUnionScreen(authManager: _authManager, onMeetingCreated: addMeeting,);
+                  return CreateUnionScreen(authManager: _authManager, onMeetingCreated: addMeeting,unionViewModel: _unionViewModel,);
                 }),
               );
             },
@@ -141,13 +112,15 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: <Widget>[
-          buildMeetingList(unionMeetings),
-          buildMeetingList(singleMeetings),
-        ],
-      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator(),)
+          : TabBarView(
+              controller: _tabController,
+              children: <Widget>[
+                buildMeetingList(unionMeetings),
+                buildMeetingList(singleMeetings),
+            ],
+          ),
     );
   }
 
@@ -202,36 +175,40 @@ class MeetingTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundImage: NetworkImage(meeting.imageUrl),
+        backgroundImage: meeting.imageUrl.startsWith('http')
+            ? NetworkImage(meeting.imageUrl)
+            : AssetImage(meeting.imageUrl) as ImageProvider,
       ),
       title: Text(meeting.title),
       subtitle: Row(
         children: [
-          Text(meeting.userName),
+          Text(meeting.userNickname),
           const SizedBox(width: 20),
           const Icon(Icons.account_circle_sharp, size: 15),
           const SizedBox(width: 5),
-          Text(meeting.maxPeople),
+          Text('${meeting.maxPeople}'),
           const SizedBox(width: 20),
           Text('# ${meeting.tag1}', style: const TextStyle(fontSize: 12)),
           const SizedBox(width: 5),
           Text('# ${meeting.tag2}', style: const TextStyle(fontSize: 12)),
         ],
       ),
-      trailing: Text(meeting.date),
+      trailing: Text(meeting.createDate),
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => UnionDetailPage(
-              leading: meeting.imageUrl,
+              articleId: meeting.articleId,
+              imageUrl: meeting.imageUrl,
               title: meeting.title,
               userName: meeting.userName,
               tag1: meeting.tag1,
               tag2: meeting.tag2,
               maxPeople: meeting.maxPeople,
-              trailing: meeting.date,
-              openTalkLink: meeting.openTalkLink,
+              trailing: meeting.createDate,
+              authManager: meeting._authmanager,
+              unionRepository: meeting._unionRepository,
             ),
           ),
         );
@@ -243,7 +220,8 @@ class MeetingTile extends StatelessWidget {
 class CreateUnionScreen extends StatelessWidget {
   final AuthManager authManager;
   final Function(dynamic) onMeetingCreated;
-  const CreateUnionScreen({Key? key, required this.authManager, required this.onMeetingCreated,}) : super(key: key);
+  final UnionViewModel unionViewModel;
+  const CreateUnionScreen({Key? key, required this.authManager, required this.onMeetingCreated, required this.unionViewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +267,7 @@ class CreateUnionScreen extends StatelessWidget {
                         width: 10,
                       ),
                       Text(
-                        '약관 및 주의사함',
+                        '약관 및 주의사항',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 10,
@@ -305,7 +283,7 @@ class CreateUnionScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CreateUnion(authManager: authManager, onMeetingCreated: onMeetingCreated,),
+                      builder: (context) => CreateUnion(authManager: authManager, onMeetingCreated: onMeetingCreated,unionViewModel: unionViewModel,),
                     ),
                   );
                 },
@@ -332,48 +310,4 @@ class CreateUnionScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-class UnionMeeting {
-  final String imageUrl;
-  final String userName;
-  final String tag1;
-  final String tag2;
-  final String title;
-  final String maxPeople;
-  final String date;
-  final String openTalkLink;
-
-  UnionMeeting({
-    required this.imageUrl,
-    required this.userName,
-    required this.tag1,
-    required this.tag2,
-    required this.title,
-    required this.maxPeople,
-    required this.date,
-    required this.openTalkLink,
-  });
-}
-
-class SingleMeeting {
-  final String imageUrl;
-  final String userName;
-  final String tag1;
-  final String tag2;
-  final String title;
-  final String maxPeople;
-  final String date;
-  final String openTalkLink;
-
-  SingleMeeting({
-    required this.imageUrl,
-    required this.userName,
-    required this.tag1,
-    required this.tag2,
-    required this.title,
-    required this.maxPeople,
-    required this.date,
-    required this.openTalkLink,
-  });
 }

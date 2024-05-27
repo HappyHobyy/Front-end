@@ -1,5 +1,9 @@
 import 'dart:ffi';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
+import 'package:hobbyhobby/Union/union_model.dart';
+import 'package:hobbyhobby/Union/union_repository.dart';
+import 'package:hobbyhobby/Union/union_view_model.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/widgets/community.dart';
 import 'package:page_transition/page_transition.dart';
@@ -7,25 +11,30 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class UnionDetailPage extends StatefulWidget {
-  final String leading;
+  final String articleId;
+  final String imageUrl;
   final String title;
   final String userName;
   final String tag1;
   final String tag2;
   final String maxPeople;
   final String trailing;
-  final String openTalkLink;
+  final AuthManager authManager;
+  final UnionRepository unionRepository;
 
   const UnionDetailPage({
     Key? key,
-    required this.leading,
+    required this.articleId,
+    required this.imageUrl,
     required this.title,
     required this.userName,
     required this.tag1,
     required this.tag2,
     required this.maxPeople,
     required this.trailing,
-    required this.openTalkLink
+    required this.authManager,
+    required this.unionRepository,
+
   }) : super(key: key);
 
   @override
@@ -33,8 +42,39 @@ class UnionDetailPage extends StatefulWidget {
 }
 
 class _UnionDetailPageState extends State<UnionDetailPage> {
+  late AuthManager _authManager;
+  late UnionRepository _unionRepository;
+  late UnionViewModel _unionViewModel;
+  bool _isLoading = true;
   bool isJoined1 = false; // button1
   bool isJoined2 = false; // button2
+
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
+    _unionRepository = widget.unionRepository;
+    _unionViewModel = UnionViewModel(_unionRepository, _authManager);
+    /*loadUnionDetails();*/
+  }
+
+//loadUnionDetials 를 통해 date, text, location, openTalkLink 데이터를 불러오는 기능 구현
+  /*void loadUnionDetails() async{
+    try {
+      final fetchedUnionMeetingDetails = await _unionViewModel.getUnionMeetingDetail();
+      final fetchedSingleMeetingDetails = await _unionViewModel.getSingleMeetingDetail();
+      setState(() {
+        unionMeetingDetils = fetchedUnionMeetingDetails;
+        singleMeetingDetails = fetchedSingleMeetingDetails;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Failed to load meetingDetials: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }*/
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +87,13 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                 expandedHeight: MediaQuery.of(context).size.width,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Image.asset(
-                    "assets/hobby/천체관측.jpg",
+                  background: widget.imageUrl.startsWith('http')
+                      ? Image.network(
+                    widget.imageUrl,
+                    fit: BoxFit.cover,
+                  )
+                      : Image.asset(
+                    widget.imageUrl,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -88,14 +133,13 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                         thickness: 1,
                       ),
                       const SizedBox(height: 20,),
-                      _buildDetailSection('모임 시간', '2024.5.20'),
+                      _buildDetailSection('모임 시간', 'date'),
                       const SizedBox(height: 50),
-                      _buildDetailSection('장소', '강원 횡성군 강림면 월안1길 82 천문인마을'),
+                      _buildDetailSection('장소', 'location'),
                       const SizedBox(height: 50),
                       _buildDetailSection('최대 인원', '${widget.maxPeople} 명'),
                       const SizedBox(height: 50),
-                      _buildDetailSection('모임 설명',
-                          '안녕하세요! 천체관측을 취미로 가지고 있는 학생입니다. \n이번 5월 10일에 횡성 천문인 마을로 천체관측을 하러 가는데 사진을 취미로 하시는 분과 같이 즐기고 싶어 모임을 만들었어요. \n같이 별에 대해서 알아보고 사진도 찍고 좋은 시간 가져보고 싶습니다. \n'),
+                      _buildDetailSection('모임 설명', 'text'),
                       Divider(
                         color: Colors.grey.withOpacity(0.4),
                         height: 30,
@@ -238,11 +282,11 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                       title: Text('오픈톡 링크'),
                       content: InkWell(
                         child: Text(
-                          widget.openTalkLink,
+                          'openTalkLink',
                           style: TextStyle(color: Colors.blue),
                         ),
                         onTap: () async {
-                          final url = widget.openTalkLink;
+                          final url = 'openTalkLink';
                           if (await canLaunch(url)) {
                             await launch(url);
                           } else {

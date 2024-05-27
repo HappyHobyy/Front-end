@@ -2,8 +2,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/Auth/auth_manager.dart';
+import 'package:hobbyhobby/Union/union_model.dart';
+import 'package:hobbyhobby/Union/union_view_model.dart';
 import 'package:hobbyhobby/root_page.dart';
-import 'package:hobbyhobby/widgets/union.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import '../constants.dart';
@@ -11,32 +12,29 @@ import '../constants.dart';
 class CreateUnion extends StatefulWidget {
   final AuthManager authManager;
   final Function(dynamic) onMeetingCreated;
-  const CreateUnion({Key? key, required this.authManager, required this.onMeetingCreated}) : super(key: key);
+  final UnionViewModel unionViewModel;
+
+  const CreateUnion({
+    Key? key,
+    required this.authManager,
+    required this.onMeetingCreated,
+    required this.unionViewModel,
+  }) : super(key: key);
 
   @override
   State<CreateUnion> createState() => _CreateUnionPageState();
 }
 
 class _CreateUnionPageState extends State<CreateUnion> {
-  dynamic _image; // 선택한 이미지의 파일을 저장할 변수
+  File? _image; // 선택한 이미지의 파일을 저장할 변수
   late AuthManager _authManager;
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path); // 선택한 이미지의 파일 경로 저장
-      } else {
-        _image = AssetImage('assets/logo.png'); // 사용자가 이미지를 선택하지 않았을 경우 기본 이미지로 설정
-      }
-    });
-  }
+  late UnionViewModel _unionViewModel;
 
   @override
   void initState() {
     super.initState();
     _authManager = widget.authManager;
+    _unionViewModel = widget.unionViewModel;
   }
 
   var _titleInputText = TextEditingController();
@@ -50,6 +48,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
   var _textEditingInputText = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -63,6 +62,19 @@ class _CreateUnionPageState extends State<CreateUnion> {
     _tag2InputText.dispose();
     _textEditingInputText.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path); // 선택한 이미지의 파일 경로 저장
+      } else {
+        _image = null; // 사용자가 이미지를 선택하지 않았을 경우 기본 이미지로 설정
+      }
+    });
   }
 
   void _showDatePicker(BuildContext context) {
@@ -111,35 +123,42 @@ class _CreateUnionPageState extends State<CreateUnion> {
       },
     );
   }
-  bool _isLoading = false;
-  bool _loginFailed = false;
 
-  void _createMeeting() {
+  Future<void> _createMeeting() async {
     if (_tag1InputText.text.isNotEmpty && _tag2InputText.text.isEmpty) {
       // SingleMeeting 추가
       SingleMeeting newMeeting = SingleMeeting(
-        imageUrl: _image is File ? (_image as File).path : 'assets/logo.png',
-        userName: _authManager.currentUserName ?? 'Unknown',
-        tag1: _tag1InputText.text,
-        tag2: '',
+        articleId: null,
+        imageUrl: _image != null ? _image!.path : 'assets/logo.png',
+        userNickname: _authManager.currentUserName ?? 'Unknown',
+        tag1: int.parse(_tag1InputText.text),
         title: _titleInputText.text,
-        maxPeople: _maxInputText.text,
-        date: "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day} ${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}",
+        maxPeople: int.parse(_maxInputText.text),
+        meetingDate: "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day} ${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}",
         openTalkLink: _opentalkInputText.text,
+        createDate: null,
+        location: _locationInputText.text,
+        mainText: _textEditingInputText.text,
       );
+      await widget.unionViewModel.createSingleMeeting(newMeeting);
       widget.onMeetingCreated(newMeeting);
     } else if (_tag1InputText.text.isNotEmpty && _tag2InputText.text.isNotEmpty) {
       // UnionMeeting 추가
       UnionMeeting newMeeting = UnionMeeting(
-        imageUrl: _image is File ? (_image as File).path : 'assets/logo.png',
-        userName: _authManager.currentUserName ?? 'Unknown',
-        tag1: _tag1InputText.text,
-        tag2: _tag2InputText.text,
+        articleId: null,
+        imageUrl: _image != null ? _image!.path : 'assets/logo.png',
+        userNickname: _authManager.currentUserName ?? 'Unknown',
+        tag1: int.parse(_tag1InputText.text),
+        tag2: int.parse(_tag2InputText.text),
         title: _titleInputText.text,
-        maxPeople: _maxInputText.text,
-        date: "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day} ${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}",
+        maxPeople: int.parse(_maxInputText.text),
+        meetingDate: "${_selectedDate!.year}.${_selectedDate!.month}.${_selectedDate!.day} ${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}",
         openTalkLink: _opentalkInputText.text,
+        createDate: null,
+        location: _locationInputText.text,
+        mainText: _textEditingInputText.text,
       );
+      await widget.unionViewModel.createUnionMeeting(newMeeting);
       widget.onMeetingCreated(newMeeting);
     }
 
@@ -183,9 +202,6 @@ class _CreateUnionPageState extends State<CreateUnion> {
                 );
                 return;
               }
-              setState(() {
-                _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
-              });
               Navigator.push(
                 context,
                 MaterialPageRoute<Widget>(builder: (BuildContext context) {
@@ -201,7 +217,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
                       ),
                       actions: [
                         TextButton(
-                          onPressed: (){
+                          onPressed: () async {
                             if (_opentalkInputText.text.isEmpty ||
                                 _textEditingInputText.text.isEmpty ||
                                 _tag1InputText.text.isEmpty) {
@@ -218,7 +234,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
                               _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                             });
 
-                            _createMeeting();
+                            await _createMeeting();
                           },
                           child: Text(
                               'Done',
@@ -230,7 +246,6 @@ class _CreateUnionPageState extends State<CreateUnion> {
                         ),
                       ],
                     ),
-
                     body: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
@@ -392,15 +407,15 @@ class _CreateUnionPageState extends State<CreateUnion> {
                 hintText: ' 제목',
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Colors.grey.withOpacity(0.3), // 변경할 색상 설정
-                    width: 2.0, // 테두리 두께 설정
+                    color: Colors.grey.withOpacity(0.3),
+                    width: 2.0,
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Constants.primaryColor, // 변경할 색상 설정
-                    width: 2.0, // 테두리 두께 설정
+                    color: Constants.primaryColor,
+                    width: 2.0,
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -565,15 +580,8 @@ class _CreateUnionPageState extends State<CreateUnion> {
                   Icons.add_circle_outline,
                   size: 50,
                 )
-                    : _image is File
-                    ? Image.file(
-                  _image,
-                  width: 150,
-                  height: 150,
-                  fit: BoxFit.cover,
-                )
-                    : Image(
-                  image: _image,
+                    : Image.file(
+                  _image!,
                   width: 150,
                   height: 150,
                   fit: BoxFit.cover,
