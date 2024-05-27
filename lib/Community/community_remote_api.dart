@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:hobbyhobby/Auth/user_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../Auth/jwt_token_model.dart';

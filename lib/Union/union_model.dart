@@ -10,8 +10,9 @@ class UnionMeeting {
   final int? tag2;
   final String? title;
   final int? maxPeople;
-  final String? createDate;
-  final String? meetingDate;
+  //dateTime으로 변경
+  final DateTime? createDate;
+  final DateTime? meetingDate;
   final String? openTalkLink;
   final String? location;
   final String? mainText;
@@ -40,8 +41,8 @@ class UnionMeeting {
       tag2: json['communityId2'],
       title: json['title'],
       maxPeople: json['joinMax'],
-      createDate: json['createdAt'],
-      meetingDate: json['date'],
+      createDate: DateTime.parse(json['createdAt']),
+      meetingDate: null,
       openTalkLink: json['openTalkLink'],
       location: json['location'],
       mainText: json['text'],
@@ -53,7 +54,7 @@ class UnionMeeting {
       'communityId1' : tag1,
       'communityId2' : tag2,
       'title' : title,
-      'date' : meetingDate,
+      'date' : meetingDate?.toIso8601String(),
       'joinMax' : maxPeople,
       'text' : mainText,
       'location' : location,
@@ -65,7 +66,7 @@ class UnionMeeting {
   UnionMeeting.getUnionMeetings(
       {
         required int gatheringArticleId,
-        required String createdAt,
+        required DateTime createdAt,
         required String title,
         required String userNickname,
         required int joinMax,
@@ -77,7 +78,7 @@ class UnionMeeting {
 
   UnionMeeting.getUnionMeetingsDetail(
       {
-        required String date,
+        required DateTime date,
         required String text,
         required String location,
         required String openTalkLink,})
@@ -93,8 +94,8 @@ class SingleMeeting {
   final int? tag1;
   final String? title;
   final int? maxPeople;
-  final String? createDate;
-  final String? meetingDate;
+  final DateTime? createDate;
+  final DateTime? meetingDate;
   final String? openTalkLink;
   final String? location;
   final String? mainText;
@@ -121,8 +122,8 @@ class SingleMeeting {
       tag1: json['communityId1'],
       title: json['title'],
       maxPeople: json['joinMax'],
-      createDate: json['createdAt'],
-      meetingDate: json['date'],
+      createDate: DateTime.parse(json['createdAt']),
+      meetingDate: null,
       openTalkLink: json['openTalkLink'],
       location: json['location'],
       mainText: json['text'],
@@ -133,7 +134,7 @@ class SingleMeeting {
     return {
       'communityId1' : tag1,
       'title' : title,
-      'date' : meetingDate,
+      'date' : meetingDate?.toIso8601String(),
       'joinMax' : maxPeople,
       'text' : mainText,
       'location' : location,
@@ -143,7 +144,7 @@ class SingleMeeting {
   SingleMeeting.getSingleMeetings(
       {
         required int gatheringArticleId,
-        required String createdAt,
+        required DateTime createdAt,
         required String title,
         required String userNickname,
         required int joinMax,
@@ -154,7 +155,7 @@ class SingleMeeting {
 
   SingleMeeting.getSingleMeetingsDetail(
       {
-        required String date,
+        required DateTime date,
         required String text,
         required String location,
         required String openTalkLink,})

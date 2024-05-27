@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:hobbyhobby/Auth/jwt_token_model.dart';
 import 'union_model.dart';
+import 'package:http_parser/http_parser.dart';
 
 class UnionApi {
   late http.Client httpClient;
@@ -9,11 +10,12 @@ class UnionApi {
   UnionApi() {
     httpClient = http.Client();
   }
+
 //연합 모임 게시글 제목 가져오기
   Future<List<UnionMeeting>> getUnionMeetings(JwtToken jwtToken) async {
     var uri = Uri.http(
         '52.79.143.36:8000', 'photocontent-service/api/gathering/multi');
-              /*{
+    /*{
                 "code": 200,
                 "message": "Success",
                 "data": [
@@ -45,17 +47,19 @@ class UnionApi {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       final res = data["data"];
-      return List<UnionMeeting>.from(res.map((data) => UnionMeeting.fromJson(data)));
+      return List<UnionMeeting>.from(
+          res.map((data) => UnionMeeting.fromJson(data)));
     } else {
       Map<String, dynamic> data = jsonDecode(response.body);
       throw data['error'];
     }
   }
+
 //단일 모임 게시글 제목 가져오기
   Future<List<SingleMeeting>> getSingleMeetings(JwtToken jwtToken) async {
     var uri = Uri.http(
         '52.79.143.36:8000', 'photocontent-service/api/gathering/single');
-             /* {
+    /* {
                 "code": 200,
                 "message": "Success",
                 "data": [
@@ -79,84 +83,89 @@ class UnionApi {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': '${jwtToken.accessToken}',
-        'index' : '0'
+        'index': '0'
       },
     );
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       final res = data["data"];
-      return List<SingleMeeting>.from(res.map((data) => SingleMeeting.fromJson(data)));
+      return List<SingleMeeting>.from(
+          res.map((data) => SingleMeeting.fromJson(data)));
     } else {
       Map<String, dynamic> data = jsonDecode(response.body);
       throw data['error'];
     }
   }
 
-//연합 모임 게시글 저장
-  Future<void> createUnionMeeting(UnionMeeting meeting,
-      JwtToken jwtToken) async {
+  Future<void> createUnionMeeting(
+      UnionMeeting meeting, JwtToken jwtToken) async {
     var uri = Uri.http(
         '52.79.143.36:8000', 'photocontent-service/api/gathering/multi');
-            /*{
-              "request": {
-                "communityId1": 0,
-                "communityId2": 0,
-                "title": "title",
-                "date": "2024-05-27T03:29:44.045Z",
-                "joinMax": 5,
-                "text": "text",
-                "location": "location",
-                "openTalkLink": "http://"
-              },
-              "file": "string"
-            }*/
-    final response = await httpClient.post(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': '${jwtToken.accessToken}'
-      },
-      body: jsonEncode(meeting.toUnionMeetingsJson()),
-    );
 
-    if (response.statusCode != 201) {
-      throw Exception('Failed to create union meeting');
+    var request = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = '${jwtToken.accessToken}';
+
+    // JSON 데이터를 파일로 추가
+    request.files.add(http.MultipartFile.fromString(
+      'request',
+      jsonEncode(meeting.toUnionMeetingsJson()),
+      contentType: MediaType('application', 'json'),
+    ));
+
+    // 이미지 파일 추가
+    request.files.add(await http.MultipartFile.fromPath(
+      'file',
+      meeting.imageUrl!,
+      contentType: MediaType('multipart', 'form-data'),
+    ));
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
     }
   }
-//단일 모임 게시글 저장
-  Future<void> createSingleMeeting(SingleMeeting meeting,
-      JwtToken jwtToken) async {
-    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/single');
-              /*{
-                "request": {
-              "communityId": 123,
-              "title": "title",
-              "date": "2024-05-25T16:24:05.571Z",
-              "text": "text",
-              "location": "location",
-              "gatheringUrl": "http://"
-            },
-              "file": "string"
-            }*/
-    final response = await httpClient.post(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': '${jwtToken.accessToken}'
-      },
-      body: jsonEncode(meeting.toSingleMeetingsJson()),
-    );
 
-    if (response.statusCode != 201) {
-      throw Exception('Failed to create single meeting');
+  //단일 모임 게시글 저장
+  Future<void> createSingleMeeting(
+      SingleMeeting meeting, JwtToken jwtToken) async {
+    var uri = Uri.http(
+        '52.79.143.36:8000', 'photocontent-service/api/gathering/single');
+
+    var request = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = '${jwtToken.accessToken}';
+
+    // JSON 데이터를 파일로 추가
+    request.files.add(http.MultipartFile.fromString(
+      'request',
+      jsonEncode(meeting.toSingleMeetingsJson()),
+      contentType: MediaType('application', 'json'),
+    ));
+
+    // 이미지 파일 추가
+    request.files.add(await http.MultipartFile.fromPath(
+      'file',
+      meeting.imageUrl!,
+      contentType: MediaType('multipart', 'form-data'),
+    ));
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
     }
   }
+
 //연합 모임 게시글 내용 가져오기
   Future<List<UnionMeeting>> getUnionMeetingsDetail(JwtToken jwtToken) async {
     var uri = Uri.http(
         '52.79.143.36:8000', 'photocontent-service/api/gathering/multi/detail');
-            /*{
+    /*{
               "code": 200,
             "message": "Success",
             "data": {
@@ -180,17 +189,19 @@ class UnionApi {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       final res = data["data"];
-      return List<UnionMeeting>.from(res.map((data) => UnionMeeting.fromJson(data)));
+      return List<UnionMeeting>.from(
+          res.map((data) => UnionMeeting.fromJson(data)));
     } else {
       Map<String, dynamic> data = jsonDecode(response.body);
       throw data['error'];
     }
   }
+
 //단일 모임 게시글 내용 가져오기
   Future<List<SingleMeeting>> getSingleMeetingsDetail(JwtToken jwtToken) async {
-    var uri = Uri.http(
-        '52.79.143.36:8000', 'photocontent-service/api/gathering/single/detail');
-            /*{
+    var uri = Uri.http('52.79.143.36:8000',
+        'photocontent-service/api/gathering/single/detail');
+    /*{
               "code": 200,
             "message": "Success",
             "data": {
@@ -214,11 +225,11 @@ class UnionApi {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       final res = data["data"];
-      return List<SingleMeeting>.from(res.map((data) => SingleMeeting.fromJson(data)));
+      return List<SingleMeeting>.from(
+          res.map((data) => SingleMeeting.fromJson(data)));
     } else {
       Map<String, dynamic> data = jsonDecode(response.body);
       throw data['error'];
     }
   }
 }
-

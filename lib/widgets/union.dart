@@ -193,7 +193,7 @@ class MeetingTile extends StatelessWidget {
           Text('# ${meeting.tag2}', style: const TextStyle(fontSize: 12)),
         ],
       ),
-      trailing: Text(meeting.createDate),
+      trailing: Text(meeting.createDate.toString()),
       onTap: () {
         Navigator.push(
           context,
