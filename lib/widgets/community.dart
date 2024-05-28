@@ -174,6 +174,8 @@ class _CommunityPageState extends State<CommunityPage> {
         {'communityId': communityId},
       );
       print('Post liked successfully');
+      // Reload data
+      await _loadData();
     } catch (e) {
       print("Error liking post: $e");
     }
@@ -189,6 +191,8 @@ class _CommunityPageState extends State<CommunityPage> {
         {'communityId': communityId},
       );
       print('Post deleted successfully');
+      // Reload data
+      await _loadData();
     } catch (e) {
       print("Error deleting post: $e");
     }
