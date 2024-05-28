@@ -129,7 +129,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
       // SingleMeeting 추가
       SingleMeeting newMeeting = SingleMeeting(
         articleId: null,
-        imageUrl: _image != null ? _image!.path : 'assets/logo.png',
+        imageUrl: _image != null ? _image!.path : 'assets/icon.png',
         userNickname: _authManager.currentUserName ?? 'Unknown',
         tag1: int.parse(_tag1InputText.text),
         title: _titleInputText.text,
@@ -152,7 +152,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
       // UnionMeeting 추가
       UnionMeeting newMeeting = UnionMeeting(
         articleId: null,
-        imageUrl: _image != null ? _image!.path : 'assets/logo.png',
+        imageUrl: _image != null ? _image!.path : 'assets/icon.png',
         userNickname: _authManager.currentUserName ?? 'Unknown',
         tag1: int.parse(_tag1InputText.text),
         tag2: int.parse(_tag2InputText.text),
@@ -242,10 +242,10 @@ class _CreateUnionPageState extends State<CreateUnion> {
                               );
                               return;
                             }
+                            Center(child: CircularProgressIndicator(),);
                             setState(() {
                               _isLoading = true; // 버튼을 눌렀을 때 대기 상태로 설정
                             });
-
                             await _createMeeting();
                           },
                           child: Text(

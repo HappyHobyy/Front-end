@@ -73,15 +73,15 @@ class UnionViewModel with ChangeNotifier {
     }
   }
 
-  Future<List<UnionMeeting>> getUnionMeetingDetail() async {
+  Future<UnionMeeting> getUnionMeetingDetail(int articleId) async {
     try {
       // Access Token을 불러옵니다.
       final JwtToken accessToken = await _authManager.loadAccessToken();
-      return await _unionRepository.getUnionMeetingsDetail(accessToken);
+      return await _unionRepository.getUnionMeetingsDetail(accessToken, articleId);
     } catch (error) {
       try {
         final JwtToken accessToken = await _authManager.authorizeRefreshToken();
-        return await _unionRepository.getUnionMeetingsDetail(accessToken);
+        return await _unionRepository.getUnionMeetingsDetail(accessToken, articleId);
       } catch (error) {
         throw error;
       }

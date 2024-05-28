@@ -45,7 +45,7 @@ class UnionApi {
     );
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(response.body);
+      Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       final res = data["data"];
       return List<UnionMeeting>.from(
           res.map((data) => UnionMeeting.fromJson(data)));
@@ -88,7 +88,7 @@ class UnionApi {
     );
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(response.body);
+      Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       final res = data["data"];
       return List<SingleMeeting>.from(
           res.map((data) => SingleMeeting.fromJson(data)));
@@ -162,7 +162,7 @@ class UnionApi {
   }
 
 //연합 모임 게시글 내용 가져오기
-  Future<List<UnionMeeting>> getUnionMeetingsDetail(JwtToken jwtToken) async {
+  Future<UnionMeeting> getUnionMeetingsDetail(JwtToken jwtToken,int articleId) async {
     var uri = Uri.http(
         '52.79.143.36:8000', 'photocontent-service/api/gathering/multi/detail');
     /*{
@@ -182,17 +182,17 @@ class UnionApi {
       uri,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': '${jwtToken.accessToken}'
+        'Authorization': '${jwtToken.accessToken}',
+        'articleId': '${articleId}'
       },
     );
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(response.body);
+      Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       final res = data["data"];
-      return List<UnionMeeting>.from(
-          res.map((data) => UnionMeeting.fromJson(data)));
+      return UnionMeeting.fromDetailJson(res);
     } else {
-      Map<String, dynamic> data = jsonDecode(response.body);
+      dynamic data = jsonDecode(response.body);
       throw data['error'];
     }
   }
@@ -223,7 +223,7 @@ class UnionApi {
     );
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(response.body);
+      Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       final res = data["data"];
       return List<SingleMeeting>.from(
           res.map((data) => SingleMeeting.fromJson(data)));

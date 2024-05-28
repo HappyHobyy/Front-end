@@ -49,6 +49,22 @@ class UnionMeeting {
     );
   }
 
+  factory UnionMeeting.fromDetailJson(Map<String, dynamic> json) {
+    return UnionMeeting(
+      articleId: null,
+      imageUrl: null,
+      userNickname: null,
+      tag1: null,
+      tag2: null,
+      title: null,
+      maxPeople: null,
+      createDate: null,
+      meetingDate: DateTime.parse(json['date']),
+      openTalkLink: json['openTalkLink'],
+      location: json['location'],
+      mainText: json['text'],
+    );
+  }
   Map<String, dynamic> toUnionMeetingsJson() {
     return {
       'communityId1' : tag1,

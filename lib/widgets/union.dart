@@ -117,14 +117,14 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
           : TabBarView(
               controller: _tabController,
               children: <Widget>[
-                buildMeetingList(unionMeetings),
-                buildMeetingList(singleMeetings),
+                buildMeetingList(unionMeetings, isSingleMeeting: false),
+                buildMeetingList(singleMeetings, isSingleMeeting: true),
             ],
           ),
     );
   }
 
-  Widget buildMeetingList(List<dynamic> meetings) {
+  Widget buildMeetingList(List<dynamic> meetings, {required bool isSingleMeeting}) {
     return Column(
       children: [
         Container(
@@ -157,7 +157,7 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
             itemCount: meetings.length,
             itemBuilder: (context, index) {
               final meeting = meetings[index];
-              return MeetingTile(meeting: meeting);
+              return MeetingTile(meeting: meeting, isSingleMeeting: isSingleMeeting, authManager: _authManager, unionRepository: _unionRepository,);
             },
           ),
         ),
@@ -168,47 +168,82 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
 
 class MeetingTile extends StatelessWidget {
   final dynamic meeting;
+   final AuthManager authManager;
+   final UnionRepository unionRepository;
+  final bool isSingleMeeting;
 
-  const MeetingTile({Key? key, required this.meeting}) : super(key: key);
+  const MeetingTile({Key? key, required this.meeting, required this.isSingleMeeting, required this.authManager, required this.unionRepository }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String displayDate;
+
+    if (meeting.createDate.year == now.year &&
+        meeting.createDate.month == now.month &&
+        meeting.createDate.day == now.day) {
+      // 오늘 생성된 경우 시, 분 표시
+      displayDate = '${meeting.createDate.hour}:${meeting.createDate.minute.toString().padLeft(2, '0')}';
+    } else {
+      // 그 외의 경우 월, 일 표시
+      displayDate = '${meeting.createDate.month}/${meeting.createDate.day}';
+    }
+
+    String truncateText(String text, int maxLength) {
+      return text.length > maxLength ? '${text.substring(0, maxLength)}...' : text;
+    }
+
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: meeting.imageUrl.startsWith('http')
             ? NetworkImage(meeting.imageUrl)
             : AssetImage(meeting.imageUrl) as ImageProvider,
       ),
-      title: Text(meeting.title),
+      title: Text(
+        truncateText(meeting.title, 8),
+        overflow: TextOverflow.ellipsis,
+      ),
       subtitle: Row(
         children: [
-          Text(meeting.userNickname),
-          const SizedBox(width: 20),
+          Text(
+            truncateText(meeting.userNickname, 8),
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(width: 50),
           const Icon(Icons.account_circle_sharp, size: 15),
           const SizedBox(width: 5),
           Text('${meeting.maxPeople}'),
+          const SizedBox(width: 50),
+          Expanded(
+            child: Text(
+              '# ${meeting.tag1}',
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+          if (!isSingleMeeting) ...[
+            const SizedBox(width: 5),
+            Expanded(
+              child: Text(
+                '# ${meeting.tag2}',
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+          ],
           const SizedBox(width: 20),
-          Text('# ${meeting.tag1}', style: const TextStyle(fontSize: 12)),
-          const SizedBox(width: 5),
-          Text('# ${meeting.tag2}', style: const TextStyle(fontSize: 12)),
         ],
       ),
-      trailing: Text(meeting.createDate.toString()),
+      trailing: Text(
+        displayDate,
+        overflow: TextOverflow.ellipsis,
+      ),
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => UnionDetailPage(
-              articleId: meeting.articleId,
-              imageUrl: meeting.imageUrl,
-              title: meeting.title,
-              userName: meeting.userName,
-              tag1: meeting.tag1,
-              tag2: meeting.tag2,
-              maxPeople: meeting.maxPeople,
-              trailing: meeting.createDate,
-              authManager: meeting._authmanager,
-              unionRepository: meeting._unionRepository,
+              authManager: authManager,
+              unionRepository: unionRepository,
+              meetings: meeting,
             ),
           ),
         );
@@ -216,6 +251,7 @@ class MeetingTile extends StatelessWidget {
     );
   }
 }
+
 
 class CreateUnionScreen extends StatelessWidget {
   final AuthManager authManager;

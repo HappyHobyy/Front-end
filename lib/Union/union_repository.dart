@@ -24,8 +24,8 @@ class UnionRepository {
     await _unionApi.createSingleMeeting(meeting, jwtToken);
   }
 
-  Future<List<UnionMeeting>> getUnionMeetingsDetail(JwtToken jwtToken) async {
-    return await _unionApi.getUnionMeetingsDetail(jwtToken);
+  Future<UnionMeeting> getUnionMeetingsDetail(JwtToken jwtToken, int articleId) async {
+    return await _unionApi.getUnionMeetingsDetail(jwtToken,articleId);
   }
 
   Future<List<SingleMeeting>> getSingleMeetingsDetail(JwtToken jwtToken) async {

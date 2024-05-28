@@ -9,32 +9,16 @@ import 'package:hobbyhobby/widgets/community.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 class UnionDetailPage extends StatefulWidget {
-  final String articleId;
-  final String imageUrl;
-  final String title;
-  final String userName;
-  final String tag1;
-  final String tag2;
-  final String maxPeople;
-  final String trailing;
   final AuthManager authManager;
   final UnionRepository unionRepository;
+  final dynamic meetings;
 
   const UnionDetailPage({
     Key? key,
-    required this.articleId,
-    required this.imageUrl,
-    required this.title,
-    required this.userName,
-    required this.tag1,
-    required this.tag2,
-    required this.maxPeople,
-    required this.trailing,
     required this.authManager,
     required this.unionRepository,
-
+    required this.meetings,
   }) : super(key: key);
 
   @override
@@ -48,38 +32,47 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
   bool _isLoading = true;
   bool isJoined1 = false; // button1
   bool isJoined2 = false; // button2
+  late dynamic _meetings;
+  DateTime? date;
+  String? location;
+  String? text;
+  String? openTalkLink;
 
+  @override
   void initState() {
     super.initState();
+    _meetings = widget.meetings;
     _authManager = widget.authManager;
     _unionRepository = widget.unionRepository;
     _unionViewModel = UnionViewModel(_unionRepository, _authManager);
-    /*loadUnionDetails();*/
+    loadUnionDetails();
   }
 
-//loadUnionDetials 를 통해 date, text, location, openTalkLink 데이터를 불러오는 기능 구현
-  /*void loadUnionDetails() async{
+  void loadUnionDetails() async {
     try {
-      final fetchedUnionMeetingDetails = await _unionViewModel.getUnionMeetingDetail();
-      final fetchedSingleMeetingDetails = await _unionViewModel.getSingleMeetingDetail();
+      final details = await _unionViewModel.getUnionMeetingDetail(_meetings.articleId);
+      // Assuming details is a list with one item, adapt as needed.
       setState(() {
-        unionMeetingDetils = fetchedUnionMeetingDetails;
-        singleMeetingDetails = fetchedSingleMeetingDetails;
+        date = details.meetingDate;
+        location = details.location;
+        text = details.mainText;
+        openTalkLink = details.openTalkLink;
         _isLoading = false;
       });
     } catch (e) {
-      print('Failed to load meetingDetials: $e');
+      print('Failed to load meeting details: $e');
       setState(() {
         _isLoading = false;
       });
     }
-  }*/
-
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Stack(
         children: <Widget>[
           CustomScrollView(
             slivers: <Widget>[
@@ -87,13 +80,13 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                 expandedHeight: MediaQuery.of(context).size.width,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: widget.imageUrl.startsWith('http')
+                  background: _meetings.imageUrl.startsWith('http')
                       ? Image.network(
-                    widget.imageUrl,
+                    _meetings.imageUrl,
                     fit: BoxFit.cover,
                   )
                       : Image.asset(
-                    widget.imageUrl,
+                    _meetings.imageUrl,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -105,7 +98,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.title,
+                        _meetings.title,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 20,
@@ -115,16 +108,17 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                       Row(
                         children: [
                           Text(
-                            widget.userName,
+                            _meetings.userNickname,
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 15,
                             ),
                           ),
                           const SizedBox(width: 80),
-                          _buildTag(widget.tag1),
+                          _buildTag('${_meetings.tag1}'),
                           const SizedBox(width: 10),
-                          _buildTag(widget.tag2),
+                          if (_meetings is UnionMeeting)
+                            _buildTag('${_meetings.tag2}'),
                         ],
                       ),
                       Divider(
@@ -132,14 +126,14 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                         height: 30,
                         thickness: 1,
                       ),
-                      const SizedBox(height: 20,),
-                      _buildDetailSection('모임 시간', 'date'),
+                      const SizedBox(height: 20),
+                      _buildDetailSection('모임 시간', date?.toString() ?? '정보 없음'),
                       const SizedBox(height: 50),
-                      _buildDetailSection('장소', 'location'),
+                      _buildDetailSection('장소', location ?? '정보 없음'),
                       const SizedBox(height: 50),
-                      _buildDetailSection('최대 인원', '${widget.maxPeople} 명'),
+                      _buildDetailSection('최대 인원', '${_meetings.maxPeople} 명'),
                       const SizedBox(height: 50),
-                      _buildDetailSection('모임 설명', 'text'),
+                      _buildDetailSection('모임 설명', text ?? '정보 없음'),
                       Divider(
                         color: Colors.grey.withOpacity(0.4),
                         height: 30,
@@ -187,7 +181,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                   _showAgreementDialog(context);
                 }
                 setState(() {
-                  if(isJoined2){
+                  if (isJoined2) {
                     isJoined2 = !isJoined2;
                   }
                 });
@@ -282,11 +276,11 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                       title: Text('오픈톡 링크'),
                       content: InkWell(
                         child: Text(
-                          'openTalkLink',
+                          openTalkLink ?? '정보 없음',
                           style: TextStyle(color: Colors.blue),
                         ),
                         onTap: () async {
-                          final url = 'openTalkLink';
+                          final url = openTalkLink ?? '';
                           if (await canLaunch(url)) {
                             await launch(url);
                           } else {
