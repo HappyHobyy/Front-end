@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/jwt_token_model.dart';
 import 'package:hobbyhobby/communitys/second_root_page.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/widgets/like_button.dart';
 
+import '../Auth/auth_manager.dart';
+import '../api_service.dart';
+import '../communitys/models.dart';
+
 class CommunityPage extends StatefulWidget {
-  const CommunityPage({super.key});
+  final AuthManager authManager;
+
+  const CommunityPage({super.key, required this.authManager});
 
   @override
   State<CommunityPage> createState() => _CommunityPageState();
 }
+
+List<String> allHobbiesMaptoList = Constants.hobbyImageMap.keys
+    .toList(); // to find index of each community in map, map is converted into a list.
 
 /* 임시 placeholder 탭 정보 */
 const List<Tab> hobbyTabs = <Tab>[
@@ -25,74 +35,7 @@ List<String> myTabsString = <String>[
   "전체",
 ];
 
-List<String> myHobbiesList = <String>["자전거", "풋살", "배드민턴"];
-
-const hobbyImageMap = <String, AssetImage>{
-  "낭독 봉사": AssetImage("assets/hobby/낭독 봉사.jpg"),
-  "가죽 공예": AssetImage("assets/hobby/가죽공예.jpg"),
-  "골프": AssetImage("assets/hobby/골프.jpg"),
-  "나무 심기 봉사": AssetImage("assets/hobby/나무 심기 봉사.jpg"),
-  "낚시": AssetImage("assets/hobby/낚시.jpg"),
-  "등산": AssetImage("assets/hobby/등산.jpg"),
-  "뜨개질": AssetImage("assets/hobby/뜨개질.jpg"),
-  "러닝": AssetImage("assets/hobby/러닝.jpg"),
-  "레고 조립": AssetImage("assets/hobby/레고.jpg"),
-  "마술": AssetImage("assets/hobby/마술.jpg"),
-  "미술": AssetImage("assets/hobby/미술.jpg"),
-  "바베큐": AssetImage("assets/hobby/바베큐.jpg"),
-  "반려식물": AssetImage("assets/hobby/반려식물.jpg"),
-  "배드민턴": AssetImage("assets/hobby/배드민턴.jpg"),
-  "베이비박스 봉사": AssetImage("assets/hobby/베이비박스 봉사.jpg"),
-  "베이킹": AssetImage("assets/hobby/베이킹.jpg"),
-  "보드게임": AssetImage("assets/hobby/보드게임.jpg"),
-  "볼링": AssetImage("assets/hobby/볼링.jpg"),
-  "비디오게임": AssetImage("assets/hobby/비디오게임.jpg"),
-  "사진 찍기": AssetImage("assets/hobby/사진.jpg"),
-  "산책": AssetImage("assets/hobby/산책.jpg"),
-  "서핑": AssetImage("assets/hobby/서핑.jpg"),
-  "스케이트 보드": AssetImage("assets/hobby/스케이트보드.jpg"),
-  "스키": AssetImage("assets/hobby/스키.jpg"),
-  "여행": AssetImage("assets/hobby/여행.jpg"),
-  "연극": AssetImage("assets/hobby/연극.jpg"),
-  "영화": AssetImage("assets/hobby/영화.jpg"),
-  "유기견 봉사": AssetImage("assets/hobby/유기견 봉사.jpg"),
-  "음악": AssetImage("assets/hobby/음악.jpg"),
-  "인테리어": AssetImage("assets/hobby/인테리어.jpg"),
-  "자전거": AssetImage("assets/hobby/자전거.jpg"),
-  "전시회": AssetImage("assets/hobby/전시회.jpg"),
-  "천체관측": AssetImage("assets/hobby/천체관측.jpg"),
-  "캘리그라피": AssetImage("assets/hobby/캘리그라피.jpg"),
-  "캠핑": AssetImage("assets/hobby/캠핑.jpg"),
-  "코딩": AssetImage("assets/hobby/코딩.jpg"),
-  "크로스핏": AssetImage("assets/hobby/크로스핏.jpg"),
-  "클라이밍": AssetImage("assets/hobby/클라이밍.jpg"),
-  "타로": AssetImage("assets/hobby/타로.jpg"),
-  "테니스": AssetImage("assets/hobby/테니스.jpg"),
-  "풋살": AssetImage("assets/hobby/풋살.jpg"),
-  "필라테스": AssetImage("assets/hobby/필라테스.jpg"),
-  "홈브루": AssetImage("assets/hobby/홈브루.jpg"),
-  "홈카페": AssetImage("assets/hobby/홈카페.jpg"),
-};
-
-List<String> suggestedHobbiesList = <String>[
-  "러닝",
-  "클라이밍",
-  "스케이트 보드",
-  "등산",
-  "크로스핏",
-  "필라테스",
-  "자전거",
-];
-List<String> popularHobbiesList = <String>[
-  "영화",
-  "낚시",
-  "등산",
-  "풋살",
-  "러닝",
-  "사진",
-  "클라이밍",
-  "음악",
-];
+// 전체 취미
 List<String> allHobbiesList = const <String>[
   "운동 및 스포츠",
   "창작 및 예술",
@@ -139,7 +82,7 @@ List<String> sports = [
 
 // 창작 및 예술
 List<String> arts = [
-  "사진 찍기",
+  "사진",
   "미술",
   "캘리그라피",
   "전시회",
@@ -159,53 +102,135 @@ List<String> learning = ["코딩", "천체관측"];
 
 // 엔터테인먼트
 List<String> entertainment = [
-  "보드 게임",
-  "비디오 게임",
+  "보드게임",
+  "비디오게임",
   "영화",
   "마술",
   "캠핑",
   "낚시",
   "여행",
-  "음악 감상",
+  "음악감상",
   "타로"
 ];
 
 // 봉사활동
 List<String> volunteering = ["나무 심기", "낭독 봉사", "유기견 봉사", "베이비박스 봉사", "플로깅"];
-
-ListView toListView(List<String> strings) {
-  return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-            color: Colors.grey[200],
-          ),
-      itemCount: strings.length + 1,
-      itemBuilder: (context, index) {
-        if (index == strings.length) {
-          // 마지막 divider 추가
-          return Container(); // zero height: not visible
-        } else {
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: hobbyImageMap[strings[index]],
-            ),
-            title: Text(strings[index]),
-            trailing: const LikeButton(),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      SecondRootPage(communityName: strings[index]),
-                ),
-              );
-            },
-          );
-        }
-      });
-}
+late List<MyCommunity> myCommunitiesList;
 
 class _CommunityPageState extends State<CommunityPage> {
+  late AuthManager _authManager;
+  late Future<List<PopularCommunity>> popularCommunitiesFuture;
+  late Future<List<MyCommunity>> myCommunitiesFuture;
+  late Future<List<Community>> recommendedCommunitiesFuture;
+  late Future<JwtToken> jwtTokenFuture;
+
   @override
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
+    jwtTokenFuture = _authManager.loadAccessToken();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final jwtToken = await jwtTokenFuture;
+      setState(() {
+        popularCommunitiesFuture = ApiService().fetchData(
+          jwtToken,
+          'community-service',
+          'api/community/popular',
+          (json) => PopularCommunity.fromJson(json),
+        );
+        myCommunitiesFuture = ApiService().fetchData(
+          jwtToken,
+          'community-service',
+          'api/community/user',
+          (json) => MyCommunity.fromJson(json),
+        );
+        myCommunitiesList = myCommunitiesFuture as List<MyCommunity>;
+        recommendedCommunitiesFuture = ApiService().fetchData(
+          jwtToken,
+          'community-service',
+          'api/community/recommend',
+          (json) => MyCommunity.fromJson(json),
+        );
+      });
+    } catch (e) {
+      print("Error loading data: $e");
+    }
+  }
+
+  Future<void> likePost(int communityId) async {
+    try {
+      final jwtToken = await jwtTokenFuture;
+      await ApiService().sendData(
+        jwtToken,
+        'community-service',
+        'api/community/user',
+        {'communityId': communityId},
+      );
+      print('Post liked successfully');
+    } catch (e) {
+      print("Error liking post: $e");
+    }
+  }
+
+  Future<void> deletePost(int communityId) async {
+    try {
+      final jwtToken = await jwtTokenFuture;
+      await ApiService().deleteData(
+        jwtToken,
+        'community-service',
+        'api/community/user',
+        {'communityId': communityId},
+      );
+      print('Post deleted successfully');
+    } catch (e) {
+      print("Error deleting post: $e");
+    }
+  }
+
+  ListView toListView<T extends Community>(List<T> communities) {
+    return ListView.separated(
+      separatorBuilder: (context, index) => Divider(color: Colors.grey[200]),
+      itemCount: communities.length,
+      itemBuilder: (context, index) {
+        final community = communities[index];
+        final isLiked = myCommunitiesList.any((likedCommunity) =>
+            likedCommunity.communityId == community.communityId);
+        return ListTile(
+          leading: CircleAvatar(
+            backgroundImage: Constants.hobbyImageMap[community.communityName],
+          ),
+          title: Text(community.communityName),
+          trailing: LikeButton(
+            isLiked: isLiked,
+            onLikedChanged: (bool liked) {
+              if (liked) {
+                likePost(community.communityId);
+              } else {
+                deletePost(community.communityId);
+              }
+              print('Button liked state is: $liked');
+            },
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SecondRootPage(
+                  communityName: community.communityName,
+                  communityID: community.communityId,
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(
@@ -236,9 +261,48 @@ class _CommunityPageState extends State<CommunityPage> {
                 )),
             body: TabBarView(
               children: [
-                toListView(myHobbiesList),
-                toListView(suggestedHobbiesList),
-                toListView(popularHobbiesList),
+                FutureBuilder<List<MyCommunity>>(
+                  future: myCommunitiesFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No communities found.'));
+                    } else {
+                      return toListView(snapshot.data!);
+                    }
+                  },
+                ),
+                FutureBuilder<List<Community>>(
+                  future: recommendedCommunitiesFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No communities found.'));
+                    } else {
+                      return toListView(snapshot.data!);
+                    }
+                  },
+                ),
+                FutureBuilder<List<PopularCommunity>>(
+                  future: popularCommunitiesFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No communities found.'));
+                    } else {
+                      return toListView(snapshot.data!);
+                    }
+                  },
+                ),
                 ListView.separated(
                   separatorBuilder: (context, index) =>
                       Divider(color: Colors.grey[200]),
@@ -261,6 +325,8 @@ class _CommunityPageState extends State<CommunityPage> {
                                   title: allHobbiesList[index],
                                   icon: ImageIcon((allHobbiesListIcons[index])),
                                   content: hobbyCategories[index],
+                                  likePost: likePost,
+                                  deletePost: deletePost,
                                 ),
                               ),
                             );
@@ -275,16 +341,71 @@ class _CommunityPageState extends State<CommunityPage> {
   }
 }
 
+ListView toListViewAllHobbies(
+  List<String> strings,
+  void Function(int communityId) likePost,
+  void Function(int communityId) deletePost,
+) {
+  return ListView.separated(
+      separatorBuilder: (context, index) => Divider(
+            color: Colors.grey[200],
+          ),
+      itemCount: strings.length + 1,
+      itemBuilder: (context, index) {
+        if (index == strings.length) {
+          // 마지막 divider 추가
+          return Container(); // zero height: not visible
+        } else {
+          final communityId = allHobbiesMaptoList.indexOf(strings[index]);
+          final isLiked = myCommunitiesList
+              .any((community) => community.communityId == communityId);
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: Constants.hobbyImageMap[strings[index]],
+            ),
+            title: Text(strings[index]),
+            trailing: LikeButton(
+              isLiked: isLiked,
+              onLikedChanged: (bool liked) {
+                if (liked) {
+                  likePost(communityId);
+                } else {
+                  deletePost(communityId);
+                }
+                print('Button liked state is: $liked');
+              },
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SecondRootPage(
+                    communityName: strings[index],
+                    communityID: communityId,
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      });
+}
+
 class GroupedCommunityPage extends StatelessWidget {
   final String title;
   final ImageIcon icon;
   final List<String> content;
+  final void Function(int communityId) likePost;
+  final void Function(int communityId) deletePost;
 
-  const GroupedCommunityPage(
-      {super.key,
-      required this.title,
-      required this.icon,
-      required this.content});
+  const GroupedCommunityPage({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.content,
+    required this.likePost,
+    required this.deletePost,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -307,7 +428,7 @@ class GroupedCommunityPage extends StatelessWidget {
             ],
           ),
         ),
-        body: toListView(content),
+        body: toListViewAllHobbies(content, likePost, deletePost),
       ),
     );
   }

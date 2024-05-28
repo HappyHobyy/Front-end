@@ -203,7 +203,6 @@ class _LoginPageState extends State<LoginPage> {
                     JwtToken jwtToken =
                         await _authRepository.postDefaultLogin(user);
                     await _authRepository.saveAllToken(jwtToken);
-                    jwtToken = await _authRepository.loadAccessToken();
                     await _communityRepository
                         .getCommunityPopularContents(jwtToken);
 
@@ -230,6 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                     setState(() {
                       _isLoading = false; // 에러 발생 시 대기 상태 해제
                       _loginFailed = true; // 로그인 실패 상태로 설정
+
                     });
                     print('Error during registration: $error');
                   }

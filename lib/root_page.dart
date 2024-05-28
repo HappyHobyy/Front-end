@@ -8,21 +8,22 @@ import 'package:hobbyhobby/constants.dart';
 
 class RootPage extends StatefulWidget {
   final AuthManager authManager;
-  const RootPage({Key? key,required this.authManager}) : super(key: key);
+  final int initialIndex;
+  const RootPage({Key? key, required this.authManager, this.initialIndex = 0}) : super(key: key);
 
   @override
   State<RootPage> createState() => _RootPageState();
 }
 
 class _RootPageState extends State<RootPage> {
-  int _bottomNavIndex = 0;
+  late int _bottomNavIndex;
   late AuthManager _authManager;
 
   // 페이지 리스트
   List<Widget> _widgetOptions() {
     return [
       const HomePage(),
-      const CommunityPage(),
+      CommunityPage(authManager: _authManager),
       UnionPage(authManager: _authManager),
       MyPage(authManager: _authManager),
     ];
@@ -31,6 +32,7 @@ class _RootPageState extends State<RootPage> {
   @override
   void initState() {
     super.initState();
+    _bottomNavIndex = widget.initialIndex;
     _authManager = widget.authManager;
   }
   // 페이지 아이콘 리스트
@@ -72,7 +74,7 @@ class _RootPageState extends State<RootPage> {
           selectedIconTheme: IconThemeData(color: Constants.primaryColor),
           items: List.generate(
             iconList.length,
-            (index) => BottomNavigationBarItem(
+                (index) => BottomNavigationBarItem(
               icon: Icon(iconList[index]),
               label: titleList[index],
             ),
