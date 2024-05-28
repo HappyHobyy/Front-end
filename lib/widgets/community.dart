@@ -115,12 +115,12 @@ List<String> entertainment = [
 
 // 봉사활동
 List<String> volunteering = ["나무 심기", "낭독 봉사", "유기견 봉사", "베이비박스 봉사", "플로깅"];
-late List<MyCommunity> myCommunitiesList;
+late List<Community> myCommunitiesList;
 
 class _CommunityPageState extends State<CommunityPage> {
   late AuthManager _authManager;
-  late Future<List<PopularCommunity>> popularCommunitiesFuture;
-  late Future<List<MyCommunity>> myCommunitiesFuture;
+  late Future<List<Community>> popularCommunitiesFuture;
+  late Future<List<Community>> myCommunitiesFuture;
   late Future<List<Community>> recommendedCommunitiesFuture;
   late Future<JwtToken> jwtTokenFuture;
 
@@ -136,26 +136,29 @@ class _CommunityPageState extends State<CommunityPage> {
     try {
       final jwtToken = await jwtTokenFuture;
       setState(() {
+        // Initialize the futures
         popularCommunitiesFuture = ApiService().fetchData(
           jwtToken,
           'community-service',
           'api/community/popular',
-          (json) => PopularCommunity.fromJson(json),
+          (json) => Community.fromJson(json),
         );
         myCommunitiesFuture = ApiService().fetchData(
           jwtToken,
           'community-service',
           'api/community/user',
-          (json) => MyCommunity.fromJson(json),
+          (json) => Community.fromJson(json),
         );
-        myCommunitiesList = myCommunitiesFuture as List<MyCommunity>;
         recommendedCommunitiesFuture = ApiService().fetchData(
           jwtToken,
           'community-service',
           'api/community/recommend',
-          (json) => MyCommunity.fromJson(json),
+          (json) => Community.fromJson(json),
         );
       });
+
+      // Assign the fetched data to myCommunitiesList
+      myCommunitiesList = await myCommunitiesFuture;
     } catch (e) {
       print("Error loading data: $e");
     }
@@ -261,7 +264,7 @@ class _CommunityPageState extends State<CommunityPage> {
                 )),
             body: TabBarView(
               children: [
-                FutureBuilder<List<MyCommunity>>(
+                FutureBuilder<List<Community>>(
                   future: myCommunitiesFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -289,7 +292,7 @@ class _CommunityPageState extends State<CommunityPage> {
                     }
                   },
                 ),
-                FutureBuilder<List<PopularCommunity>>(
+                FutureBuilder<List<Community>>(
                   future: popularCommunitiesFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
