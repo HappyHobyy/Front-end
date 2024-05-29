@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/Union/create_union.dart';
 import 'package:hobbyhobby/Union/tag_page.dart';
+import 'package:hobbyhobby/Union/union_api.dart';
 import 'package:hobbyhobby/Union/union_detail.dart';
 import 'package:hobbyhobby/Union/union_model.dart';
 import 'package:hobbyhobby/Union/union_repository.dart';
@@ -11,23 +12,30 @@ import 'package:hobbyhobby/Union/union_view_model.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:provider/provider.dart';
 
+import '../communitys/models.dart';
+
 class UnionPage extends StatefulWidget {
   final AuthManager authManager;
-  final UnionRepository unionRepository;
 
-  const UnionPage({super.key, required this.authManager, required this.unionRepository});
+  const UnionPage({
+    super.key,
+    required this.authManager,
+  });
 
   @override
   State<UnionPage> createState() => _UnionPageState();
 }
 
-class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMixin {
+class _UnionPageState extends State<UnionPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late AuthManager _authManager;
   late UnionRepository _unionRepository;
   late UnionViewModel _unionViewModel;
-  List<UnionMeeting> unionMeetings = [];
-  List<SingleMeeting> singleMeetings = [];
+  List<UnionMeeting> _unionMeetings = [];
+  List<SingleMeeting> _singleMeetings = [];
+  List<Community> _selectedSingleTags = [];
+  List<Community> _selectedUnionTags = [];
   bool _isLoading = true;
 
   @override
@@ -35,18 +43,18 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _authManager = widget.authManager;
-    _unionRepository = widget.unionRepository;
+    _unionRepository = UnionRepository(UnionApi());
     _unionViewModel = UnionViewModel(_unionRepository, _authManager);
     loadUnions();
   }
 
-  void loadUnions() async{
+  void loadUnions() async {
     try {
       final fetchedUnionMeetings = await _unionViewModel.getUnionMeeting();
       final fetchedSingleMeetings = await _unionViewModel.getSingleMeeting();
       setState(() {
-        unionMeetings = fetchedUnionMeetings as List<UnionMeeting>;
-        singleMeetings = fetchedSingleMeetings as List<SingleMeeting>;
+        _unionMeetings = fetchedUnionMeetings as List<UnionMeeting>;
+        _singleMeetings = fetchedSingleMeetings as List<SingleMeeting>;
         _isLoading = false;
       });
     } catch (e) {
@@ -60,11 +68,45 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
   void addMeeting(dynamic meeting) {
     setState(() {
       if (meeting is SingleMeeting) {
-        singleMeetings.add(meeting);
+        _singleMeetings.add(meeting);
       } else if (meeting is UnionMeeting) {
-        unionMeetings.add(meeting);
+        _unionMeetings.add(meeting);
       }
     });
+  }
+
+  Future<void> fetchMeetings(
+      bool isSingleMeeting, List<Community> result) async {
+    late List<SingleMeeting> singleMeetings;
+    late List<UnionMeeting> unionMeetings;
+    if (isSingleMeeting) {
+      _selectedSingleTags = result;
+      if (_selectedSingleTags.isEmpty) {
+        singleMeetings = await _unionViewModel.getSingleMeeting();
+      } else {
+        singleMeetings = await _unionViewModel
+            .getSingleMeetingsSearch(_selectedSingleTags.first.communityId);
+      }
+    } else {
+      _selectedUnionTags = result;
+      if (_selectedUnionTags.isEmpty) {
+        unionMeetings = await _unionViewModel.getUnionMeeting();
+      } else {
+        List<int> tagIds =
+            _selectedUnionTags.map((tag) => tag.communityId).toList();
+        unionMeetings = await _unionViewModel.getUnionMeetingsSearch(tagIds);
+      }
+    }
+    if (isSingleMeeting) {
+      setState(() {
+        _singleMeetings = singleMeetings;
+      });
+      _singleMeetings = singleMeetings;
+    } else {
+      setState(() {
+        _unionMeetings = unionMeetings;
+      });
+    }
   }
 
   @override
@@ -93,7 +135,11 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
               Navigator.push(
                 context,
                 MaterialPageRoute<Widget>(builder: (BuildContext context) {
-                  return CreateUnionScreen(authManager: _authManager, onMeetingCreated: addMeeting,unionViewModel: _unionViewModel,);
+                  return CreateUnionScreen(
+                    authManager: _authManager,
+                    onMeetingCreated: addMeeting,
+                    unionViewModel: _unionViewModel,
+                  );
                 }),
               );
             },
@@ -113,18 +159,21 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
         ),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator(),)
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
           : TabBarView(
               controller: _tabController,
               children: <Widget>[
-                buildMeetingList(unionMeetings, isSingleMeeting: false),
-                buildMeetingList(singleMeetings, isSingleMeeting: true),
-            ],
-          ),
+                buildMeetingList(_unionMeetings, isSingleMeeting: false),
+                buildMeetingList(_singleMeetings, isSingleMeeting: true),
+              ],
+            ),
     );
   }
 
-  Widget buildMeetingList(List<dynamic> meetings, {required bool isSingleMeeting}) {
+  Widget buildMeetingList(List<dynamic> meetings,
+      {required bool isSingleMeeting}) {
     return Column(
       children: [
         Container(
@@ -144,10 +193,23 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute<Widget>(builder: (BuildContext context) {
-                  return const TagPage();
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return TagPage(
+                      authManager: _authManager,
+                      isMaxOne: isSingleMeeting);
                 }),
-              );
+              ).then((result) async {
+                // 반환된 값으로 처리
+                if (result != null) {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  await fetchMeetings(isSingleMeeting, result);
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
+              });
             },
           ),
         ),
@@ -157,7 +219,12 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
             itemCount: meetings.length,
             itemBuilder: (context, index) {
               final meeting = meetings[index];
-              return MeetingTile(meeting: meeting, isSingleMeeting: isSingleMeeting, authManager: _authManager, unionRepository: _unionRepository,);
+              return MeetingTile(
+                meeting: meeting,
+                isSingleMeeting: isSingleMeeting,
+                authManager: _authManager,
+                unionRepository: _unionRepository,
+              );
             },
           ),
         ),
@@ -168,11 +235,17 @@ class _UnionPageState extends State<UnionPage> with SingleTickerProviderStateMix
 
 class MeetingTile extends StatelessWidget {
   final dynamic meeting;
-   final AuthManager authManager;
-   final UnionRepository unionRepository;
+  final AuthManager authManager;
+  final UnionRepository unionRepository;
   final bool isSingleMeeting;
 
-  const MeetingTile({Key? key, required this.meeting, required this.isSingleMeeting, required this.authManager, required this.unionRepository }) : super(key: key);
+  const MeetingTile(
+      {Key? key,
+      required this.meeting,
+      required this.isSingleMeeting,
+      required this.authManager,
+      required this.unionRepository})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -183,14 +256,17 @@ class MeetingTile extends StatelessWidget {
         meeting.createDate.month == now.month &&
         meeting.createDate.day == now.day) {
       // 오늘 생성된 경우 시, 분 표시
-      displayDate = '${meeting.createDate.hour}:${meeting.createDate.minute.toString().padLeft(2, '0')}';
+      displayDate =
+          '${meeting.createDate.hour}:${meeting.createDate.minute.toString().padLeft(2, '0')}';
     } else {
       // 그 외의 경우 월, 일 표시
       displayDate = '${meeting.createDate.month}/${meeting.createDate.day}';
     }
 
     String truncateText(String text, int maxLength) {
-      return text.length > maxLength ? '${text.substring(0, maxLength)}...' : text;
+      return text.length > maxLength
+          ? '${text.substring(0, maxLength)}...'
+          : text;
     }
 
     return ListTile(
@@ -252,12 +328,17 @@ class MeetingTile extends StatelessWidget {
   }
 }
 
-
 class CreateUnionScreen extends StatelessWidget {
   final AuthManager authManager;
   final Function(dynamic) onMeetingCreated;
   final UnionViewModel unionViewModel;
-  const CreateUnionScreen({Key? key, required this.authManager, required this.onMeetingCreated, required this.unionViewModel}) : super(key: key);
+
+  const CreateUnionScreen(
+      {Key? key,
+      required this.authManager,
+      required this.onMeetingCreated,
+      required this.unionViewModel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +400,11 @@ class CreateUnionScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CreateUnion(authManager: authManager, onMeetingCreated: onMeetingCreated,unionViewModel: unionViewModel,),
+                      builder: (context) => CreateUnion(
+                        authManager: authManager,
+                        onMeetingCreated: onMeetingCreated,
+                        unionViewModel: unionViewModel,
+                      ),
                     ),
                   );
                 },
@@ -328,7 +413,8 @@ class CreateUnionScreen extends StatelessWidget {
                     color: Constants.primaryColor,
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   child: const Center(
                     child: Text(
                       '동의하기',

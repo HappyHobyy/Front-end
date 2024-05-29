@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/constants.dart';
 
+import '../communitys/models.dart';
+
 class HobbiesGrid extends StatelessWidget {
-  final List<String> items;
-  final List<String> selectedTags;
-  final void Function(String) toggleTag;
+  final List<Community> items;
+  final List<Community> selectedTags;
+  final void Function(Community) toggleTag;
 
   const HobbiesGrid({
     Key? key,
@@ -25,13 +27,12 @@ class HobbiesGrid extends StatelessWidget {
         childAspectRatio: 0.75,
       ),
       itemBuilder: (BuildContext context, int index) {
-        final String item = items[index];
-        final AssetImage image = Constants.hobbyImageMap[item] ??
-            const AssetImage('assets/icon.jpg');
-
+        final Community item = items[index];
+        final AssetImage image = items[index].getHobbyImage();
         return GestureDetector(
           onTap: () {
-            toggleTag(item); // Call toggleTag function from TagPage
+
+            toggleTag(item);
           },
           child: Column(
             children: [
@@ -41,7 +42,7 @@ class HobbiesGrid extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                item,
+                item.communityName,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,

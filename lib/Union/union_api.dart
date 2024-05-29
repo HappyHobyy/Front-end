@@ -232,4 +232,76 @@ class UnionApi {
       throw data['error'];
     }
   }
+  Future<List<SingleMeeting>> getSingleMeetingsSearch(JwtToken jwtToken, int communityId) async {
+    var uri = Uri.http('52.79.143.36:8000',
+        'photocontent-service/api/gathering/single/search');
+    final response = await httpClient.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+        'index': '0',
+        'communityId': '${communityId}'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      final res = data["data"];
+      return List<SingleMeeting>.from(
+          res.map((data) => SingleMeeting.fromJson(data)));
+    } else {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  Future<List<UnionMeeting>> getUnionMeetingsSearchOne(JwtToken jwtToken, int communityId) async {
+    var uri = Uri.http('52.79.143.36:8000',
+        'photocontent-service/api/gathering/multi/search1');
+    final response = await httpClient.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+        'index': '0',
+        'communityId1': '$communityId',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      final res = data["data"];
+      return List<UnionMeeting>.from(
+          res.map((data) => UnionMeeting.fromJson(data)));
+    } else {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  Future<List<UnionMeeting>> getUnionMeetingsSearchTwo(JwtToken jwtToken, int communityId1,int communityId2) async {
+    var uri = Uri.http('52.79.143.36:8000',
+        'photocontent-service/api/gathering/multi/search1');
+    final response = await httpClient.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+        'index': '0',
+        'communityId1': '$communityId1',
+        'communityId2': '$communityId2'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      final res = data["data"];
+      return List<UnionMeeting>.from(
+          res.map((data) => UnionMeeting.fromJson(data)));
+    } else {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
 }

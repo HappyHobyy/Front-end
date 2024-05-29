@@ -102,4 +102,49 @@ class UnionViewModel with ChangeNotifier {
       }
     }
   }
+
+  Future<List<SingleMeeting>> getSingleMeetingsSearch(int communityId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      return await _unionRepository.getSingleMeetingsSearch(accessToken,communityId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        return await _unionRepository.getSingleMeetingsSearch(accessToken,communityId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+  Future<List<UnionMeeting>> getUnionMeetingsSearch(List<int> communityIds) async {
+    if (communityIds.length == 1){
+      try {
+        final JwtToken accessToken = await _authManager.loadAccessToken();
+        return await _unionRepository.getUnionMeetingsSearchOne(accessToken,communityIds.first);
+      } catch (error) {
+        try {
+          final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+          return await _unionRepository.getUnionMeetingsSearchOne(accessToken,communityIds.first);
+        } catch (error) {
+          throw error;
+        }
+      }
+    }
+    if (communityIds.length == 2){
+      try {
+        final JwtToken accessToken = await _authManager.loadAccessToken();
+        return await _unionRepository.getUnionMeetingsSearchTwo(accessToken,communityIds.first,communityIds.last);
+      } catch (error) {
+        try {
+          final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+          return await _unionRepository.getUnionMeetingsSearchTwo(accessToken,communityIds.first,communityIds.last);
+        } catch (error) {
+          throw error;
+        }
+      }
+    }
+    else{
+      throw Exception();
+    }
+  }
 }
