@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/Auth/auth_manager.dart';
-import 'package:hobbyhobby/Union/union_api.dart';
-import 'package:hobbyhobby/Union/union_repository.dart';
 import 'package:hobbyhobby/widgets/community.dart';
 import 'package:hobbyhobby/widgets/home.dart';
 import 'package:hobbyhobby/widgets/mypage.dart';
@@ -20,14 +18,13 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> {
   late int _bottomNavIndex;
   late AuthManager _authManager;
-  late UnionRepository _unionRepository;
 
   // 페이지 리스트
   List<Widget> _widgetOptions() {
     return [
       const HomePage(),
-      const CommunityPage(),
-      UnionPage(authManager: _authManager, unionRepository: _unionRepository,),
+      CommunityPage(authManager: _authManager),
+      UnionPage(authManager: _authManager),
       MyPage(authManager: _authManager),
     ];
   }
@@ -37,7 +34,6 @@ class _RootPageState extends State<RootPage> {
     super.initState();
     _bottomNavIndex = widget.initialIndex;
     _authManager = widget.authManager;
-    _unionRepository = UnionRepository(UnionApi());
   }
   // 페이지 아이콘 리스트
   List<IconData> iconList = [
