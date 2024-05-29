@@ -23,7 +23,7 @@ class _RootPageState extends State<RootPage> {
   List<Widget> _widgetOptions() {
     return [
       const HomePage(),
-      const CommunityPage(),
+      CommunityPage(authManager: _authManager),
       UnionPage(authManager: _authManager),
       MyPage(authManager: _authManager),
     ];

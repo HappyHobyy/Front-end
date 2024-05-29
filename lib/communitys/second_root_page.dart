@@ -7,8 +7,10 @@ import 'package:hobbyhobby/communitys/rental.dart';
 
 class SecondRootPage extends StatefulWidget {
   final String communityName;
+  final int communityID;
 
-  const SecondRootPage({Key? key, required this.communityName})
+  const SecondRootPage(
+      {Key? key, required this.communityName, required this.communityID})
       : super(key: key);
 
   @override
