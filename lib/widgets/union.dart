@@ -276,7 +276,7 @@ class MeetingTile extends StatelessWidget {
             : AssetImage(meeting.imageUrl) as ImageProvider,
       ),
       title: Text(
-        truncateText(meeting.title, 8),
+        truncateText(meeting.title, 13),
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Row(

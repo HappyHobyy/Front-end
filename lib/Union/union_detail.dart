@@ -5,6 +5,7 @@ import 'package:hobbyhobby/Union/union_model.dart';
 import 'package:hobbyhobby/Union/union_repository.dart';
 import 'package:hobbyhobby/Union/union_view_model.dart';
 import 'package:hobbyhobby/constants.dart';
+import 'package:hobbyhobby/root_page.dart';
 import 'package:hobbyhobby/widgets/community.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -50,15 +51,25 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
 
   void loadUnionDetails() async {
     try {
-      final details = await _unionViewModel.getUnionMeetingDetail(_meetings.articleId);
-      // Assuming details is a list with one item, adapt as needed.
-      setState(() {
-        date = details.meetingDate;
-        location = details.location;
-        text = details.mainText;
-        openTalkLink = details.openTalkLink;
-        _isLoading = false;
-      });
+      if(_meetings is UnionMeeting){
+        final details = await _unionViewModel.getUnionMeetingDetail(_meetings.articleId);
+        setState(() {
+          date = details.meetingDate;
+          location = details.location;
+          text = details.mainText;
+          openTalkLink = details.openTalkLink;
+          _isLoading = false;
+        });
+      } else if(_meetings is SingleMeeting){
+        final details = await _unionViewModel.getSingleMeetingDetail(_meetings.articleId);
+        setState(() {
+          date = details.meetingDate;
+          location = details.location;
+          text = details.mainText;
+          openTalkLink = details.openTalkLink;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       print('Failed to load meeting details: $e');
       setState(() {
@@ -79,6 +90,23 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
               SliverAppBar(
                 expandedHeight: MediaQuery.of(context).size.width,
                 pinned: true,
+                actions: [
+                  PopupMenuButton<String>(
+                    onSelected: (value) {
+                      if (value == 'delete') {
+                        _showDeleteConfirmationDialog(context);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text('삭제'),
+                        ),
+                      ];
+                    },
+                  ),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: _meetings.imageUrl.startsWith('http')
                       ? Image.network(
@@ -176,15 +204,20 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
             left: MediaQuery.of(context).size.width / 5,
             child: FloatingActionButton.extended(
               heroTag: 'fab2', //고유한 Hero 태그 추가
-              onPressed: () {
-                if (!isJoined2) {
-                  _showAgreementDialog(context);
+              onPressed: () async {
+                if (!isJoined2 && _meetings is UnionMeeting) {
+                  _showAttendDialog(context);
+                  await _unionViewModel.memberUnionMeeting(_meetings.articleId);
+                } else if(!isJoined2 && _meetings is SingleMeeting){
+                  _showAttendDialog(context);
+                  await _unionViewModel.memberSingleMeeting(_meetings.articleId);
+                } else if(isJoined2 && _meetings is UnionMeeting){
+                  _showCancelDialog(context);
+                  await _unionViewModel.deleteMemberUnionMeeting(_meetings.articleId);
+                } else if (isJoined2 && _meetings is SingleMeeting) {
+                  _showCancelDialog(context);
+                  await _unionViewModel.deleteMemberSingleMeeting(_meetings.articleId);
                 }
-                setState(() {
-                  if (isJoined2) {
-                    isJoined2 = !isJoined2;
-                  }
-                });
               },
               label: SizedBox(
                 width: 200,
@@ -249,7 +282,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
     );
   }
 
-  void _showAgreementDialog(BuildContext context) {
+  void _showAttendDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -302,6 +335,89 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                     );
                   },
                 );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showCancelDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('취소 하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('동의하기'),
+              onPressed: () {
+                setState(() {
+                  isJoined2 = false;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('삭제 하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('확인'),
+              onPressed: () async {
+                try{
+                  if(_meetings is UnionMeeting){
+                    await _unionViewModel.deleteUnionMeeting(_meetings.articleId);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      PageTransition(
+                        child: RootPage(authManager: _authManager, initialIndex: 2),
+                        type: PageTransitionType.rightToLeftWithFade,
+                        duration: Duration(milliseconds: 300),
+                      ),
+                          (Route<dynamic> route) => false,
+                    );
+                  } else if(_meetings is SingleMeeting){
+                    await _unionViewModel.deleteSingleMeeting(_meetings.articleId);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      PageTransition(
+                        child: RootPage(authManager: _authManager, initialIndex: 2),
+                        type: PageTransitionType.rightToLeftWithFade,
+                        duration: Duration(milliseconds: 300),
+                      ),
+                          (Route<dynamic> route) => false,
+                    );
+                  }
+                } catch(error){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to delete meeting: $error')),
+                  );
+                }
               },
             ),
           ],

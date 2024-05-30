@@ -64,10 +64,12 @@ class UnionViewModel with ChangeNotifier {
       final JwtToken accessToken = await _authManager.loadAccessToken();
       await _unionRepository.createSingleMeeting(meeting, accessToken);
     } catch (error) {
+      print("Failed to create single meeting with initial access token: $error");
       try {
         final JwtToken accessToken = await _authManager.authorizeRefreshToken();
         await _unionRepository.createSingleMeeting(meeting, accessToken);
       } catch (error) {
+        print("Failed to create single meeting with refreshed access token: $error");
         throw error;
       }
     }
@@ -88,15 +90,98 @@ class UnionViewModel with ChangeNotifier {
     }
   }
 
-  Future<List<SingleMeeting>> getSingleMeetingDetail() async {
+  Future<SingleMeeting> getSingleMeetingDetail(int articleId) async {
     try {
       // Access Token을 불러옵니다.
       final JwtToken accessToken = await _authManager.loadAccessToken();
-      return await _unionRepository.getSingleMeetingsDetail(accessToken);
+      return await _unionRepository.getSingleMeetingsDetail(accessToken, articleId);
     } catch (error) {
       try {
         final JwtToken accessToken = await _authManager.authorizeRefreshToken();
-        return await _unionRepository.getSingleMeetingsDetail(accessToken);
+        return await _unionRepository.getSingleMeetingsDetail(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  Future<void> deleteUnionMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.deleteUnionMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.deleteUnionMeeting(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  Future<void> deleteSingleMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.deleteSingleMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.deleteSingleMeeting(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+  Future<void> memberUnionMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.memberUnionMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.memberUnionMeeting(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  Future<void> memberSingleMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.memberSingleMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.memberSingleMeeting(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  Future<void> deleteMemberUnionMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.deleteMemberUnionMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.deleteMemberUnionMeeting(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  Future<void> deleteMemberSingleMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.deleteMemberSingleMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.deleteMemberSingleMeeting(accessToken, articleId);
       } catch (error) {
         throw error;
       }

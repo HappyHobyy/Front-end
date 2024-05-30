@@ -78,29 +78,6 @@ class UnionMeeting {
 
     };
   }
-
-  UnionMeeting.getUnionMeetings(
-      {
-        required int gatheringArticleId,
-        required DateTime createdAt,
-        required String title,
-        required String userNickname,
-        required int joinMax,
-        required int communityId1,
-        required int communityId2,
-        required String Image,})
-      : this(articleId: gatheringArticleId, imageUrl: Image, userNickname: userNickname, tag1: communityId1, tag2: communityId2, title: title,
-            maxPeople: joinMax, createDate: createdAt, meetingDate: null, openTalkLink: null, location: null, mainText: null,);
-
-  UnionMeeting.getUnionMeetingsDetail(
-      {
-        required DateTime date,
-        required String text,
-        required String location,
-        required String openTalkLink,})
-      : this(articleId: null, imageUrl: null, userNickname: null, tag1: null, tag2: null, title: null,
-    maxPeople: null, createDate: null, meetingDate: date, openTalkLink: openTalkLink, location: location, mainText: text,);
-
 }
 
 class SingleMeeting {
@@ -135,7 +112,7 @@ class SingleMeeting {
       articleId: json['gatheringArticleId'],
       imageUrl: json['image']['path'],
       userNickname: json['userNickname'],
-      tag1: json['communityId1'],
+      tag1: json['communityId'],
       title: json['title'],
       maxPeople: json['joinMax'],
       createDate: DateTime.parse(json['createdAt']),
@@ -146,9 +123,25 @@ class SingleMeeting {
     );
   }
 
+  factory SingleMeeting.fromDetailJson(Map<String, dynamic> json) {
+    return SingleMeeting(
+      articleId: null,
+      imageUrl: null,
+      userNickname: null,
+      tag1: null,
+      title: null,
+      maxPeople: null,
+      createDate: null,
+      meetingDate: DateTime.parse(json['date']),
+      openTalkLink: json['openTalkLink'],
+      location: json['location'],
+      mainText: json['text'],
+    );
+  }
+
   Map<String, dynamic> toSingleMeetingsJson() {
     return {
-      'communityId1' : tag1,
+      'communityId' : tag1,
       'title' : title,
       'date' : meetingDate?.toIso8601String(),
       'joinMax' : maxPeople,
@@ -157,25 +150,4 @@ class SingleMeeting {
       'openTalkLink' : openTalkLink,
     };
   }
-  SingleMeeting.getSingleMeetings(
-      {
-        required int gatheringArticleId,
-        required DateTime createdAt,
-        required String title,
-        required String userNickname,
-        required int joinMax,
-        required int communityId1,
-        required String Image,})
-    : this(articleId: gatheringArticleId, imageUrl: Image, userNickname: userNickname, tag1: communityId1, title: title,
-          maxPeople: joinMax, createDate: createdAt, meetingDate: null, openTalkLink: null, location: null, mainText: null,);
-
-  SingleMeeting.getSingleMeetingsDetail(
-      {
-        required DateTime date,
-        required String text,
-        required String location,
-        required String openTalkLink,})
-      : this(articleId: null, imageUrl: null, userNickname: null, tag1: null, title: null,
-    maxPeople: null, createDate: null, meetingDate: date, openTalkLink: openTalkLink, location: location, mainText: text,);
-
 }

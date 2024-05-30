@@ -11,6 +11,8 @@ import 'package:hobbyhobby/root_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import '../constants.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CreateUnion extends StatefulWidget {
   final AuthManager authManager;
@@ -73,6 +75,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
   var _maxInputText = TextEditingController();
   var _opentalkInputText = TextEditingController();
   var _textEditingInputText = TextEditingController();
+
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   bool _isLoading = false;
@@ -93,13 +96,15 @@ class _CreateUnionPageState extends State<CreateUnion> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    setState(() {
-      if (pickedFile != null) {
+    if (pickedFile != null) {
+      setState(() {
         _image = File(pickedFile.path); // 선택한 이미지의 파일 경로 저장
-      } else {
-        _image = null; // 사용자가 이미지를 선택하지 않았을 경우 기본 이미지로 설정
-      }
-    });
+      });
+    } else {
+      setState(() {
+        _image = null;
+      });
+    }
   }
 
   void _showDatePicker(BuildContext context) {
@@ -151,11 +156,19 @@ class _CreateUnionPageState extends State<CreateUnion> {
   }
 
   Future<void> _createMeeting() async {
-    if (_tag1 == null && _tag2 == null) {
+    if(_image == null){
+      final ByteData byteData = await rootBundle.load('assets/icon.png');
+      final File tempFile = File('${(await getTemporaryDirectory()).path}/icon.png');
+      await tempFile.writeAsBytes(byteData.buffer.asUint8List());
+      setState(() {
+        _image = tempFile;
+      });
+    }
+    if (_tag1 != null && _tag2 == null) {
       // SingleMeeting 추가
       SingleMeeting newMeeting = SingleMeeting(
         articleId: null,
-        imageUrl: _image != null ? _image!.path : 'assets/icon.png',
+        imageUrl: _image!.path,
         userNickname: _authManager.currentUserName ?? 'Unknown',
         tag1: _tag1?.communityId,
         title: _titleInputText.text,
@@ -178,7 +191,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
       // UnionMeeting 추가
       UnionMeeting newMeeting = UnionMeeting(
         articleId: null,
-        imageUrl: _image != null ? _image!.path : 'assets/icon.png',
+        imageUrl: _image!.path,
         userNickname: _authManager.currentUserName ?? 'Unknown',
         tag1: _tag1!.communityId,
         tag2: _tag2!.communityId,
@@ -258,7 +271,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
                           onPressed: () async {
                             if (_opentalkInputText.text.isEmpty ||
                                 _textEditingInputText.text.isEmpty ||
-                                _tag2 == null) {
+                                _tag1 == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(' 모든 항목에 입력해주세요.'),
