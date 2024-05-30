@@ -38,6 +38,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
   String? openTalkLink;
   late bool isUserJoined;
   late bool isUserLiked;
+  String? displayDate;
 
   @override
   void initState() {
@@ -55,6 +56,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
         final details = await _unionViewModel.getUnionMeetingDetail(_meetings.articleId);
         setState(() {
           date = details.meetingDate;
+          displayDate = '${date?.year}년 ${date?.month}월 ${date?.day}일 ${date?.hour}시 ${date?.minute.toString().padLeft(2, '0')}분';
           location = details.location;
           text = details.mainText;
           openTalkLink = details.openTalkLink;
@@ -159,7 +161,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                         thickness: 1,
                       ),
                       const SizedBox(height: 20),
-                      _buildDetailSection('모임 시간', date?.toString() ?? '정보 없음'),
+                      _buildDetailSection('모임 시간', displayDate ?? '정보 없음'),
                       const SizedBox(height: 50),
                       _buildDetailSection('장소', location ?? '정보 없음'),
                       const SizedBox(height: 50),
