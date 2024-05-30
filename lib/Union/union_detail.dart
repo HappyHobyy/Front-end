@@ -5,6 +5,7 @@ import 'package:hobbyhobby/Union/union_model.dart';
 import 'package:hobbyhobby/Union/union_repository.dart';
 import 'package:hobbyhobby/Union/union_view_model.dart';
 import 'package:hobbyhobby/constants.dart';
+import 'package:hobbyhobby/root_page.dart';
 import 'package:hobbyhobby/widgets/community.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -30,13 +31,14 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
   late UnionRepository _unionRepository;
   late UnionViewModel _unionViewModel;
   bool _isLoading = true;
-  bool isJoined1 = false; // button1
-  bool isJoined2 = false; // button2
   late dynamic _meetings;
   DateTime? date;
   String? location;
   String? text;
   String? openTalkLink;
+  late bool isUserJoined;
+  late bool isUserLiked;
+  String? displayDate;
 
   @override
   void initState() {
@@ -50,15 +52,30 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
 
   void loadUnionDetails() async {
     try {
-      final details = await _unionViewModel.getUnionMeetingDetail(_meetings.articleId);
-      // Assuming details is a list with one item, adapt as needed.
-      setState(() {
-        date = details.meetingDate;
-        location = details.location;
-        text = details.mainText;
-        openTalkLink = details.openTalkLink;
-        _isLoading = false;
-      });
+      if(_meetings is UnionMeeting){
+        final details = await _unionViewModel.getUnionMeetingDetail(_meetings.articleId);
+        setState(() {
+          date = details.meetingDate;
+          displayDate = '${date?.year}년 ${date?.month}월 ${date?.day}일 ${date?.hour}시 ${date?.minute.toString().padLeft(2, '0')}분';
+          location = details.location;
+          text = details.mainText;
+          openTalkLink = details.openTalkLink;
+          isUserJoined = details.isUserJoined;
+          isUserLiked = details.isUserLiked;
+          _isLoading = false;
+        });
+      } else if(_meetings is SingleMeeting){
+        final details = await _unionViewModel.getSingleMeetingDetail(_meetings.articleId);
+        setState(() {
+          date = details.meetingDate;
+          location = details.location;
+          text = details.mainText;
+          openTalkLink = details.openTalkLink;
+          isUserJoined = details.isUserJoined;
+          isUserLiked = details.isUserLiked;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       print('Failed to load meeting details: $e');
       setState(() {
@@ -79,6 +96,23 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
               SliverAppBar(
                 expandedHeight: MediaQuery.of(context).size.width,
                 pinned: true,
+                actions: [
+                  PopupMenuButton<String>(
+                    onSelected: (value) {
+                      if (value == 'delete') {
+                        _showDeleteConfirmationDialog(context);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text('삭제'),
+                        ),
+                      ];
+                    },
+                  ),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: _meetings.imageUrl.startsWith('http')
                       ? Image.network(
@@ -127,7 +161,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                         thickness: 1,
                       ),
                       const SizedBox(height: 20),
-                      _buildDetailSection('모임 시간', date?.toString() ?? '정보 없음'),
+                      _buildDetailSection('모임 시간', displayDate ?? '정보 없음'),
                       const SizedBox(height: 50),
                       _buildDetailSection('장소', location ?? '정보 없음'),
                       const SizedBox(height: 50),
@@ -159,14 +193,27 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
             right: 20.0,
             child: FloatingActionButton(
               heroTag: 'fab1', //고유한 Hero 태그 추가
-              onPressed: () {
+              onPressed: () async {
+                if(!isUserLiked && _meetings is UnionMeeting){
+                  _showLikeDialog(context);
+                  await _unionViewModel.likeUnionMeeting(_meetings.articleId);
+                }else if(!isUserLiked && _meetings is SingleMeeting){
+                  _showLikeDialog(context);
+                  await _unionViewModel.likeSingleMeeting(_meetings.articleId);
+                }else if(isUserLiked && _meetings is UnionMeeting){
+                  _showCancleLikeDialog(context);
+                  await _unionViewModel.deleteLikeUnionMeeting(_meetings.articleId);
+                }else if(isUserLiked && _meetings is SingleMeeting){
+                  _showCancleLikeDialog(context);
+                  await _unionViewModel.deleteLikeSingleMeeting(_meetings.articleId);
+                }
                 setState(() {
-                  isJoined1 = !isJoined1;
+                  isUserLiked = !isUserLiked;
                 });
               },
               child: Icon(
-                isJoined1 ? Icons.favorite : Icons.favorite_outline,
-                color: isJoined1 ? Colors.red : null,
+                isUserLiked ? Icons.favorite : Icons.favorite_outline,
+                color: isUserLiked ? Colors.red : null,
                 size: 24.0,
               ),
             ),
@@ -176,22 +223,27 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
             left: MediaQuery.of(context).size.width / 5,
             child: FloatingActionButton.extended(
               heroTag: 'fab2', //고유한 Hero 태그 추가
-              onPressed: () {
-                if (!isJoined2) {
-                  _showAgreementDialog(context);
+              onPressed: () async {
+                if (!isUserJoined && _meetings is UnionMeeting) {
+                  _showAttendDialog(context);
+                  await _unionViewModel.memberUnionMeeting(_meetings.articleId);
+                } else if(!isUserJoined && _meetings is SingleMeeting){
+                  _showAttendDialog(context);
+                  await _unionViewModel.memberSingleMeeting(_meetings.articleId);
+                } else if(isUserJoined && _meetings is UnionMeeting){
+                  _showCancelDialog(context);
+                  await _unionViewModel.deleteMemberUnionMeeting(_meetings.articleId);
+                } else if (isUserJoined && _meetings is SingleMeeting) {
+                  _showCancelDialog(context);
+                  await _unionViewModel.deleteMemberSingleMeeting(_meetings.articleId);
                 }
-                setState(() {
-                  if (isJoined2) {
-                    isJoined2 = !isJoined2;
-                  }
-                });
               },
               label: SizedBox(
                 width: 200,
                 height: 40,
                 child: Center(
                   child: Text(
-                    isJoined2 ? '취소하기' : '참석하기',
+                    isUserJoined ? '취소하기' : '참석하기',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,
@@ -200,7 +252,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                   ),
                 ),
               ),
-              backgroundColor: isJoined2 ? Colors.grey : Constants.primaryColor,
+              backgroundColor: isUserJoined ? Colors.grey : Constants.primaryColor,
             ),
           ),
         ],
@@ -249,7 +301,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
     );
   }
 
-  void _showAgreementDialog(BuildContext context) {
+  void _showAttendDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -293,7 +345,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                           child: Text('확인'),
                           onPressed: () {
                             setState(() {
-                              isJoined2 = true;
+                              isUserJoined = true;
                             });
                             Navigator.of(context).pop();
                           },
@@ -309,4 +361,132 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
       },
     );
   }
+
+  void _showCancelDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('취소 하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('동의하기'),
+              onPressed: () {
+                setState(() {
+                  isUserJoined = false;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('삭제 하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('확인'),
+              onPressed: () async {
+                try{
+                  if(_meetings is UnionMeeting){
+                    await _unionViewModel.deleteUnionMeeting(_meetings.articleId);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      PageTransition(
+                        child: RootPage(authManager: _authManager, initialIndex: 2),
+                        type: PageTransitionType.rightToLeftWithFade,
+                        duration: Duration(milliseconds: 300),
+                      ),
+                          (Route<dynamic> route) => false,
+                    );
+                  } else if(_meetings is SingleMeeting){
+                    await _unionViewModel.deleteSingleMeeting(_meetings.articleId);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      PageTransition(
+                        child: RootPage(authManager: _authManager, initialIndex: 2),
+                        type: PageTransitionType.rightToLeftWithFade,
+                        duration: Duration(milliseconds: 300),
+                      ),
+                          (Route<dynamic> route) => false,
+                    );
+                  }
+                } catch(error){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to delete meeting: $error')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLikeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('좋아요가 등록되었습니다.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                setState(() {
+                  isUserLiked = true;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showCancleLikeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('좋아요가 취소되었습니다.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                setState(() {
+                  isUserLiked = false;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

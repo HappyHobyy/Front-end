@@ -28,9 +28,50 @@ class UnionRepository {
     return await _unionApi.getUnionMeetingsDetail(jwtToken,articleId);
   }
 
-  Future<List<SingleMeeting>> getSingleMeetingsDetail(JwtToken jwtToken) async {
-    return await _unionApi.getSingleMeetingsDetail(jwtToken);
+  Future<SingleMeeting> getSingleMeetingsDetail(JwtToken jwtToken, int articleId) async {
+    return await _unionApi.getSingleMeetingsDetail(jwtToken, articleId);
   }
+
+  Future<void> deleteUnionMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.deleteUnionMeeting(jwtToken, articleId);
+  }
+
+  Future<void> deleteSingleMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.deleteSingleMeeting(jwtToken, articleId);
+  }
+
+  Future<void> memberUnionMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.memberUnionMeeting(jwtToken, articleId);
+  }
+
+  Future<void> memberSingleMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.memberSingleMeeting(jwtToken, articleId);
+  }
+
+  Future<void> deleteMemberUnionMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.deleteMemberUnionMeeting(jwtToken, articleId);
+  }
+
+  Future<void> deleteMemberSingleMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.deleteMemberSingleMeeting(jwtToken, articleId);
+  }
+
+  Future<void> likeUnionMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.likeUnionMeeting(jwtToken, articleId);
+  }
+
+  Future<void> likeSingleMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.likeSingleMeeting(jwtToken, articleId);
+  }
+
+  Future<void> deleteLikeUnionMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.deleteLikeUnionMeeting(jwtToken, articleId);
+  }
+
+  Future<void> deleteLikeSingleMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.deleteLikeSingleMeeting(jwtToken, articleId);
+  }
+
   Future<List<SingleMeeting>> getSingleMeetingsSearch(JwtToken jwtToken,int communityId) async {
     return await _unionApi.getSingleMeetingsSearch(jwtToken,communityId);
   }

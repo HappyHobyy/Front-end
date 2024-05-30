@@ -15,26 +15,6 @@ class UnionApi {
   Future<List<UnionMeeting>> getUnionMeetings(JwtToken jwtToken) async {
     var uri = Uri.http(
         '52.79.143.36:8000', 'photocontent-service/api/gathering/multi');
-    /*{
-                "code": 200,
-                "message": "Success",
-                "data": [
-                  {
-                    "gatheringArticleId": 123,
-                    "createdAt": "2024-05-27T03:24:11.381Z",
-                    "title": "hobbyhobby",
-                    "userNickname": "hobbyhobby",
-                    "likes": 12,
-                    "joinMax": 12,
-                    "joinCount": 12,
-                    "communityId1": 1,
-                    "communityId2": 2,
-                    "image": {
-                      "path": "http://...."
-                    }
-                  }
-                ]
-              }*/
     final response = await httpClient.get(
       uri,
       headers: {
@@ -59,25 +39,6 @@ class UnionApi {
   Future<List<SingleMeeting>> getSingleMeetings(JwtToken jwtToken) async {
     var uri = Uri.http(
         '52.79.143.36:8000', 'photocontent-service/api/gathering/single');
-    /* {
-                "code": 200,
-                "message": "Success",
-                "data": [
-                  {
-                    "gatheringArticleId": 123,
-                    "createdAt": "2024-05-27T03:29:16.442Z",
-                    "title": "hobbyhobby",
-                    "userNickname": "hobbyhobby",
-                    "likes": 12,
-                    "joinMax": 12,
-                    "joinCount": 12,
-                    "communityId": 12,
-                    "image": {
-                      "path": "http://...."
-                    }
-                  }
-                ]
-              }*/
     final response = await httpClient.get(
       uri,
       headers: {
@@ -165,19 +126,6 @@ class UnionApi {
   Future<UnionMeeting> getUnionMeetingsDetail(JwtToken jwtToken,int articleId) async {
     var uri = Uri.http(
         '52.79.143.36:8000', 'photocontent-service/api/gathering/multi/detail');
-    /*{
-              "code": 200,
-            "message": "Success",
-            "data": {
-            "date": "2024-05-25T16:24:30.791Z",
-            "text": "text",
-            "location": "location",
-            "openTalkLink": "http;//",
-            "isUserArticleOwner": true,
-            "isUserLiked": true,
-            "isUserJoined": true
-          }
-          }*/
     final response = await httpClient.get(
       uri,
       headers: {
@@ -198,40 +146,216 @@ class UnionApi {
   }
 
 //단일 모임 게시글 내용 가져오기
-  Future<List<SingleMeeting>> getSingleMeetingsDetail(JwtToken jwtToken) async {
+  Future<SingleMeeting> getSingleMeetingsDetail(JwtToken jwtToken, int articleId) async {
     var uri = Uri.http('52.79.143.36:8000',
         'photocontent-service/api/gathering/single/detail');
-    /*{
-              "code": 200,
-            "message": "Success",
-            "data": {
-            "date": "2024-05-25T16:26:05.462Z",
-            "text": "text",
-            "location": "location",
-            "openTalkLink": "http;//",
-            "isUserArticleOwner": true,
-            "isUserLiked": true,
-            "isUserJoined": true
-          }
-          }*/
     final response = await httpClient.get(
       uri,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': '${jwtToken.accessToken}'
+        'Authorization': '${jwtToken.accessToken}',
+        'articleId': '${articleId}'
       },
     );
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       final res = data["data"];
-      return List<SingleMeeting>.from(
-          res.map((data) => SingleMeeting.fromJson(data)));
+      return SingleMeeting.fromDetailJson(res);
     } else {
+      dynamic data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+  //연합 모임 게시글 삭제
+  Future<void> deleteUnionMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/multi');
+
+    final response = await httpClient.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       throw data['error'];
     }
   }
+
+  //단일 모임 게시글 삭제
+  Future<void> deleteSingleMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/single');
+
+    final response = await httpClient.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //연합 모임 멤버 추가
+  Future<void> memberUnionMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/multi/member');
+
+    final response = await httpClient.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //단일 모임 멤버 추가
+  Future<void> memberSingleMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/single/member');
+
+    final response = await httpClient.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+  //연합 모임 멤버 삭제
+  Future<void> deleteMemberUnionMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/multi/member');
+
+    final response = await httpClient.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //단일 모임 멤버 삭제
+  Future<void> deleteMemberSingleMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/single/member');
+
+    final response = await httpClient.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //연합 모임 좋아요 추가
+  Future<void> likeUnionMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/multi/like');
+
+    final response = await httpClient.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //단일 모임 좋아요 추가
+  Future<void> likeSingleMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/single/like');
+
+    final response = await httpClient.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //연합 모임 좋아요 삭제
+  Future<void> deleteLikeUnionMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/multi/like');
+
+    final response = await httpClient.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //단일 모임 좋아요 삭제
+  Future<void> deleteLikeSingleMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/single/like');
+
+    final response = await httpClient.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
   Future<List<SingleMeeting>> getSingleMeetingsSearch(JwtToken jwtToken, int communityId) async {
     var uri = Uri.http('52.79.143.36:8000',
         'photocontent-service/api/gathering/single/search');
