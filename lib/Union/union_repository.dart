@@ -56,6 +56,22 @@ class UnionRepository {
     await _unionApi.deleteMemberSingleMeeting(jwtToken, articleId);
   }
 
+  Future<void> likeUnionMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.likeUnionMeeting(jwtToken, articleId);
+  }
+
+  Future<void> likeSingleMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.likeSingleMeeting(jwtToken, articleId);
+  }
+
+  Future<void> deleteLikeUnionMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.deleteLikeUnionMeeting(jwtToken, articleId);
+  }
+
+  Future<void> deleteLikeSingleMeeting(JwtToken jwtToken, int articleId) async {
+    await _unionApi.deleteLikeSingleMeeting(jwtToken, articleId);
+  }
+
   Future<List<SingleMeeting>> getSingleMeetingsSearch(JwtToken jwtToken,int communityId) async {
     return await _unionApi.getSingleMeetingsSearch(jwtToken,communityId);
   }

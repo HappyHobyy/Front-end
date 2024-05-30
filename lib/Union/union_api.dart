@@ -280,6 +280,82 @@ class UnionApi {
     }
   }
 
+  //연합 모임 좋아요 추가
+  Future<void> likeUnionMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/multi/like');
+
+    final response = await httpClient.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //단일 모임 좋아요 추가
+  Future<void> likeSingleMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/single/like');
+
+    final response = await httpClient.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //연합 모임 좋아요 삭제
+  Future<void> deleteLikeUnionMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/multi/like');
+
+    final response = await httpClient.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
+  //단일 모임 좋아요 삭제
+  Future<void> deleteLikeSingleMeeting(JwtToken jwtToken, int articleId) async {
+    var uri = Uri.http('52.79.143.36:8000', 'photocontent-service/api/gathering/single/like');
+
+    final response = await httpClient.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${jwtToken.accessToken}',
+      },
+      body: jsonEncode({'articleId': articleId}),
+    );
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      throw data['error'];
+    }
+  }
+
   Future<List<SingleMeeting>> getSingleMeetingsSearch(JwtToken jwtToken, int communityId) async {
     var uri = Uri.http('52.79.143.36:8000',
         'photocontent-service/api/gathering/single/search');

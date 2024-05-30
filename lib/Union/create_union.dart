@@ -184,6 +184,8 @@ class _CreateUnionPageState extends State<CreateUnion> {
         createDate: null,
         location: _locationInputText.text,
         mainText: _textEditingInputText.text,
+        isUserJoined: false,
+        isUserLiked: false,
       );
       await widget.unionViewModel.createSingleMeeting(newMeeting);
       widget.onMeetingCreated(newMeeting);
@@ -208,6 +210,8 @@ class _CreateUnionPageState extends State<CreateUnion> {
         createDate: null,
         location: _locationInputText.text,
         mainText: _textEditingInputText.text,
+        isUserJoined: false,
+        isUserLiked: false,
       );
       await widget.unionViewModel.createUnionMeeting(newMeeting);
       widget.onMeetingCreated(newMeeting);

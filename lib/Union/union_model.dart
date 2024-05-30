@@ -16,6 +16,8 @@ class UnionMeeting {
   final String? openTalkLink;
   final String? location;
   final String? mainText;
+  final bool isUserJoined;
+  final bool isUserLiked;
 
   UnionMeeting({
     required this.articleId,
@@ -30,6 +32,8 @@ class UnionMeeting {
     required this.openTalkLink,
     required this.location,
     required this.mainText,
+    required this.isUserJoined,
+    required this.isUserLiked,
   });
 
   factory UnionMeeting.fromJson(Map<String, dynamic> json) {
@@ -46,6 +50,8 @@ class UnionMeeting {
       openTalkLink: json['openTalkLink'],
       location: json['location'],
       mainText: json['text'],
+      isUserJoined: json['isUserJoined'] ?? false,
+      isUserLiked: json['isUserLiked'] ?? false,
     );
   }
 
@@ -63,6 +69,8 @@ class UnionMeeting {
       openTalkLink: json['openTalkLink'],
       location: json['location'],
       mainText: json['text'],
+      isUserJoined: json['isUserJoined'] ?? false,
+      isUserLiked: json['isUserLiked'] ?? false,
     );
   }
   Map<String, dynamic> toUnionMeetingsJson() {
@@ -75,7 +83,6 @@ class UnionMeeting {
       'text' : mainText,
       'location' : location,
       'openTalkLink' : openTalkLink,
-
     };
   }
 }
@@ -92,6 +99,8 @@ class SingleMeeting {
   final String? openTalkLink;
   final String? location;
   final String? mainText;
+  final bool isUserJoined;
+  final bool isUserLiked;
 
   SingleMeeting({
     required this.articleId,
@@ -105,6 +114,8 @@ class SingleMeeting {
     required this.openTalkLink,
     required this.location,
     required this.mainText,
+    required this.isUserJoined,
+    required this.isUserLiked,
   });
 
   factory SingleMeeting.fromJson(Map<String, dynamic> json) {
@@ -120,6 +131,8 @@ class SingleMeeting {
       openTalkLink: json['openTalkLink'],
       location: json['location'],
       mainText: json['text'],
+      isUserJoined: json['isUserJoined'] ?? false,
+      isUserLiked: json['isUserLiked'] ?? false,
     );
   }
 
@@ -136,6 +149,8 @@ class SingleMeeting {
       openTalkLink: json['openTalkLink'],
       location: json['location'],
       mainText: json['text'],
+      isUserJoined: json['isUserJoined'] ?? false,
+      isUserLiked: json['isUserLiked'] ?? false,
     );
   }
 

@@ -187,6 +187,61 @@ class UnionViewModel with ChangeNotifier {
       }
     }
   }
+  Future<void> likeUnionMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.likeUnionMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.likeUnionMeeting(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  Future<void> likeSingleMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.likeSingleMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.likeSingleMeeting(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  Future<void> deleteLikeUnionMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.deleteLikeUnionMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.deleteLikeUnionMeeting(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  Future<void> deleteLikeSingleMeeting(int articleId) async {
+    try {
+      final JwtToken accessToken = await _authManager.loadAccessToken();
+      await _unionRepository.deleteLikeSingleMeeting(accessToken, articleId);
+    } catch (error) {
+      try {
+        final JwtToken accessToken = await _authManager.authorizeRefreshToken();
+        await _unionRepository.deleteLikeSingleMeeting(accessToken, articleId);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
 
   Future<List<SingleMeeting>> getSingleMeetingsSearch(int communityId) async {
     try {
