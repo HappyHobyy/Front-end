@@ -34,6 +34,7 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
   var _birthInputText = TextEditingController();
   var _phoneInputText = TextEditingController();
   var _phoneAuthText = TextEditingController();
+  late String phoneNum = _phoneInputText.text.replaceAll('-', '');
   late AuthRepository _authRepository;
   late AuthManager _authManager;
   DateTime? _selectedDate;
@@ -217,6 +218,29 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
               const SizedBox(height: 10),
               TextField(
                 controller: _phoneInputText,
+                onChanged: (value) {
+                  // 입력된 문자열에서 숫자만 필터링하여 새로운 문자열을 만듭니다.
+                  String digitsOnly = value.replaceAll(RegExp(r'[^0-9]'), ''); // 숫자와 '-' 제거
+
+                  // 사용자가 '-'를 추가하거나 제거할 때, 휴대폰 번호 형식을 유지합니다.
+                  if (digitsOnly.length > 3 && digitsOnly.length <= 7) {
+                    // 010-xxxx 형식
+                    _phoneInputText.value = TextEditingValue(
+                      text: '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3)}',
+                      selection: TextSelection.collapsed(offset: '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3)}'.length),
+                    );
+                  } else if (digitsOnly.length > 7) {
+                    // 010-xxxx-xxxx 형식
+                    _phoneInputText.value = TextEditingValue(
+                      text: '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3, 7)}-${digitsOnly.substring(7)}',
+                      selection: TextSelection.collapsed(offset: '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3, 7)}-${digitsOnly.substring(7)}'.length),
+                    );
+                  }
+                },
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(11), // 전화번호 최대 길이 제한
+                ],
                 decoration: InputDecoration(
                   hintText: ' 휴대폰 번호',
                   enabledBorder: OutlineInputBorder(
@@ -303,7 +327,7 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
                     userEmail: _email,
                     userType: _userType,
                     userNickName: _nicknameInputText.text,
-                    phoneNumber: int.parse(_phoneInputText.text),
+                    phoneNumber: phoneNum,
                     userName: _nameInputText.text,
                     // 문자열을 정수로 변환
                     birth: _birthInputText.text,

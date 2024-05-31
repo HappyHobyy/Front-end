@@ -10,11 +10,11 @@ class ApiService {
 
   // GET
   Future<List<T>> fetchData<T>(
-    JwtToken jwtToken,
-    String basePath,
-    String endpoint,
-    T Function(Map<String, dynamic>) fromJson,
-  ) async {
+      JwtToken jwtToken,
+      String basePath,
+      String endpoint,
+      T Function(Map<String, dynamic>) fromJson,
+      ) async {
     String accessToken = jwtToken.accessToken!;
 
     final response = await http.get(
@@ -38,28 +38,12 @@ class ApiService {
   }
 
   // POST
-  /* 예시
-  Future<void> likePost(int communityId) async {
-    try {
-      final jwtToken = await jwtTokenFuture;
-      await ApiService().sendData(
-        jwtToken,
-        'community-service',
-        'api/community/user',
-        {'communityId': communityId},
-      );
-      print('Post liked successfully');
-    } catch (e) {
-      print("Error liking post: $e");
-    }
-  }
-  * */
   Future<void> sendData(
-    JwtToken jwtToken,
-    String basePath,
-    String endpoint,
-    Map<String, dynamic> body,
-  ) async {
+      JwtToken jwtToken,
+      String basePath,
+      String endpoint,
+      Map<String, dynamic> body,
+      ) async {
     String accessToken = jwtToken.accessToken!;
 
     final response = await http.post(
@@ -79,27 +63,12 @@ class ApiService {
   }
 
   // DELETE
-  /*
-  * Future<void> deletePost(int communityId) async {
-    try {
-      final jwtToken = await jwtTokenFuture;
-      await ApiService().deleteData(
-        jwtToken,
-        'community-service',
-        'api/community/user',
-        {'communityId': communityId},
-      );
-      print('Post deleted successfully');
-    } catch (e) {
-      print("Error deleting post: $e");
-    }
-  } */
   Future<void> deleteData(
-    JwtToken jwtToken,
-    String basePath,
-    String endpoint,
-    Map<String, dynamic> body,
-  ) async {
+      JwtToken jwtToken,
+      String basePath,
+      String endpoint,
+      Map<String, dynamic> body,
+      ) async {
     String accessToken = jwtToken.accessToken!;
 
     final response = await http.delete(
@@ -119,44 +88,15 @@ class ApiService {
   }
 
   // GET
-  /* 예시
-  late AuthManager _authManager;
-  late Future<List<PopularCommunity>> popularCommunitiesFuture;
-  late Future<JwtToken> jwtTokenFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _authManager = widget.authManager;
-    jwtTokenFuture = _authManager.loadAccessToken();
-    _loadData();
-  }
-  Future<void> _loadData() async {
-    try {
-      final jwtToken = await jwtTokenFuture;
-      setState(() {
-        popularCommunitiesFuture = ApiService().fetchData(
-          jwtToken,
-          'community-service',
-          'api/community/popular',
-          (json) => PopularCommunity.fromJson(json),
-        );
-      });
-    } catch (e) {
-      print("Error loading data: $e");
-    }
-  }
-   * */
   // 인기 커뮤니티
-  Future<List<PopularCommunity>> getPopularCommunities(
-      JwtToken jwtToken) async {
+  Future<List<Community>> getPopularCommunities(JwtToken jwtToken) async {
     return fetchData(jwtToken, 'community-service', 'api/community/popular',
-        (json) => PopularCommunity.fromJson(json));
+            (json) => Community.fromJson(json));
   }
 
   // 즐겨찾기 커뮤니티
-  Future<List<MyCommunity>> getMyCommunities(JwtToken jwtToken) async {
+  Future<List<Community>> getMyCommunities(JwtToken jwtToken) async {
     return fetchData(jwtToken, 'community-service', 'api/community/user',
-        (json) => MyCommunity.fromJson(json));
+            (json) => Community.fromJson(json));
   }
 }

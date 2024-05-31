@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hobbyhobby/constants.dart';
 
 class AnimationPage extends StatefulWidget {
-  const AnimationPage({Key? key}) : super(key: key);
+  final List<int?> answers;
+
+  const AnimationPage({Key? key, required this.answers}) : super(key: key);
 
   @override
   State<AnimationPage> createState() => _AnimationPageState();
@@ -13,7 +15,9 @@ class _AnimationPageState extends State<AnimationPage>
   late AnimationController _controller;
   late Animation<Offset> _animation;
 
-  final List<String> hobbies = ["#볼링", "#낚시", "#등산", "#자전거", "#요리", "#골프", "#풋살"]; // 다양한 취미 텍스트를 담은 리스트
+  final List<String> hobbies = [
+    "#볼링", "#낚시", "#등산", "#자전거", "#요리", "#골프", "#풋살", "#미술", "#인테리어", "#뜨개질", "#산책", "#클라이밍"
+  ]; // 다양한 취미 텍스트를 담은 리스트
 
   @override
   void initState() {
@@ -21,7 +25,7 @@ class _AnimationPageState extends State<AnimationPage>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 10),
     )..repeat(reverse: true);
 
     _animation = Tween<Offset>(
@@ -47,7 +51,7 @@ class _AnimationPageState extends State<AnimationPage>
       child: Row(
         children: List.generate(
           maxCards,
-              (index) => CardWidget(text: hobbies[index % hobbies.length]), // 리스트의 텍스트를 순환하면서 가져와 사용
+              (index) => CardWidget(text: hobbies[index % hobbies.length]),
         ),
       ),
     );
@@ -62,6 +66,7 @@ class _AnimationPageState extends State<AnimationPage>
           height: 500,
           child: Column(
             children: [
+              SizedBox(height: 120),
               Column(
                 children: [
                   Text(

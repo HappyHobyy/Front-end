@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:hobbyhobby/Auth/user_model.dart';
 import 'package:http/http.dart' as http;
-
 import 'jwt_token_model.dart';
 
 class AuthRemoteApi {

@@ -22,7 +22,7 @@ class _RootPageState extends State<RootPage> {
   // 페이지 리스트
   List<Widget> _widgetOptions() {
     return [
-      const HomePage(),
+      HomePage(authManager: _authManager),
       CommunityPage(authManager: _authManager),
       UnionPage(authManager: _authManager),
       MyPage(authManager: _authManager),
@@ -35,6 +35,7 @@ class _RootPageState extends State<RootPage> {
     _bottomNavIndex = widget.initialIndex;
     _authManager = widget.authManager;
   }
+
   // 페이지 아이콘 리스트
   List<IconData> iconList = [
     Icons.home,

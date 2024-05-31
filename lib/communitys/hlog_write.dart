@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:hobbyhobby/communitys/second_root_page.dart';
 import 'package:hobbyhobby/constants.dart';
+import 'package:hobbyhobby/communitys/hlog_model.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
+import 'package:hobbyhobby/Auth/jwt_token_model.dart';
+import 'package:hobbyhobby/communitys/hlog_remote_api.dart';
 
 class HlogWritePage extends StatefulWidget {
+  final AuthManager authManager;
   final List<File>? images;
+  final String communityName;
+  final int communityID;
 
-  const HlogWritePage({Key? key, this.images}) : super(key: key);
+  const HlogWritePage({Key? key, required this.authManager, required this.images,
+  required this.communityName, required this.communityID}) : super(key: key);
 
   @override
   State<HlogWritePage> createState() => _HlogWritePageState();
@@ -15,6 +24,17 @@ class HlogWritePage extends StatefulWidget {
 class _HlogWritePageState extends State<HlogWritePage> {
   TextEditingController _textEditingController = TextEditingController();
   int _currentImageIndex = 0;
+  late AuthManager _authManager;
+  late Future<JwtToken> jwtTokenFuture;
+  late HlogRemoteApi _hlogRemoteApi;
+
+  @override
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
+    jwtTokenFuture = _authManager.loadAccessToken();
+    _hlogRemoteApi = HlogRemoteApi();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +49,41 @@ class _HlogWritePageState extends State<HlogWritePage> {
         scrolledUnderElevation: 0,
         actions: [
           Row(
-            children: [ // 약간의 여백 추가
-              TextButton(
-                onPressed: null,
-                child: Text(
-                  'Done',
-                  style: TextStyle(
-                    color: Constants.primaryColor,
-                    fontSize: 15,
-                  ),
-                ),
+          children: [
+          TextButton(
+            onPressed: () async {
+              // 현재 사용자의 액세스 토큰을 가져옵니다.
+             try {
+               JwtToken jwtToken = await jwtTokenFuture;
+
+               HLogPostRequest postRequest = HLogPostRequest(
+                 communityId: widget.communityID,
+                 text: _textEditingController.text,
+                 files: widget.images,
+               );
+               // 게시글을 저장하는 메서드 호출
+               await _hlogRemoteApi.savePost(jwtToken, postRequest, widget.images ?? []);
+               Navigator.push(
+                 context,
+                 MaterialPageRoute(
+                   builder: (context) =>
+                       SecondRootPage(authManager: _authManager,
+                           communityName: widget.communityName,
+                           communityID: widget.communityID),
+                 ),
+               );
+             } catch (e) {
+               print('오류 발생: $e');
+             }
+            },
+            child: Text(
+              'Done',
+              style: TextStyle(
+                color: Constants.primaryColor,
+                fontSize: 15,
               ),
+            ),
+          ),
               SizedBox(width: 10),
             ],
           ),
@@ -113,7 +157,7 @@ class _HlogWritePageState extends State<HlogWritePage> {
             ),
           ],
         ),
-    ),
+      ),
     );
   }
 }

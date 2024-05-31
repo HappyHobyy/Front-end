@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/communitys/avatar.dart';
+import 'package:hobbyhobby/communitys/hlog_model.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hobbyhobby/constants.dart';
@@ -12,6 +13,8 @@ class HlogPage extends StatefulWidget {
   final List<String> images;
   final int countLikes;
   final String writeTime;
+  final String articleText;
+  final String communityName;
   const HlogPage({
     super.key,
     required this.userUrl,
@@ -19,6 +22,8 @@ class HlogPage extends StatefulWidget {
     required this.images,
     required this.countLikes,
     required this.writeTime,
+    required this.articleText,
+    required this.communityName,
   });
 
   @override
@@ -90,7 +95,7 @@ class _HlogPageState extends State<HlogPage> {
                         fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    '풋살',
+                    widget.communityName,
                     style: TextStyle(
                       fontSize: 12,
                     ),
@@ -155,6 +160,7 @@ class _HlogPageState extends State<HlogPage> {
                   setState(() {
                     _isFavorited = !_isFavorited; // Toggle the favorite state
                   });
+                  _isFavorited ? HLogLikeRequest(articleId: 0): likeDeleteRequest(articleId: 0);
                 },
                 child: Icon(
                   _isFavorited ? Icons.favorite : Icons.favorite_border,
@@ -244,7 +250,7 @@ class _HlogPageState extends State<HlogPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ExpandableText(
-              '컨텐츠 입니다.\n컨텐츠 입니다.\n컨텐츠 입니다.\n컨텐츠 입니다.\n컨텐츠 입니다.',
+              '${widget.articleText}',
               expandText: '더보기',
               linkColor: Colors.grey,
             ),
