@@ -35,7 +35,6 @@ class _RootPageState extends State<RootPage> {
     _bottomNavIndex = widget.initialIndex;
     _authManager = widget.authManager;
   }
-
   // 페이지 아이콘 리스트
   List<String> iconList = [
     'assets/메인아이콘.png',

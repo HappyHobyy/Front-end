@@ -3,6 +3,7 @@ import 'package:hobbyhobby/Auth/jwt_token_model.dart';
 import 'package:hobbyhobby/communitys/second_root_page.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/widgets/like_button.dart';
+
 import '../Auth/auth_manager.dart';
 import '../api_service.dart';
 import '../communitys/models.dart';
@@ -16,7 +17,8 @@ class CommunityPage extends StatefulWidget {
   State<CommunityPage> createState() => _CommunityPageState();
 }
 
-List<String> allHobbiesMaptoList = Constants.hobbyImageMap.keys.toList(); // to find index of each community in map, map is converted into a list.
+List<String> allHobbiesMaptoList = Constants.hobbyImageMap.keys
+    .toList(); // to find index of each community in map, map is converted into a list.
 
 /* 임시 placeholder 탭 정보 */
 const List<Tab> hobbyTabs = <Tab>[
@@ -42,7 +44,6 @@ List<String> allHobbiesList = const <String>[
   "엔터테인먼트",
   "봉사활동"
 ];
-
 List<AssetImage> allHobbiesListIcons = const <AssetImage>[
   AssetImage("assets/community_icons/Exercise.png"),
   AssetImage("assets/community_icons/Drawing.png"),
@@ -51,7 +52,7 @@ List<AssetImage> allHobbiesListIcons = const <AssetImage>[
   AssetImage("assets/community_icons/TV Show.png"),
   AssetImage("assets/community_icons/Trust.png"),
 ];
-
+// 전체 취미 분류 리스트
 List<List<String>> hobbyCategories = [
   sports,
   arts,
@@ -60,7 +61,7 @@ List<List<String>> hobbyCategories = [
   entertainment,
   volunteering,
 ];
-
+// 운동 및 스포츠
 List<String> sports = [
   "자전거",
   "골프",
@@ -79,6 +80,7 @@ List<String> sports = [
   "러닝"
 ];
 
+// 창작 및 예술
 List<String> arts = [
   "사진",
   "미술",
@@ -92,10 +94,13 @@ List<String> arts = [
   "반려식물"
 ];
 
+// 요리
 List<String> cooking = ["홈브루", "베이킹", "홈카페", "바베큐"];
 
+// 독서 및 학습
 List<String> learning = ["코딩", "천체관측"];
 
+// 엔터테인먼트
 List<String> entertainment = [
   "보드게임",
   "비디오게임",
@@ -108,14 +113,14 @@ List<String> entertainment = [
   "타로"
 ];
 
+// 봉사활동
 List<String> volunteering = ["나무 심기", "낭독 봉사", "유기견 봉사", "베이비박스 봉사", "플로깅"];
-
 late List<Community> myCommunitiesList;
 
 class _CommunityPageState extends State<CommunityPage> {
   late AuthManager _authManager;
-  late Future<List<Community>> popularCommunitiesFuture;
-  late Future<List<Community>> myCommunitiesFuture;
+  late Future<List<PopularCommunity>> popularCommunitiesFuture;
+  late Future<List<MyCommunity>> myCommunitiesFuture;
   late Future<List<Community>> recommendedCommunitiesFuture;
   late Future<JwtToken> jwtTokenFuture;
   bool _isLoading = true; // Add loading state
@@ -157,6 +162,9 @@ class _CommunityPageState extends State<CommunityPage> {
       setState(() {
         _isLoading = false; // Update loading state
       });
+
+      // Assign the fetched data to myCommunitiesList
+      myCommunitiesList = await myCommunitiesFuture;
     } catch (e) {
       print("Error loading data: $e");
       setState(() {
@@ -175,8 +183,6 @@ class _CommunityPageState extends State<CommunityPage> {
         {'communityId': communityId},
       );
       print('Post liked successfully');
-      // Reload data
-      await _loadData();
     } catch (e) {
       print("Error liking post: $e");
     }
@@ -206,7 +212,7 @@ class _CommunityPageState extends State<CommunityPage> {
       itemBuilder: (context, index) {
         final community = communities[index];
         final isLiked = myCommunitiesList.any((likedCommunity) =>
-        likedCommunity.communityId == community.communityId);
+            likedCommunity.communityId == community.communityId);
         return ListTile(
           leading: CircleAvatar(
             backgroundImage: Constants.hobbyImageMap[community.communityName],

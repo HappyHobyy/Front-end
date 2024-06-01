@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'communitys/models.dart';
+
 class Constants {
   //Primary color
   static var primaryColor = const Color(0xFF8C52FF);
@@ -11,14 +13,14 @@ class Constants {
   );
   static const hobbyImageMap = <String, AssetImage>{
     "낭독 봉사": AssetImage("assets/hobby/낭독 봉사.jpg"),
-    "가죽 공예": AssetImage("assets/hobby/가죽공예.jpg"),
+    "가죽 공예": AssetImage("assets/hobby/가죽 공예.jpg"),
     "골프": AssetImage("assets/hobby/골프.jpg"),
     "나무 심기 봉사": AssetImage("assets/hobby/나무 심기 봉사.jpg"),
     "낚시": AssetImage("assets/hobby/낚시.jpg"),
     "등산": AssetImage("assets/hobby/등산.jpg"),
     "뜨개질": AssetImage("assets/hobby/뜨개질.jpg"),
     "러닝": AssetImage("assets/hobby/러닝.jpg"),
-    "레고 조립": AssetImage("assets/hobby/레고.jpg"),
+    "레고 조립": AssetImage("assets/hobby/레고 조립.jpg"),
     "마술": AssetImage("assets/hobby/마술.jpg"),
     "미술": AssetImage("assets/hobby/미술.jpg"),
     "바베큐": AssetImage("assets/hobby/바베큐.jpg"),
@@ -32,7 +34,7 @@ class Constants {
     "사진": AssetImage("assets/hobby/사진.jpg"),
     "산책": AssetImage("assets/hobby/산책.jpg"),
     "서핑": AssetImage("assets/hobby/서핑.jpg"),
-    "스케이트 보드": AssetImage("assets/hobby/스케이트보드.jpg"),
+    "스케이트 보드": AssetImage("assets/hobby/스케이트 보드.jpg"),
     "스키": AssetImage("assets/hobby/스키.jpg"),
     "여행": AssetImage("assets/hobby/여행.jpg"),
     "연극": AssetImage("assets/hobby/연극.jpg"),
@@ -55,4 +57,54 @@ class Constants {
     "홈브루": AssetImage("assets/hobby/홈브루.jpg"),
     "홈카페": AssetImage("assets/hobby/홈카페.jpg"),
   };
+
+  static Map<int, Community> communities = {
+    1: const Community(communityId: 1, communityName: "낭독 봉사"),
+    2: const Community(communityId: 2, communityName: "가죽 공예"),
+    3: const Community(communityId: 3, communityName: "골프"),
+    4: const Community(communityId: 4, communityName: "나무 심기 봉사"),
+    5: const Community(communityId: 5, communityName: "낚시"),
+    6: const Community(communityId: 6, communityName: "등산"),
+    7: const Community(communityId: 7, communityName: "뜨개질"),
+    8: const Community(communityId: 8, communityName: "러닝"),
+    9: const Community(communityId: 9, communityName: "레고 조립"),
+    10: const Community(communityId: 10, communityName: "마술"),
+    11: const Community(communityId: 11, communityName: "미술"),
+    12: const Community(communityId: 12, communityName: "바베큐"),
+    13: const Community(communityId: 13, communityName: "반려식물"),
+    14: const Community(communityId: 14, communityName: "배드민턴"),
+    15: const Community(communityId: 15, communityName: "베이킹"),
+    16: const Community(communityId: 16, communityName: "보드게임"),
+    17: const Community(communityId: 17, communityName: "볼링"),
+    18: const Community(communityId: 18, communityName: "비디오게임"),
+    19: const Community(communityId: 19, communityName: "사진"),
+    20: const Community(communityId: 20, communityName: "산책"),
+    21: const Community(communityId: 21, communityName: "서핑"),
+    22: const Community(communityId: 22, communityName: "스케이트 보드"),
+    23: const Community(communityId: 23, communityName: "스키"),
+    24: const Community(communityId: 24, communityName: "여행"),
+    25: const Community(communityId: 25, communityName: "연극"),
+    26: const Community(communityId: 26, communityName: "영화"),
+    27: const Community(communityId: 27, communityName: "유기견 봉사"),
+    28: const Community(communityId: 28, communityName: "음악"),
+    29: const Community(communityId: 29, communityName: "인테리어"),
+    30: const Community(communityId: 30, communityName: "자전거"),
+    31: const Community(communityId: 31, communityName: "전시회"),
+    32: const Community(communityId: 32, communityName: "천체관측"),
+    33: const Community(communityId: 33, communityName: "캘리그라피"),
+    34: const Community(communityId: 34, communityName: "캠핑"),
+    35: const Community(communityId: 35, communityName: "코딩"),
+    36: const Community(communityId: 36, communityName: "크로스핏"),
+    37: const Community(communityId: 37, communityName: "클라이밍"),
+    38: const Community(communityId: 38, communityName: "타로"),
+    39: const Community(communityId: 39, communityName: "테니스"),
+    40: const Community(communityId: 40, communityName: "풋살"),
+    41: const Community(communityId: 41, communityName: "필라테스"),
+    42: const Community(communityId: 42, communityName: "홈브루"),
+    43: const Community(communityId: 43, communityName: "홈카페"),
+  };
+
+  static List<Community> get communitiesList {
+    return communities.values.toList();
+  }
 }
