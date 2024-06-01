@@ -9,7 +9,6 @@ import 'package:hobbyhobby/Auth/jwt_token_model.dart';
 import 'package:hobbyhobby/communitys/hlog_remote_api.dart';
 import '../root_page.dart';
 
-
 class CommunityHomePage extends StatefulWidget {
   final AuthManager authManager;
   final String communityName;
@@ -28,32 +27,76 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
 
   List<HLogArticle> articles = [];
   bool isLoading = true;
+  final ScrollController _scrollController = ScrollController();
+  bool isFetchingMore = false;
+  int currentPage = 0;
+  bool hasMoreArticles = true;
 
   @override
   void initState() {
     super.initState();
+    print('CommunityHomePage initState with communityID: ${widget.communityID}');
     _authManager = widget.authManager;
     jwtTokenFuture = _authManager.loadAccessToken();
     _hlogRemoteApi = HlogRemoteApi();
     _loadRecentArticles();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent && !isLoading && hasMoreArticles) {
+        _loadMoreArticles();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadRecentArticles() async {
+    setState(() {
+      isLoading = true;
+      currentPage = 0; // 페이지를 초기화하여 처음부터 다시 로드하도록 설정
+    });
     try {
-      // 현재 사용자의 액세스 토큰을 가져옵니다.
       JwtToken jwtToken = await jwtTokenFuture;
-
-      // 최신 게시물 가져오기
-      await _hlogRemoteApi.fetchRecentArticles(jwtToken, 0, widget.communityID);
-
-      // 게시물을 가져오고 상태를 갱신하여 화면에 반영합니다.
+      print('Fetching articles for communityID: ${widget.communityID}, currentPage: $currentPage');
+      await _hlogRemoteApi.fetchRecentArticles(jwtToken, currentPage, widget.communityID);
       setState(() {
-        isLoading = false;
         articles = _hlogRemoteApi.articles;
+        currentPage++;
+        hasMoreArticles = _hlogRemoteApi.articles.length == 10;
       });
     } catch (error) {
       print('오류 발생: $error');
       // 에러 처리
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadMoreArticles() async {
+    if (isFetchingMore) return; // 중복 호출 방지
+    setState(() {
+      isFetchingMore = true;
+    });
+    try {
+      JwtToken jwtToken = await jwtTokenFuture;
+      await _hlogRemoteApi.fetchRecentArticles(jwtToken, currentPage, widget.communityID);
+      setState(() {
+        articles.addAll(_hlogRemoteApi.articles);
+        currentPage++;
+        hasMoreArticles = _hlogRemoteApi.articles.length == 10;
+      });
+    } catch (error) {
+      print('오류 발생: $error');
+      // 에러 처리
+    } finally {
+      setState(() {
+        isFetchingMore = false;
+      });
     }
   }
 
@@ -63,7 +106,6 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
 
     if (pickedImages != null && pickedImages.isNotEmpty) {
       List<File> images = pickedImages.map((pickedFile) => File(pickedFile.path)).toList();
-
 
       Navigator.push(
         context,
@@ -119,7 +161,10 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
             ),
           ),
           Expanded(
-            child: _body(),
+            child: RefreshIndicator(
+              onRefresh: _loadRecentArticles,
+              child: _body(),
+            ),
           ),
         ],
       ),
@@ -127,20 +172,34 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
   }
 
   Widget _body() {
-    return ListView.builder(
-      itemCount: articles.length,
-      itemBuilder: (context, index) {
-        final article = articles[index];
-        return HlogPage(
-          userUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnnnObTCNg1QJoEd9Krwl3kSUnPYTZrxb5Ig&usqp=CAU',
-          userName: article.nickname,
-          images: article.images.map((img) => img.path).toList(),
-          countLikes: article.likes,
-          writeTime: article.date.toString(),
-          articleText: article.text,
-          communityName: widget.communityName,
-        );
-      },
-    );
+    if (isLoading && articles.isEmpty) {
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return ListView.builder(
+        controller: _scrollController,
+        itemCount: articles.length + (hasMoreArticles ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == articles.length) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            final article = articles[index];
+            return HlogPage(
+              userUrl: article.userImageUrl,
+              userName: article.nickname,
+              images: article.images.map((img) => img.path).toList(),
+              countLikes: article.likes,
+              writeTime: article.date.toString(),
+              articleText: article.text,
+              communityName: widget.communityName,
+              articleId: article.photoArticleId,
+              authManager: _authManager,
+              isUserLiked: article.isUserLiked,
+              isUserArticleOwner: article.isUserArticleOwner,
+              onDelete: _loadRecentArticles, // 게시물이 삭제되면 _loadRecentArticles를 호출하여 다시 로드
+            );
+          }
+        },
+      );
+    }
   }
 }

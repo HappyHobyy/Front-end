@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/Recommendation/animation.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 
 class TestPage extends StatefulWidget {
-  const TestPage({super.key});
+  final AuthManager authManager;
+  const TestPage({super.key, required this.authManager});
 
   @override
   State<TestPage> createState() => _TestPageState();
@@ -13,6 +15,13 @@ class _TestPageState extends State<TestPage> {
   final PageController _pageController = PageController();
   int _currentQuestionIndex = 0;
   final List<int?> _selectedAnswers = List.filled(12, null); // Track selected answers
+  late AuthManager _authManager;
+
+  @override
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
+  }
 
   // Define the list of questions
   final List<Question> _questions = [
@@ -207,7 +216,7 @@ class _TestPageState extends State<TestPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AnimationPage(answers: _selectedAnswers)
+                              builder: (context) => AnimationPage(authManager: _authManager, answers: _selectedAnswers)
                           ),
                         );
                       }

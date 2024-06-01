@@ -13,16 +13,16 @@ class HomeModel {
 
   factory HomeModel.fromJson(Map<String, dynamic> json) {
     return HomeModel(
-      popularPhotoArticles: (json['photoArticles']['popularPhotoArticle'] as List)
+      popularPhotoArticles: (json['data']['photoArticles']['popularPhotoArticle'] as List)
           .map((i) => PhotoArticle.fromJson(i))
           .toList(),
-      nonePopularPhotoArticles: (json['photoArticles']['nonePopularPhotoArticle'] as List)
+      nonePopularPhotoArticles: (json['data']['photoArticles']['nonePopularPhotoArticle'] as List)
           .map((i) => PhotoArticle.fromJson(i))
           .toList(),
-      popularGatheringArticles: (json['GatheringArticles']['popularGatheringArticle'] as List)
+      popularGatheringArticles: (json['data']['GatheringArticles']['popularGatheringArticle'] as List)
           .map((i) => GatheringArticle.fromJson(i))
           .toList(),
-      nonePopularGatheringArticles: (json['GatheringArticles']['nonePopularGatheringArticle'] as List)
+      nonePopularGatheringArticles: (json['data']['GatheringArticles']['nonePopularGatheringArticle'] as List)
           .map((i) => GatheringArticle.fromJson(i))
           .toList(),
     );
@@ -70,7 +70,7 @@ class PhotoArticle {
   factory PhotoArticle.fromJson(Map<String, dynamic> json) {
     return PhotoArticle(
       articleId: json['articleId'],
-      date: DateTime.parse(json['date']),
+      date: DateTime.parse(json['date'].split('.')[0]),
       userId: json['userId'],
       userNickName: json['userNickName'],
       userImagePath: json['userImagePath'],
@@ -126,7 +126,7 @@ class GatheringArticle {
   factory GatheringArticle.fromJson(Map<String, dynamic> json) {
     return GatheringArticle(
       gatheringArticleId: json['gatheringArticleId'],
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt'].split('.')[0]),
       title: json['title'],
       userNickname: json['userNickname'],
       likes: json['likes'],

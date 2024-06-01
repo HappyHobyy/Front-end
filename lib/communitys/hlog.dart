@@ -1,11 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
-import 'package:hobbyhobby/communitys/avatar.dart';
 import 'package:hobbyhobby/communitys/hlog_model.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hobbyhobby/constants.dart';
+import 'package:hobbyhobby/communitys/hlog_remote_api.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
+import 'package:hobbyhobby/Auth/jwt_token_model.dart';
 
 class HlogPage extends StatefulWidget {
   final String userUrl;
@@ -15,6 +17,11 @@ class HlogPage extends StatefulWidget {
   final String writeTime;
   final String articleText;
   final String communityName;
+  final int articleId;
+  final AuthManager authManager;
+  final bool isUserLiked;
+  final bool isUserArticleOwner;
+  final VoidCallback onDelete;
   const HlogPage({
     super.key,
     required this.userUrl,
@@ -24,6 +31,11 @@ class HlogPage extends StatefulWidget {
     required this.writeTime,
     required this.articleText,
     required this.communityName,
+    required this.articleId,
+    required this.authManager,
+    required this.isUserLiked,
+    required this.isUserArticleOwner,
+    required this.onDelete,
   });
 
   @override
@@ -32,8 +44,22 @@ class HlogPage extends StatefulWidget {
 
 class _HlogPageState extends State<HlogPage> {
   int _current = 0;
-  bool _isFavorited = false;
+  late bool _isFavorited;
   bool _isBookmarked = false;
+  late HlogRemoteApi _hlogRemoteApi;
+  late AuthManager _authManager;
+  late Future<JwtToken> jwtTokenFuture;
+  late int _countLikes;
+
+  @override
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
+    jwtTokenFuture = _authManager.loadAccessToken();
+    _hlogRemoteApi = HlogRemoteApi();
+    _isFavorited = widget.isUserLiked;
+    _countLikes = widget.countLikes;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +103,13 @@ class _HlogPageState extends State<HlogPage> {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 15, right: 8.0, top: 8.0, bottom: 8.0),
-              child: ImageAvatar( //프로필 사진
-                url: widget.userUrl,
-                type: AvatarType.BASIC,
+              child: ClipOval( //프로필 사진
+              child: CachedNetworkImage(
+              imageUrl: widget.userUrl,
+              width: 33, // 원하는 크기로 설정
+              height: 33, // 원하는 크기로 설정
+              fit: BoxFit.cover,
+              ),
               ),
             ),
             Padding(
@@ -102,9 +132,43 @@ class _HlogPageState extends State<HlogPage> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
+        if (widget.isUserArticleOwner)
+          Padding(
+            padding: EdgeInsets.only(right: 8.0),
+            child: PopupMenuButton<String>(
+              onSelected: (value) async {
+                if (value == 'delete') {
+                  JwtToken jwtToken = await jwtTokenFuture;
+                  HLogDeleteRequest hlogdeleteRequest =
+                      HLogDeleteRequest(articleId: widget.articleId);
+                  await _hlogRemoteApi.articleDelete(jwtToken, hlogdeleteRequest);
+                  widget.onDelete();
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline),
+                        const SizedBox(width: 16),
+                        Text(
+                            '삭제',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ];
+              },
+            ),
+          ),
       ],
     );
   }
@@ -156,11 +220,25 @@ class _HlogPageState extends State<HlogPage> {
             Padding(
               padding: const EdgeInsets.only(left: 20),
               child: GestureDetector(
-                onTap: () {
+                onTap: () async {
                   setState(() {
                     _isFavorited = !_isFavorited; // Toggle the favorite state
+                    if (_isFavorited) {
+                      _countLikes++; // Increment like count
+                    } else {
+                      _countLikes--; // Decrement like count
+                    }
                   });
-                  _isFavorited ? HLogLikeRequest(articleId: 0): likeDeleteRequest(articleId: 0);
+
+                  JwtToken jwtToken = await jwtTokenFuture;
+                  HLogLikeRequest likeRequest = HLogLikeRequest(articleId: widget.articleId);
+                  likeDeleteRequest deleteRequest = likeDeleteRequest(articleId: widget.articleId);
+
+                  if (_isFavorited) {
+                    await _hlogRemoteApi.likePost(jwtToken, likeRequest);
+                  } else {
+                    await _hlogRemoteApi.likeDelete(jwtToken, deleteRequest);
+                  }
                 },
                 child: Icon(
                   _isFavorited ? Icons.favorite : Icons.favorite_border,
@@ -243,7 +321,7 @@ class _HlogPageState extends State<HlogPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              '좋아요 ${widget.countLikes}개',
+              '좋아요 ${_countLikes}개',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),

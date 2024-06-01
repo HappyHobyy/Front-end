@@ -66,6 +66,7 @@ class HLogArticle {
   final List<HLogImage> images;
   final bool isUserArticleOwner;
   final bool isUserLiked;
+  final String userImageUrl;
 
   HLogArticle({
     required this.photoArticleId,
@@ -77,6 +78,7 @@ class HLogArticle {
     required this.images,
     required this.isUserArticleOwner,
     required this.isUserLiked,
+    required this.userImageUrl,
   });
 
   factory HLogArticle.fromJson(Map<String, dynamic> json) {
@@ -92,6 +94,7 @@ class HLogArticle {
           .toList(),
       isUserArticleOwner: json['isUserArticleOwner'],
       isUserLiked: json['isUserLiked'],
+      userImageUrl: json['userImageUrl']
     );
   }
 }

@@ -10,6 +10,7 @@ import 'package:hobbyhobby/Recommendation/test.dart';
 import 'package:hobbyhobby/widgets/home_model.dart';
 import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/Auth/jwt_token_model.dart';
+import 'package:hobbyhobby/constants.dart';
 
 class HomePage extends StatefulWidget {
   final AuthManager authManager;
@@ -159,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TestPage(),
+                      builder: (context) => TestPage(authManager: _authManager),
                     ),
                   );
                 },
@@ -217,6 +218,7 @@ class _HomePageState extends State<HomePage> {
       return Container();
     }
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CarouselSlider.builder(
           itemCount: articles.length,
@@ -225,7 +227,7 @@ class _HomePageState extends State<HomePage> {
             return Stack(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(12.0),
                   child: Container(
                     width: screenWidth,
                     height: screenWidth,
@@ -240,8 +242,8 @@ class _HomePageState extends State<HomePage> {
                   right: 15,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     padding: EdgeInsets.only(left: 8, right: 10, top: 3),
                     child: Text(
@@ -289,7 +291,12 @@ class _HomePageState extends State<HomePage> {
             children: [
               Text('${articles[_currentList[sliderIndex]].userNickName}'),
               Spacer(),
-              Text('좋아요 ${articles[_currentList[sliderIndex]].likes}개'),
+              Text(
+                  '좋아요 ${articles[_currentList[sliderIndex]].likes}개',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ),
@@ -323,6 +330,8 @@ class _HomePageState extends State<HomePage> {
     if (articles.isEmpty) {
       return Container();
     }
+
+    List<String> hobbyKeys = Constants.hobbyImageMap.keys.toList();
     return Column(
       children: [
         CarouselSlider.builder(
@@ -332,7 +341,7 @@ class _HomePageState extends State<HomePage> {
             return Stack(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(12.0),
                   child: Container(
                     width: screenWidth,
                     height: screenWidth,
@@ -347,12 +356,12 @@ class _HomePageState extends State<HomePage> {
                   right: 15,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     padding: EdgeInsets.only(left: 8, right: 10, top: 3),
                     child: Text(
-                      '#${article.communityId1} #${article.communityId2}',
+                      '#${hobbyKeys[article.communityId1]} #${hobbyKeys[article.communityId2]}',
                       style: TextStyle(
                         color: Constants.textColor,
                         fontSize: 20,
@@ -396,7 +405,12 @@ class _HomePageState extends State<HomePage> {
             children: [
               Text('${articles[_currentList[sliderIndex]].userNickname}'),
               Spacer(),
-              Text('좋아요 ${articles[_currentList[sliderIndex]].likes}개'),
+              Text(
+                  '좋아요 ${articles[_currentList[sliderIndex]].likes}개',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+              ),
             ],
           ),
         ),
@@ -414,8 +428,8 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             children: [
               Text(
-                  '모집 인원: ${articles[_currentList[sliderIndex]]
-                      .joinCount}명 / ${articles[_currentList[sliderIndex]]
+                  '모집 인원 : ${articles[_currentList[sliderIndex]]
+                      .joinCount} / ${articles[_currentList[sliderIndex]]
                       .joinMax}명'
               ),
               Spacer(),

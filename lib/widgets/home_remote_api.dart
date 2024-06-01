@@ -14,7 +14,7 @@ class HomeRemoteApi {
   Future<HomeModel?> popularContentsArticles(JwtToken jwtToken) async {
     try {
       var uri =
-      Uri.http('52.79.143.36:8000', 'photocontent-service/api/community/popular/contents');
+      Uri.http('52.79.143.36:8000', 'community-service/api/community/popular/contents');
 
       final http.Response response = await httpClient.get(
         uri,
@@ -28,11 +28,9 @@ class HomeRemoteApi {
         return HomeModel.fromJson(jsonResponse);
       } else {
         print('인기/비인기 게시물을 불러오는 데 실패했습니다.');
-        return null;
       }
     } catch (e) {
       print('오류 발생: $e');
-      return null;
     }
   }
 }

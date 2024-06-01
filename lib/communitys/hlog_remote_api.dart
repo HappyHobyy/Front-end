@@ -32,6 +32,7 @@ class HlogRemoteApi {
       );
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        print('Response data: $jsonResponse');
         _articles = (jsonResponse['data'] as List<dynamic>)
             .map((item) => HLogArticle.fromJson(item))
             .toList();
@@ -126,6 +127,7 @@ class HlogRemoteApi {
         body: json.encode(deleteRequest.toJson()),
       );
       if (response.statusCode == 200) {
+        print('좋아요가 취소되었습니다.');
       } else {
         print('좋아요를 취소하는 데 실패했습니다.');
       }

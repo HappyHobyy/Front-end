@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Recommendation/recommend.dart';
 import 'package:hobbyhobby/constants.dart';
+import 'package:hobbyhobby/Recommendation/recommend_remote_api.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 
 class AnimationPage extends StatefulWidget {
+  final AuthManager authManager;
   final List<int?> answers;
 
-  const AnimationPage({Key? key, required this.answers}) : super(key: key);
+  const AnimationPage({Key? key, required this.authManager, required this.answers}) : super(key: key);
 
   @override
   State<AnimationPage> createState() => _AnimationPageState();
@@ -14,10 +18,11 @@ class _AnimationPageState extends State<AnimationPage>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animation;
-
-  final List<String> hobbies = [
+  final List<String> showHobbies = [
     "#볼링", "#낚시", "#등산", "#자전거", "#요리", "#골프", "#풋살", "#미술", "#인테리어", "#뜨개질", "#산책", "#클라이밍"
   ]; // 다양한 취미 텍스트를 담은 리스트
+  List<String> hobbies = [];
+  late AuthManager _authManager;
 
   @override
   void initState() {
@@ -32,6 +37,25 @@ class _AnimationPageState extends State<AnimationPage>
       begin: const Offset(0.1, 0),
       end: const Offset(-0.1, 0),
     ).animate(_controller);
+    _fetchHobbies();
+    _authManager = widget.authManager;
+  }
+
+  Future<void> _fetchHobbies() async {
+    final api = RecommendationRemoteApi();
+    final recommendation = await api.mbtiTestPost(widget.answers);
+
+    if (recommendation != null) {
+      setState(() {
+        hobbies = recommendation.hobbies;
+      });
+      
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => RecommendationPage(authManager: _authManager, hobbies: hobbies))
+      );
+    }
   }
 
   @override
@@ -51,7 +75,7 @@ class _AnimationPageState extends State<AnimationPage>
       child: Row(
         children: List.generate(
           maxCards,
-              (index) => CardWidget(text: hobbies[index % hobbies.length]),
+              (index) => CardWidget(text: showHobbies[index % showHobbies.length]),
         ),
       ),
     );

@@ -37,11 +37,11 @@ class _RootPageState extends State<RootPage> {
   }
 
   // 페이지 아이콘 리스트
-  List<IconData> iconList = [
-    Icons.home,
-    Icons.forum,
-    Icons.groups,
-    Icons.person,
+  List<String> iconList = [
+    'assets/메인아이콘.png',
+    'assets/커뮤니티아이콘.png',
+    'assets/연합아이콘.png',
+    'assets/마이페이지아이콘.png',
   ];
 
   // 네비게이션 바 제목 리스트
@@ -76,7 +76,10 @@ class _RootPageState extends State<RootPage> {
           items: List.generate(
             iconList.length,
                 (index) => BottomNavigationBarItem(
-              icon: Icon(iconList[index]),
+                  icon: ImageIcon(
+                    AssetImage(iconList[index]),
+                    color: _bottomNavIndex == index ? Constants.primaryColor : Colors.black,
+                  ),
               label: titleList[index],
             ),
           ),

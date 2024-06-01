@@ -52,7 +52,6 @@ class _HlogWritePageState extends State<HlogWritePage> {
           children: [
           TextButton(
             onPressed: () async {
-              // 현재 사용자의 액세스 토큰을 가져옵니다.
              try {
                JwtToken jwtToken = await jwtTokenFuture;
 

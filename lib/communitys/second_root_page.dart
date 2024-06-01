@@ -45,11 +45,12 @@ class _SecondRootPageState extends State<SecondRootPage> {
     ];
   }
 
-  List<IconData> secondiconList = [
-    Icons.monochrome_photos,
-    Icons.list_alt,
-    Icons.mode_comment_outlined,
-    Icons.recycling,
+  List<String> secondiconList = [
+    'assets/Hlog아이콘.png',
+    'assets/Hboard아이콘.png',
+    'assets/장비리뷰아이콘.png',
+    'assets/장비대여아이콘.png',
+
   ];
 
   List<String> secondtitleList = [
@@ -83,7 +84,10 @@ class _SecondRootPageState extends State<SecondRootPage> {
           items: List.generate(
             secondiconList.length,
             (index) => BottomNavigationBarItem(
-              icon: Icon(secondiconList[index]),
+              icon: ImageIcon(
+    AssetImage(secondiconList[index]),
+                size: 26.0,
+              ),
               label: secondtitleList[index],
             ),
           ),
