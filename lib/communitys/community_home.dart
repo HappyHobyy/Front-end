@@ -35,7 +35,6 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
   @override
   void initState() {
     super.initState();
-    print('CommunityHomePage initState with communityID: ${widget.communityID}');
     _authManager = widget.authManager;
     jwtTokenFuture = _authManager.loadAccessToken();
     _hlogRemoteApi = HlogRemoteApi();
@@ -60,7 +59,6 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
     });
     try {
       JwtToken jwtToken = await jwtTokenFuture;
-      print('Fetching articles for communityID: ${widget.communityID}, currentPage: $currentPage');
       await _hlogRemoteApi.fetchRecentArticles(jwtToken, currentPage, widget.communityID);
       setState(() {
         articles = _hlogRemoteApi.articles;

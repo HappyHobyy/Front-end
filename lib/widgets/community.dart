@@ -119,8 +119,8 @@ late List<Community> myCommunitiesList;
 
 class _CommunityPageState extends State<CommunityPage> {
   late AuthManager _authManager;
-  late Future<List<PopularCommunity>> popularCommunitiesFuture;
-  late Future<List<MyCommunity>> myCommunitiesFuture;
+  late Future<List<Community>> popularCommunitiesFuture;
+  late Future<List<Community>> myCommunitiesFuture;
   late Future<List<Community>> recommendedCommunitiesFuture;
   late Future<JwtToken> jwtTokenFuture;
   bool _isLoading = true; // Add loading state

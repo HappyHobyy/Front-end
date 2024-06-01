@@ -14,8 +14,13 @@ class HlogWritePage extends StatefulWidget {
   final String communityName;
   final int communityID;
 
-  const HlogWritePage({Key? key, required this.authManager, required this.images,
-  required this.communityName, required this.communityID}) : super(key: key);
+  const HlogWritePage({
+    Key? key,
+    required this.authManager,
+    required this.images,
+    required this.communityName,
+    required this.communityID,
+  }) : super(key: key);
 
   @override
   State<HlogWritePage> createState() => _HlogWritePageState();
@@ -27,6 +32,7 @@ class _HlogWritePageState extends State<HlogWritePage> {
   late AuthManager _authManager;
   late Future<JwtToken> jwtTokenFuture;
   late HlogRemoteApi _hlogRemoteApi;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -49,40 +55,57 @@ class _HlogWritePageState extends State<HlogWritePage> {
         scrolledUnderElevation: 0,
         actions: [
           Row(
-          children: [
-          TextButton(
-            onPressed: () async {
-             try {
-               JwtToken jwtToken = await jwtTokenFuture;
+            children: [
+              _isLoading
+                  ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: CircularProgressIndicator(
+                  color: Constants.primaryColor,
+                ),
+              )
+                  : TextButton(
+                onPressed: () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
 
-               HLogPostRequest postRequest = HLogPostRequest(
-                 communityId: widget.communityID,
-                 text: _textEditingController.text,
-                 files: widget.images,
-               );
-               // 게시글을 저장하는 메서드 호출
-               await _hlogRemoteApi.savePost(jwtToken, postRequest, widget.images ?? []);
-               Navigator.push(
-                 context,
-                 MaterialPageRoute(
-                   builder: (context) =>
-                       SecondRootPage(authManager: _authManager,
-                           communityName: widget.communityName,
-                           communityID: widget.communityID),
-                 ),
-               );
-             } catch (e) {
-               print('오류 발생: $e');
-             }
-            },
-            child: Text(
-              'Done',
-              style: TextStyle(
-                color: Constants.primaryColor,
-                fontSize: 15,
+                  try {
+                    JwtToken jwtToken = await jwtTokenFuture;
+
+                    HLogPostRequest postRequest = HLogPostRequest(
+                      communityId: widget.communityID,
+                      text: _textEditingController.text,
+                      files: widget.images,
+                    );
+                    // 게시글을 저장하는 메서드 호출
+                    await _hlogRemoteApi.savePost(
+                        jwtToken, postRequest, widget.images ?? []);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SecondRootPage(
+                          authManager: _authManager,
+                          communityName: widget.communityName,
+                          communityID: widget.communityID,
+                        ),
+                      ),
+                    );
+                  } catch (e) {
+                    print('오류 발생: $e');
+                  } finally {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }
+                },
+                child: Text(
+                  'Done',
+                  style: TextStyle(
+                    color: Constants.primaryColor,
+                    fontSize: 15,
+                  ),
+                ),
               ),
-            ),
-          ),
               SizedBox(width: 10),
             ],
           ),
