@@ -38,10 +38,13 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
   late AuthRepository _authRepository;
   late AuthManager _authManager;
   DateTime? _selectedDate;
+  bool _isNicknameDuplicate = false;
+  late AuthRemoteApi _authRemoteApi;
 
   @override
   void initState() {
     super.initState();
+    _authRemoteApi = AuthRemoteApi();
     _authRepository = widget.authRepository;
     _password = widget.password;
     _email = widget.email;
@@ -79,6 +82,35 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
         );
       },
     );
+  }
+  Future<void> _checkNicknameDuplicate() async {
+    try {
+      bool isDuplicate = await _authRemoteApi.checkNicknameDuplicate(
+          _nicknameInputText.text);
+      setState(() {
+        _isNicknameDuplicate = isDuplicate;
+      });
+      if (_isNicknameDuplicate) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('중복된 닉네임입니다.'),
+            backgroundColor: Constants.primaryColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('사용 가능한 닉네임 입니다.'),
+            backgroundColor: Constants.primaryColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (error) {
+      print('$error');
+    }
   }
 
   @override
@@ -132,28 +164,26 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
                   hintText: ' 닉네임',
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.grey.withOpacity(0.3), // 변경할 색상 설정
-                      width: 2.0, // 테두리 두께 설정
+                      color: _isNicknameDuplicate ? Colors.red : Colors.grey.withOpacity(0.3),
+                      width: 2.0
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Constants.primaryColor, // 변경할 색상 설정
-                      width: 2.0, // 테두리 두께 설정
+                      color: _isNicknameDuplicate ? Colors.red : Constants.primaryColor,
+                      width: 2.0,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   suffixIcon: InkWell(
-                    onTap: () {
-                      // 중복 확인 기능 추가
-                    },
+                    onTap: _checkNicknameDuplicate,
                     child: Padding(
                       padding: EdgeInsets.only(right: 5),
                       child: Container(
                         padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
-                          color: Constants.primaryColor,
+                          color: _isNicknameDuplicate ? Colors.red : Constants.primaryColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(

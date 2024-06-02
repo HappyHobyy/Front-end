@@ -103,4 +103,23 @@ class AuthRemoteApi {
       throw Exception();
     }
   }
+  Future<bool> checkNicknameDuplicate(String nickname) async {
+    var uri = Uri.http('52.79.143.36:8000', 'user-service/api/auth/register/nickName');
+    String jsonData = jsonEncode({'nickname': nickname});
+
+    final response = await httpClient.post(
+      uri,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonData,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      return data['isDuplicate'] ?? false;
+    } else {
+      return true;
+    }
+  }
 }

@@ -91,14 +91,14 @@ flutter:
     - assets/
     - assets/community_icons/
     - assets/hobby/낭독 봉사.jpg
-    - assets/hobby/가죽공예.jpg
+    - assets/hobby/가죽 공예.jpg
     - assets/hobby/골프.jpg
     - assets/hobby/나무 심기 봉사.jpg
     - assets/hobby/낚시.jpg
     - assets/hobby/등산.jpg
     - assets/hobby/뜨개질.jpg
     - assets/hobby/러닝.jpg
-    - assets/hobby/레고.jpg
+    - assets/hobby/레고 조립.jpg
     - assets/hobby/마술.jpg
     - assets/hobby/미술.jpg
     - assets/hobby/바베큐.jpg
@@ -112,7 +112,7 @@ flutter:
     - assets/hobby/사진.jpg
     - assets/hobby/산책.jpg
     - assets/hobby/서핑.jpg
-    - assets/hobby/스케이트보드.jpg
+    - assets/hobby/스케이트 보드.jpg
     - assets/hobby/스키.jpg
     - assets/hobby/여행.jpg
     - assets/hobby/연극.jpg
