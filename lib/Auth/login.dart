@@ -228,18 +228,17 @@ class _LoginPageState extends State<LoginPage> {
                     setState(() {
                       _isLoading = false; // 에러 발생 시 대기 상태 해제
                       _loginFailed = true; // 로그인 실패 상태로 설정
-
                     });
                     print('Error during registration: $error');
                   }
-                  Navigator.pushReplacement(
+                  /*Navigator.pushReplacement(
                     context,
                     PageTransition(
                       child: RootPage(authManager: _authManager),
                       type: PageTransitionType.rightToLeftWithFade,
                       duration: Duration(milliseconds: 300),
                     ),
-                  );
+                  );*/
                 },
                 child: Container(
                   width: size.width,
