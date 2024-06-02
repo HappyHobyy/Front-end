@@ -207,6 +207,7 @@ class _CommunityPageState extends State<CommunityPage>
         length: hobbyTabs.length,
         child: Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             title: Text(
               '커뮤니티',
               style: Constants.titleTextStyle,
@@ -237,18 +238,21 @@ class _CommunityPageState extends State<CommunityPage>
                 myCommunitiesList: myCommunitiesList,
                 likePost: likePost,
                 deletePost: deletePost,
+                authManager: _authManager,
               ),
               CommunityTab(
                 future: recommendedCommunitiesFuture,
                 myCommunitiesList: myCommunitiesList,
                 likePost: likePost,
                 deletePost: deletePost,
+                authManager: _authManager,
               ),
               CommunityTab(
                 future: popularCommunitiesFuture,
                 myCommunitiesList: myCommunitiesList,
                 likePost: likePost,
                 deletePost: deletePost,
+                authManager: _authManager,
               ),
               ListView.separated(
                 separatorBuilder: (context, index) =>
@@ -273,6 +277,7 @@ class _CommunityPageState extends State<CommunityPage>
                               content: hobbyCategories[index],
                               likePost: (id) => likePost(id),
                               deletePost: (id) => deletePost(id),
+                              authManager: _authManager,
                             ),
                           ),
                         );
@@ -351,6 +356,7 @@ class _CommunityPageState extends State<CommunityPage>
                 builder: (context) => SecondRootPage(
                   communityName: community.communityName,
                   communityID: community.communityId,
+                  authManager: _authManager,
                 ),
               ),
             );
@@ -365,6 +371,7 @@ ListView toListViewAllHobbies(
   List<String> strings,
   void Function(int communityId) likePost,
   void Function(int communityId) deletePost,
+  AuthManager authManager,
 ) {
   return ListView.separated(
       separatorBuilder: (context, index) => Divider(
@@ -402,6 +409,7 @@ ListView toListViewAllHobbies(
                   builder: (context) => SecondRootPage(
                     communityName: strings[index],
                     communityID: communityId,
+                    authManager: authManager,
                   ),
                 ),
               );
@@ -417,6 +425,7 @@ class GroupedCommunityPage extends StatelessWidget {
   final List<String> content;
   final void Function(int communityId) likePost;
   final void Function(int communityId) deletePost;
+  final AuthManager authManager;
 
   const GroupedCommunityPage({
     super.key,
@@ -425,6 +434,7 @@ class GroupedCommunityPage extends StatelessWidget {
     required this.content,
     required this.likePost,
     required this.deletePost,
+    required this.authManager,
   });
 
   @override
@@ -448,7 +458,7 @@ class GroupedCommunityPage extends StatelessWidget {
             ],
           ),
         ),
-        body: toListViewAllHobbies(content, likePost, deletePost),
+        body: toListViewAllHobbies(content, likePost, deletePost, authManager),
       ),
     );
   }
@@ -460,6 +470,7 @@ class CommunityTab extends StatelessWidget {
   final List<Community> myCommunitiesList;
   final Future<void> Function(int communityId) likePost;
   final Future<void> Function(int communityId) deletePost;
+  final AuthManager authManager;
 
   const CommunityTab({
     Key? key,
@@ -468,6 +479,7 @@ class CommunityTab extends StatelessWidget {
     required this.myCommunitiesList,
     required this.likePost,
     required this.deletePost,
+    required this.authManager,
   }) : super(key: key);
 
   @override
@@ -516,6 +528,7 @@ class CommunityTab extends StatelessWidget {
                       builder: (context) => SecondRootPage(
                         communityName: community.communityName,
                         communityID: community.communityId,
+                        authManager: authManager,
                       ),
                     ),
                   );
