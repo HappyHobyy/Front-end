@@ -8,8 +8,9 @@ class TagButton extends StatefulWidget {
   final Function(Community?) onPressed;
   final String? tagName;
   final AuthManager authManager;
+  final int type;
 
-  TagButton({required this.onPressed, this.tagName,required this.authManager});
+  TagButton({required this.type,required this.onPressed, this.tagName,required this.authManager});
 
   @override
   _TagButtonState createState() => _TagButtonState();
@@ -18,12 +19,14 @@ class TagButton extends StatefulWidget {
 class _TagButtonState extends State<TagButton> {
   String? _tagName;
   late AuthManager _authManager;
+  late int _type;
 
   @override
   void initState() {
     super.initState();
     _tagName = widget.tagName;
     _authManager = widget.authManager;
+    _type = widget.type;
   }
 
   @override
@@ -46,10 +49,18 @@ class _TagButtonState extends State<TagButton> {
             );
             if (result != null) {
               List<Community> communities = result;
-              setState(() {
-                _tagName = communities.first.communityName;
-              });
-              widget.onPressed(communities.first);
+              if(communities.isNotEmpty){
+                setState(() {
+                  _tagName = communities.first.communityName;
+                });
+                widget.onPressed(communities.first);
+              }
+              else{
+                setState(() {
+                  _tagName = "태그${_type}";
+                });
+                widget.onPressed(null);
+              }
             }
           },
           style: ElevatedButton.styleFrom(
