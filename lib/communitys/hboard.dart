@@ -19,6 +19,7 @@ class _HboardPageState extends State<HboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           widget.communityName,
           style: Constants.titleTextStyle,
