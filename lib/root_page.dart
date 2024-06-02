@@ -9,9 +9,7 @@ import 'package:hobbyhobby/constants.dart';
 class RootPage extends StatefulWidget {
   final AuthManager authManager;
   final int initialIndex;
-
-  const RootPage({Key? key, required this.authManager, this.initialIndex = 0})
-      : super(key: key);
+  const RootPage({Key? key, required this.authManager, this.initialIndex = 0}) : super(key: key);
 
   @override
   State<RootPage> createState() => _RootPageState();
@@ -24,7 +22,7 @@ class _RootPageState extends State<RootPage> {
   // 페이지 리스트
   List<Widget> _widgetOptions() {
     return [
-      const HomePage(),
+      HomePage(authManager: _authManager),
       CommunityPage(authManager: _authManager),
       UnionPage(authManager: _authManager),
       MyPage(authManager: _authManager),
@@ -37,13 +35,12 @@ class _RootPageState extends State<RootPage> {
     _bottomNavIndex = widget.initialIndex;
     _authManager = widget.authManager;
   }
-
   // 페이지 아이콘 리스트
-  List<IconData> iconList = [
-    Icons.home,
-    Icons.forum,
-    Icons.groups,
-    Icons.person,
+  List<String> iconList = [
+    'assets/메인아이콘.png',
+    'assets/커뮤니티아이콘.png',
+    'assets/연합아이콘.png',
+    'assets/마이페이지아이콘.png',
   ];
 
   // 네비게이션 바 제목 리스트
@@ -77,8 +74,11 @@ class _RootPageState extends State<RootPage> {
           selectedIconTheme: IconThemeData(color: Constants.primaryColor),
           items: List.generate(
             iconList.length,
-            (index) => BottomNavigationBarItem(
-              icon: Icon(iconList[index]),
+                (index) => BottomNavigationBarItem(
+                  icon: ImageIcon(
+                    AssetImage(iconList[index]),
+                    color: _bottomNavIndex == index ? Constants.primaryColor : Colors.black,
+                  ),
               label: titleList[index],
             ),
           ),

@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/root_page.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 
-class RecommendationPage extends StatelessWidget {
-  final String hobby1 = '축구';
-  final String hobby2 = '농구';
-  final String hobby3 = '야구';
+class RecommendationPage extends StatefulWidget {
+  final AuthManager authManager;
+  final List<String> hobbies;
 
-  const RecommendationPage({super.key});
+  const RecommendationPage({
+    Key? key,
+    required this.hobbies,
+    required this.authManager,
+  }) : super(key: key);
+
+  @override
+  _RecommendationPageState createState() => _RecommendationPageState();
+}
+
+class _RecommendationPageState extends State<RecommendationPage> {
+  late AuthManager _authManager;
+
+  @override
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,57 +35,66 @@ class RecommendationPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text.rich(
-                  TextSpan(
-                    text: '유저님에게는 ',
+                  Text(
+                    '유저님에게는',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 30,
-                    ), // 일반 텍스트
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: hobby1, // 첫 번째 변수
-                        style: TextStyle(
-                          color: Constants.textColor,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      TextSpan(
-                        text: ', ', // 일반 텍스트
-                      ),
-                      TextSpan(
-                        text: hobby2, // 두 번째 변수
-                        style: TextStyle(
-                          color: Constants.textColor,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      TextSpan(
-                        text: ',', // 일반 텍스트
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.hobbies[0], // 첫 번째 변수
+                    style: TextStyle(
+                      color: Constants.textColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 30,
+                    ),
+                  ),
+                  Text(
+                    ', ',
+                    style: TextStyle(
+                      color: Constants.textColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 30,
+                    ),// 일반 텍스트
+                  ),
+                  Text(
+                    widget.hobbies[1], // 두 번째 변수
+                    style: TextStyle(
+                      color: Constants.textColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 30,
+                    ),
+                  ),
+                  Text(
+                    ', ',
+                    style: TextStyle(
+                      color: Constants.textColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 30,
+                    ),// 일반 텍스트
+                  ),
+                  Text(
+                    widget.hobbies[2],
+                    style: TextStyle(
+                      color: Constants.textColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 30,
+                    ),
+                  ),
+                ],
+              ),
                     Text(
-                      hobby3,
+                      '취미가 잘 맞을 것 같아요',
                       style: TextStyle(
-                        color: Constants.textColor,
                         fontWeight: FontWeight.w700,
                         fontSize: 30,
                       ),
                     ),
-                    Text(
-                      '가 잘 맞을 것 같아요',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 30,
-                      ),
-                    ),
-                  ],
-                ),
+                const SizedBox(height: 50),
               ],
             ),
           ),
@@ -79,9 +105,12 @@ class RecommendationPage extends StatelessWidget {
             child: Center(
               child: InkWell(
                 onTap: () {
-                    Navigator.pop(
-                      context
-                    );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RootPage(authManager: _authManager),
+                    ),
+                  );
                 },
                 child: Container(
                   width: 330,

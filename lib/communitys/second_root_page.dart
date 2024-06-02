@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/Auth/auth_manager.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/communitys/community_home.dart';
 import 'package:hobbyhobby/communitys/hboard.dart';
 import 'package:hobbyhobby/communitys/review.dart';
 import 'package:hobbyhobby/communitys/rental.dart';
+import 'package:hobbyhobby/Auth/jwt_token_model.dart';
 
 class SecondRootPage extends StatefulWidget {
+  final AuthManager authManager;
   final String communityName;
   final int communityID;
 
   const SecondRootPage(
-      {Key? key, required this.communityName, required this.communityID})
+      {Key? key, required this.authManager, required this.communityName, required this.communityID})
       : super(key: key);
 
   @override
@@ -19,11 +22,20 @@ class SecondRootPage extends StatefulWidget {
 
 class _SecondRootPageState extends State<SecondRootPage> {
   int _selectedIndex = 0;
+  late AuthManager _authManager;
+  late Future<JwtToken> jwtTokenFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _authManager = widget.authManager;
+    jwtTokenFuture = _authManager.loadAccessToken();
+  }
 
   List<Widget> _widgetOptions() {
     return [
       CommunityHomePage(
-        communityName: widget.communityName,
+        authManager: widget.authManager, communityName: widget.communityName, communityID: widget.communityID,
       ),
       const HboardPage(),
       ReviewPage(
@@ -33,11 +45,12 @@ class _SecondRootPageState extends State<SecondRootPage> {
     ];
   }
 
-  List<IconData> secondiconList = [
-    Icons.monochrome_photos,
-    Icons.list_alt,
-    Icons.mode_comment_outlined,
-    Icons.recycling,
+  List<String> secondiconList = [
+    'assets/Hlog아이콘.png',
+    'assets/Hboard아이콘.png',
+    'assets/장비리뷰아이콘.png',
+    'assets/장비대여아이콘.png',
+
   ];
 
   List<String> secondtitleList = [
@@ -71,7 +84,10 @@ class _SecondRootPageState extends State<SecondRootPage> {
           items: List.generate(
             secondiconList.length,
             (index) => BottomNavigationBarItem(
-              icon: Icon(secondiconList[index]),
+              icon: ImageIcon(
+    AssetImage(secondiconList[index]),
+                size: 26.0,
+              ),
               label: secondtitleList[index],
             ),
           ),

@@ -12,6 +12,7 @@ import 'auth_repository.dart';
 import 'jwt_token_model.dart';
 
 class LoginPage extends StatefulWidget {
+
   final AuthRepository authRepository;
   final AuthManager authManager;
 

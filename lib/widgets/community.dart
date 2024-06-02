@@ -123,6 +123,7 @@ class _CommunityPageState extends State<CommunityPage> {
   late Future<List<Community>> myCommunitiesFuture;
   late Future<List<Community>> recommendedCommunitiesFuture;
   late Future<JwtToken> jwtTokenFuture;
+  bool _isLoading = true; // Add loading state
 
   @override
   void initState() {
@@ -135,32 +136,40 @@ class _CommunityPageState extends State<CommunityPage> {
   Future<void> _loadData() async {
     try {
       final jwtToken = await jwtTokenFuture;
+      // Initialize the futures
+      popularCommunitiesFuture = ApiService().fetchData(
+        jwtToken,
+        'community-service',
+        'api/community/popular',
+            (json) => Community.fromJson(json),
+      );
+      myCommunitiesFuture = ApiService().fetchData(
+        jwtToken,
+        'community-service',
+        'api/community/user',
+            (json) => Community.fromJson(json),
+      );
+      recommendedCommunitiesFuture = ApiService().fetchData(
+        jwtToken,
+        'community-service',
+        'api/community/recommend',
+            (json) => Community.fromJson(json),
+      );
+
+      // Assign the fetched data to myCommunitiesList
+      myCommunitiesList = await myCommunitiesFuture;
+
       setState(() {
-        // Initialize the futures
-        popularCommunitiesFuture = ApiService().fetchData(
-          jwtToken,
-          'community-service',
-          'api/community/popular',
-          (json) => Community.fromJson(json),
-        );
-        myCommunitiesFuture = ApiService().fetchData(
-          jwtToken,
-          'community-service',
-          'api/community/user',
-          (json) => Community.fromJson(json),
-        );
-        recommendedCommunitiesFuture = ApiService().fetchData(
-          jwtToken,
-          'community-service',
-          'api/community/recommend',
-          (json) => Community.fromJson(json),
-        );
+        _isLoading = false; // Update loading state
       });
 
       // Assign the fetched data to myCommunitiesList
       myCommunitiesList = await myCommunitiesFuture;
     } catch (e) {
       print("Error loading data: $e");
+      setState(() {
+        _isLoading = false; // Update loading state even if there's an error
+      });
     }
   }
 
@@ -174,8 +183,6 @@ class _CommunityPageState extends State<CommunityPage> {
         {'communityId': communityId},
       );
       print('Post liked successfully');
-      // Reload data
-      await _loadData();
     } catch (e) {
       print("Error liking post: $e");
     }
@@ -227,6 +234,7 @@ class _CommunityPageState extends State<CommunityPage> {
               context,
               MaterialPageRoute(
                 builder: (context) => SecondRootPage(
+                  authManager: _authManager,
                   communityName: community.communityName,
                   communityID: community.communityId,
                 ),
@@ -238,8 +246,11 @@ class _CommunityPageState extends State<CommunityPage> {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
-    return Theme(
+    return _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : Theme(
       data: ThemeData(
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
@@ -248,6 +259,7 @@ class _CommunityPageState extends State<CommunityPage> {
           length: hobbyTabs.length,
           child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
                 title: Text(
                   '커뮤니티',
                   style: Constants.titleTextStyle,
@@ -255,11 +267,11 @@ class _CommunityPageState extends State<CommunityPage> {
                 bottom: TabBar(
                   splashFactory: NoSplash.splashFactory,
                   overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                      (Set<MaterialState> states) {
-                    return states.contains(MaterialState.focused)
-                        ? null
-                        : Colors.transparent;
-                  }),
+                          (Set<MaterialState> states) {
+                        return states.contains(MaterialState.focused)
+                            ? null
+                            : Colors.transparent;
+                      }),
                   labelStyle: const TextStyle(
                     fontSize: 15,
                   ),
@@ -271,12 +283,17 @@ class _CommunityPageState extends State<CommunityPage> {
                 FutureBuilder<List<Community>>(
                   future: myCommunitiesFuture,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                    if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(
+                          child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No communities found.'));
+                      return Center(
+                          child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text('No communities found.'));
                     } else {
                       return toListView(snapshot.data!);
                     }
@@ -285,12 +302,17 @@ class _CommunityPageState extends State<CommunityPage> {
                 FutureBuilder<List<Community>>(
                   future: recommendedCommunitiesFuture,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                    if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(
+                          child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No communities found.'));
+                      return Center(
+                          child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text('No communities found.'));
                     } else {
                       return toListView(snapshot.data!);
                     }
@@ -299,12 +321,17 @@ class _CommunityPageState extends State<CommunityPage> {
                 FutureBuilder<List<Community>>(
                   future: popularCommunitiesFuture,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                    if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(
+                          child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No communities found.'));
+                      return Center(
+                          child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text('No communities found.'));
                     } else {
                       return toListView(snapshot.data!);
                     }
@@ -320,24 +347,26 @@ class _CommunityPageState extends State<CommunityPage> {
                       return Container(); // zero height: not visible
                     } else {
                       return ListTile(
-                          // leading: ImageIcon(allHobbiesListIcons[index]),
-                          leading: ImageIcon(allHobbiesListIcons[index]),
-                          title: Text(allHobbiesList[index]),
-                          trailing: const Icon(Icons.navigate_next),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => GroupedCommunityPage(
-                                  title: allHobbiesList[index],
-                                  icon: ImageIcon((allHobbiesListIcons[index])),
-                                  content: hobbyCategories[index],
-                                  likePost: likePost,
-                                  deletePost: deletePost,
-                                ),
+                        leading: ImageIcon(allHobbiesListIcons[index]),
+                        title: Text(allHobbiesList[index]),
+                        trailing: const Icon(Icons.navigate_next),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GroupedCommunityPage(
+                                title: allHobbiesList[index],
+                                icon: ImageIcon(
+                                    (allHobbiesListIcons[index])),
+                                content: hobbyCategories[index],
+                                likePost: likePost,
+                                deletePost: deletePost,
+                                authManager: _authManager, // Pass the _authManager here
                               ),
-                            );
-                          });
+                            ),
+                          );
+                        },
+                      );
                     }
                   },
                 ),
@@ -349,53 +378,56 @@ class _CommunityPageState extends State<CommunityPage> {
 }
 
 ListView toListViewAllHobbies(
-  List<String> strings,
-  void Function(int communityId) likePost,
-  void Function(int communityId) deletePost,
-) {
+    List<String> strings,
+    void Function(int communityId) likePost,
+    void Function(int communityId) deletePost,
+    AuthManager authManager, // Add this parameter
+    ) {
   return ListView.separated(
-      separatorBuilder: (context, index) => Divider(
-            color: Colors.grey[200],
+    separatorBuilder: (context, index) => Divider(
+      color: Colors.grey[200],
+    ),
+    itemCount: strings.length + 1,
+    itemBuilder: (context, index) {
+      if (index == strings.length) {
+        // 마지막 divider 추가
+        return Container(); // zero height: not visible
+      } else {
+        final communityId = allHobbiesMaptoList.indexOf(strings[index]);
+        final isLiked = myCommunitiesList
+            .any((community) => community.communityId == communityId);
+        return ListTile(
+          leading: CircleAvatar(
+            backgroundImage: Constants.hobbyImageMap[strings[index]],
           ),
-      itemCount: strings.length + 1,
-      itemBuilder: (context, index) {
-        if (index == strings.length) {
-          // 마지막 divider 추가
-          return Container(); // zero height: not visible
-        } else {
-          final communityId = allHobbiesMaptoList.indexOf(strings[index]);
-          final isLiked = myCommunitiesList
-              .any((community) => community.communityId == communityId);
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: Constants.hobbyImageMap[strings[index]],
-            ),
-            title: Text(strings[index]),
-            trailing: LikeButton(
-              isLiked: isLiked,
-              onLikedChanged: (bool liked) {
-                if (liked) {
-                  likePost(communityId);
-                } else {
-                  deletePost(communityId);
-                }
-                print('Button liked state is: $liked');
-              },
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SecondRootPage(
-                    communityName: strings[index],
-                    communityID: communityId,
-                  ),
-                ),
-              );
+          title: Text(strings[index]),
+          trailing: LikeButton(
+            isLiked: isLiked,
+            onLikedChanged: (bool liked) {
+              if (liked) {
+                likePost(communityId);
+              } else {
+                deletePost(communityId);
+              }
+              print('Button liked state is: $liked');
             },
-          );
-        }
-      });
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SecondRootPage(
+                  authManager: authManager, // Pass authManager here
+                  communityName: strings[index],
+                  communityID: communityId,
+                ),
+              ),
+            );
+          },
+        );
+      }
+    },
+  );
 }
 
 class GroupedCommunityPage extends StatelessWidget {
@@ -404,6 +436,7 @@ class GroupedCommunityPage extends StatelessWidget {
   final List<String> content;
   final void Function(int communityId) likePost;
   final void Function(int communityId) deletePost;
+  final AuthManager authManager; // Add this parameter
 
   const GroupedCommunityPage({
     super.key,
@@ -412,6 +445,7 @@ class GroupedCommunityPage extends StatelessWidget {
     required this.content,
     required this.likePost,
     required this.deletePost,
+    required this.authManager, // Add this parameter
   });
 
   @override
@@ -435,7 +469,7 @@ class GroupedCommunityPage extends StatelessWidget {
             ],
           ),
         ),
-        body: toListViewAllHobbies(content, likePost, deletePost),
+        body: toListViewAllHobbies(content, likePost, deletePost, authManager), // Pass authManager here
       ),
     );
   }

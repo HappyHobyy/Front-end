@@ -4,7 +4,7 @@ class User {
   final String? password;
   final String? userNickName;
   final String? userName;
-  final int? phoneNumber;
+  final String? phoneNumber;
   final UserType userType;
   final String? deviceToken;
   final String? birth;
@@ -60,7 +60,7 @@ class User {
   User.withUserRegister({
     required String userEmail,
     required String password,
-    required int phoneNumber,
+    required String phoneNumber,
     required String userNickName,
     required String userName,
     required UserType userType,
