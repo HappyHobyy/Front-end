@@ -352,6 +352,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
                           Row(
                             children: <Widget>[
                               TagButton(
+                                type: 1,
                                 tagName: _tag1?.communityName ?? "태그1",
                                 onPressed: (result) {
                                   updateTag1(result);
@@ -359,6 +360,7 @@ class _CreateUnionPageState extends State<CreateUnion> {
                                 authManager: _authManager,
                               ),
                               TagButton(
+                                type: 2,
                                 tagName: _tag2?.communityName?? "태그2",
                                 onPressed: (tagName) {
                                   updateTag2(tagName);
