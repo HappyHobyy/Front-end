@@ -101,18 +101,25 @@ class DetailPage extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: AssetImage('assets/profile_picture.png'),
+                      backgroundImage: AssetImage('assets/profile_picture_com1.png'),
                     ),
-                    title: Text('Commenter 1'),
-                    subtitle: Text('This is a comment.'),
+                    title: Text('mocoa'),
+                    subtitle: Text('오늘 진짜 인정! 너무너무 재밌었어요.'),
                   ),
                   ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: AssetImage('assets/profile_picture.png'),
+                      backgroundImage: AssetImage('assets/profile_picture_com2.png'),
                     ),
-                    title: Text('Commenter 2'),
-                    subtitle: Text('This is another comment.'),
+                    title: Text('피알아이'),
+                    subtitle: Text('드리븐님은 정말 매주 빠짐없이 나가시네요'),
                   ),
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: AssetImage('assets/profile_picture_com3.png'),
+                    ),
+                    title: Text('꼬마앙마'),
+                    subtitle: Text('담주엔 꼭!!! 모임 참석 일찍 누를께요,,,ㅠㅠ'),
+                  )
                 ],
               ),
             ),
