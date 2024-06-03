@@ -38,10 +38,10 @@ class _SecondRootPageState extends State<SecondRootPage> {
         authManager: widget.authManager, communityName: widget.communityName, communityID: widget.communityID,
       ),
       HboardPage(
-        communityName: widget.communityName,
+        authManager: widget.authManager, communityName: widget.communityName, communityID: widget.communityID
       ),
       ReviewPage(
-        communityName: widget.communityName,
+          authManager: widget.authManager, communityName: widget.communityName, communityID: widget.communityID
       ),
       const RentalPage(),
     ];

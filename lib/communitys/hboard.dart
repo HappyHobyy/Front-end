@@ -1,38 +1,56 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../Auth/auth_manager.dart';
 import '../constants.dart';
+import '../root_page.dart';
 import '../widgets/like_button.dart';
 import 'hboard_detail_page.dart';
 
-class HboardPage extends StatefulWidget {
-  final String communityName;
+// class HboardPage extends StatefulWidget {
+//   final String communityName;
+//   final AuthManager
+//
+//   const HboardPage({super.key, required this.communityName});
+//
+//   @override
+//   State<HboardPage> createState() => _HboardPageState();
+// }
 
-  const HboardPage({super.key, required this.communityName});
+class HboardPage extends StatefulWidget {
+  final AuthManager authManager;
+  final String communityName;
+  final int communityID;
+
+  const HboardPage({super.key, required this.authManager, required this.communityName, required this.communityID});
 
   @override
   State<HboardPage> createState() => _HboardPageState();
 }
 
 class _HboardPageState extends State<HboardPage> {
+  late AuthManager _authManager = widget.authManager;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RootPage(authManager: _authManager, initialIndex: 1),
+              ),
+            );
+          },
           icon: Icon(Icons.arrow_back),
         ),
         title: Text(
           widget.communityName,
-          style: Constants.titleTextStyle,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        actions: const [
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: LikeButton()),
-        ],
         scrolledUnderElevation: 0,
       ),
       body: Column(
