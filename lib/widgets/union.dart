@@ -284,25 +284,40 @@ class MeetingTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            truncateText(meeting.userNickname, 8),
-            overflow: TextOverflow.ellipsis,
+          SizedBox(
+           width: 50,
+            child: Text(
+              truncateText(meeting.userNickname, 8),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          const SizedBox(width: 50),
           const Icon(Icons.account_circle_sharp, size: 15),
           const SizedBox(width: 5),
-          Text('${meeting.maxPeople}'),
-          const SizedBox(width: 30),
-          Text(
-            '# ${getCommunityName(meeting.tag1)}',
-            style: const TextStyle(fontSize: 12),
+          SizedBox(
+            width: 30,
+            child: Text('${meeting.maxPeople}'),
           ),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 60,
+            child: Text(
+              '# ${getCommunityName(meeting.tag1)}',
+              style: const TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 10),
           if (!isSingleMeeting) ...[
             const SizedBox(width: 5),
-            Text(
-              '# ${getCommunityName(meeting.tag2)}',
-              style: const TextStyle(fontSize: 12),
+            SizedBox(
+              width: 60,
+              child: Text(
+                '# ${getCommunityName(meeting.tag2)}',
+                style: const TextStyle(fontSize: 12),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
           const SizedBox(width: 20),

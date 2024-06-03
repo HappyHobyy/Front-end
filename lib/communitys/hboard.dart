@@ -22,7 +22,11 @@ class HboardPage extends StatefulWidget {
   final String communityName;
   final int communityID;
 
-  const HboardPage({super.key, required this.authManager, required this.communityName, required this.communityID});
+  const HboardPage(
+      {super.key,
+      required this.authManager,
+      required this.communityName,
+      required this.communityID});
 
   @override
   State<HboardPage> createState() => _HboardPageState();
@@ -30,6 +34,7 @@ class HboardPage extends StatefulWidget {
 
 class _HboardPageState extends State<HboardPage> {
   late AuthManager _authManager = widget.authManager;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +44,8 @@ class _HboardPageState extends State<HboardPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RootPage(authManager: _authManager, initialIndex: 1),
+                builder: (context) =>
+                    RootPage(authManager: _authManager, initialIndex: 1),
               ),
             );
           },
@@ -88,7 +94,8 @@ class _HboardPageState extends State<HboardPage> {
     List<PostData> postDataList = [
       PostData(title: "오늘의 풋살 후기", author: "드리븐마스터", time: "09:41"),
       PostData(title: "안녕하세요!", author: "터치마에스트로", time: "09:30"),
-      PostData(title: "올 것이 왔습니다...(feat 찰리 tf)", author: "SIUUUU", time: "08:16"),
+      PostData(
+          title: "올 것이 왔습니다...(feat 찰리 tf)", author: "SIUUUU", time: "08:16"),
       PostData(title: "풋살 시작한지 1년이 지났네~^^", author: "Apple", time: "08:06"),
       PostData(title: "무릎 부상 후기", author: "케하", time: "07:49"),
       PostData(title: "공인구 예약 구매 문의", author: "사무엘디", time: "07:35"),
@@ -106,7 +113,13 @@ class _HboardPageState extends State<HboardPage> {
           title: Text(postData.title),
           subtitle: Row(
             children: [
-              Text(postData.author),
+              SizedBox(
+                width: 100,
+                child: Text(
+                  postData.author,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               SizedBox(width: 5),
               Row(
                 children: [
