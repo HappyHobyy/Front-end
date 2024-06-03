@@ -52,7 +52,7 @@ class _RentalPageState extends State<RentalPage> {
       },
       child: Container(
         width: double.infinity, // Container width to fill parent width
-        height: 450, // Set a specific height if needed
+        height: 470, // Set a specific height if needed
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.0), // Rounded corners
@@ -73,7 +73,7 @@ class _RentalPageState extends State<RentalPage> {
               Image.asset(
                   'assets/홈카페2.png',
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Padding(
                 padding: EdgeInsets.only(left: 10),
                 child: Text(
@@ -122,7 +122,7 @@ class _RentalPageState extends State<RentalPage> {
       },
       child: Container(
         width: double.infinity, // Container width to fill parent width
-        height: 450, // Set a specific height if needed
+        height: 470, // Set a specific height if needed
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.0), // Rounded corners
@@ -141,7 +141,7 @@ class _RentalPageState extends State<RentalPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image.asset('assets/홈카페1.png'),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Padding(
                 padding: EdgeInsets.only(left: 10),
                 child: Text(
@@ -201,7 +201,7 @@ class Detail1Page extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 290, // Set the desired height
+                height: 400, // Set the desired height
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0), // Rounded corners
@@ -335,7 +335,7 @@ class Detail1Page extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 30.0, left: 25, right: 25, top: 16),
+        padding: const EdgeInsets.only(bottom: 30.0, left: 25, right: 25, top: 20),
         child: ElevatedButton(
           onPressed: () {
             // Add your rental functionality here
@@ -370,7 +370,7 @@ class Detail2Page extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 290, // Set the desired height
+                height: 400, // Set the desired height
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0), // Rounded corners
@@ -424,49 +424,49 @@ class Detail2Page extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                '  1. 에스프레소 머신: 딜리코 CRM3605S',
+                '  1. 에스프레소 머신: 가찌아 클래식 에보 프로',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
                 ),
               ),
               Text(
-                ' 58mm 포터필더 규격과 3 Way 밸브, 15BAR 펌프',
+                ' 에스프레소 머신 필수 덕목은 기본. 안정적인 연속',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
                 ),
               ),
               Text(
-                ' 압력, 추출시간 타이머 등을 제공하여 필수 덕목을 모',
+                ' 추출을 위한 PID까지. 제품 변화는 없어도 꾸준히 사',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
                 ),
               ),
               Text(
-                ' 두 갖춘 입문자용 머신 (포터필터, 탬퍼 포함)',
+                ' 랑받는 중급자용 머신 (포터필터, 탬퍼 포함)',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
                 ),
               ),
               Text(
-                '  2. 그라인더: ITOP 03(하이퍼노바 울트라 7코어)',
+                '  2. 그라인더: 세테 270',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
                 ),
               ),
               Text(
-                ' 코니컬 버의 깔끔함과 묵직한 바디감, 달콤함을 잘',
+                ' 코니컬 버를 사용했지만 플랫버의 맛까지 구현? 초',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
                 ),
               ),
               Text(
-                ' 살려 입문자들의 입맛에 딱 맞춤 가성비 그라인더',
+                ' 상급자도 잊지 못해 재구매하는 중급자용 그라인더.',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 16,
@@ -504,7 +504,7 @@ class Detail2Page extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 30.0, left: 25, right: 25, top: 16),
+        padding: const EdgeInsets.only(bottom: 30.0, left: 25, right: 25, top: 20),
         child: ElevatedButton(
           onPressed: () {
             // Add your rental functionality here
