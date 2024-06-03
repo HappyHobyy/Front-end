@@ -126,8 +126,6 @@ class _CommunityPageState extends State<CommunityPage>
   late Future<JwtToken> jwtTokenFuture;
   late TabController _tabController;
 
-  List<Community> myCommunitiesList = []; // Initialize with an empty list
-
   @override
   void initState() {
     super.initState();
@@ -180,6 +178,9 @@ class _CommunityPageState extends State<CommunityPage>
         );
       });
     });
+    myCommunitiesFuture = Future.value([]);
+    recommendedCommunitiesFuture = Future.value([]);
+    popularCommunitiesFuture = Future.value([]);
   }
 
   Future<void> _refreshMyCommunities() async {
