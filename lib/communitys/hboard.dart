@@ -114,7 +114,7 @@ class _HboardPageState extends State<HboardPage> {
           subtitle: Row(
             children: [
               SizedBox(
-                width: 100,
+                width: 270,
                 child: Text(
                   postData.author,
                   overflow: TextOverflow.ellipsis,
