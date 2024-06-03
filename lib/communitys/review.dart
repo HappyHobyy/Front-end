@@ -19,6 +19,10 @@ class _ReviewPageState extends State<ReviewPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.arrow_back),
+        ),
         title: Text(
           widget.communityName,
           style: Constants.titleTextStyle,
