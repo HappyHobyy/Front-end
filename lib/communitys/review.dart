@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/communitys/review_detail.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/widgets/like_button.dart';
 
@@ -17,6 +18,7 @@ class _ReviewPageState extends State<ReviewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           widget.communityName,
           style: Constants.titleTextStyle,
@@ -65,7 +67,7 @@ class _ReviewPageState extends State<ReviewPage> {
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Image.asset(
-            "assets/community_icons/Drawing.png",
+            "assets/장비리뷰예시1.png",
             fit: BoxFit.cover,
           ),
         ),
@@ -90,12 +92,20 @@ class _ReviewPageState extends State<ReviewPage> {
             Text("09:41"),
           ],
         ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
       ),
       ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Image.asset(
-            "assets/community_icons/Drawing.png",
+            "assets/장비리뷰예시3.png",
             fit: BoxFit.cover,
           ),
         ),
@@ -120,6 +130,14 @@ class _ReviewPageState extends State<ReviewPage> {
             Text("09:41"),
           ],
         ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
       ),
     ]);
   }

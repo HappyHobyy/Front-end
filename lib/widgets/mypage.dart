@@ -10,12 +10,12 @@ import 'package:page_transition/page_transition.dart';
 import '../Auth/auth_remote_api.dart';
 import '../DataSource/local_data_storage.dart';
 
-int postsNum = 0;
-int likesNum = 0;
+int postsNum = 1;
+int likesNum = 10;
 int commentsNum = 0;
-String userName = 'John Doe';
-String userEmail = 'johndoe@example.com';
-NetworkImage userImage = NetworkImage('https://via.placeholder.com/150');
+String userName = '뉴트리아';
+String userEmail = 'qkrwldn2010@naver.com';
+AssetImage userImage = AssetImage('assets/마이페이지예시.png');
 
 class MyPage extends StatefulWidget {
   final AuthManager authManager;
