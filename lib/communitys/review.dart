@@ -1,31 +1,56 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hobbyhobby/communitys/review_detail.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:hobbyhobby/widgets/like_button.dart';
 
-class ReviewPage extends StatefulWidget {
-  final String communityName;
+import '../Auth/auth_manager.dart';
+import '../root_page.dart';
 
-  const ReviewPage({super.key, required this.communityName});
+// class ReviewPage extends StatefulWidget {
+//   final String communityName;
+//
+//   const ReviewPage({super.key, required this.communityName});
+//
+//   @override
+//   State<ReviewPage> createState() => _ReviewPageState();
+// }
+
+class ReviewPage extends StatefulWidget {
+  final AuthManager authManager;
+  final String communityName;
+  final int communityID;
+
+  const ReviewPage({super.key, required this.authManager, required this.communityName, required this.communityID});
 
   @override
   State<ReviewPage> createState() => _ReviewPageState();
 }
 
 class _ReviewPageState extends State<ReviewPage> {
+  late AuthManager _authManager = widget.authManager;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RootPage(authManager: _authManager, initialIndex: 1),
+              ),
+            );
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         title: Text(
           widget.communityName,
-          style: Constants.titleTextStyle,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        actions: const [
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: LikeButton()),
-        ],
         scrolledUnderElevation: 0,
       ),
       body: Column(
@@ -65,7 +90,7 @@ class _ReviewPageState extends State<ReviewPage> {
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Image.asset(
-            "assets/community_icons/Drawing.png",
+            "assets/장비리뷰예시1.png",
             fit: BoxFit.cover,
           ),
         ),
@@ -90,12 +115,20 @@ class _ReviewPageState extends State<ReviewPage> {
             Text("09:41"),
           ],
         ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
       ),
       ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Image.asset(
-            "assets/community_icons/Drawing.png",
+            "assets/장비리뷰예시3.png",
             fit: BoxFit.cover,
           ),
         ),
@@ -120,6 +153,14 @@ class _ReviewPageState extends State<ReviewPage> {
             Text("09:41"),
           ],
         ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
       ),
     ]);
   }

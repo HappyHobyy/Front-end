@@ -86,6 +86,10 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    String getCommunityName(int communityId) {
+      return Constants.communities[communityId]?.communityName ?? 'Unknown';
+    }
+
     return Scaffold(
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -149,10 +153,10 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                             ),
                           ),
                           const SizedBox(width: 80),
-                          _buildTag('${_meetings.tag1}'),
+                          _buildTag('${getCommunityName(_meetings.tag1)}'),
                           const SizedBox(width: 10),
                           if (_meetings is UnionMeeting)
-                            _buildTag('${_meetings.tag2}'),
+                            _buildTag('${getCommunityName(_meetings.tag2)}'),
                         ],
                       ),
                       Divider(
