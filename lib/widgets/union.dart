@@ -269,6 +269,10 @@ class MeetingTile extends StatelessWidget {
           : text;
     }
 
+    String getCommunityName(int communityId) {
+      return Constants.communities[communityId]?.communityName ?? 'Unknown';
+    }
+
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: meeting.imageUrl.startsWith('http')
@@ -289,20 +293,16 @@ class MeetingTile extends StatelessWidget {
           const Icon(Icons.account_circle_sharp, size: 15),
           const SizedBox(width: 5),
           Text('${meeting.maxPeople}'),
-          const SizedBox(width: 50),
-          Expanded(
-            child: Text(
-              '# ${meeting.tag1}',
-              style: const TextStyle(fontSize: 12),
-            ),
+          const SizedBox(width: 30),
+          Text(
+            '# ${getCommunityName(meeting.tag1)}',
+            style: const TextStyle(fontSize: 12),
           ),
           if (!isSingleMeeting) ...[
             const SizedBox(width: 5),
-            Expanded(
-              child: Text(
-                '# ${meeting.tag2}',
-                style: const TextStyle(fontSize: 12),
-              ),
+            Text(
+              '# ${getCommunityName(meeting.tag2)}',
+              style: const TextStyle(fontSize: 12),
             ),
           ],
           const SizedBox(width: 20),
