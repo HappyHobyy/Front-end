@@ -94,7 +94,7 @@ class _ReviewPageState extends State<ReviewPage> {
             fit: BoxFit.cover,
           ),
         ),
-        title: const Text("지냑 찰리 TF 풋살화 리뷰"),
+        title: const Text("지냑 찰리 TF"),
         subtitle: const Text("축구화"),
         trailing: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -132,7 +132,7 @@ class _ReviewPageState extends State<ReviewPage> {
             fit: BoxFit.cover,
           ),
         ),
-        title: const Text('스포츠트라이브 풋살공 리뷰'),
+        title: const Text('스포츠트라이브 s1+'),
         subtitle: const Text("축구공"),
         trailing: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -150,7 +150,7 @@ class _ReviewPageState extends State<ReviewPage> {
               ],
             ),
             SizedBox(height: 4.0), // Add some space between rows
-            Text("09:41"),
+            Text("09:38"),
           ],
         ),
         onTap: () {
@@ -162,6 +162,310 @@ class _ReviewPageState extends State<ReviewPage> {
           );
         },
       ),
+      ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.asset(
+            "assets/장비리뷰예시4.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: const Text("나이키 리액트 팬텀 GX 프로 TF"),
+        subtitle: const Text("축구화"),
+        trailing: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                SizedBox(width: 4.0), // Add some space between icon and text
+                Text("4.2"),
+              ],
+            ),
+            SizedBox(height: 4.0), // Add some space between rows
+            Text("09:30"),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.asset(
+            "assets/장비리뷰예시5.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: const Text("아디다스 프레데터 엣지.1 tf"),
+        subtitle: const Text("축구화"),
+        trailing: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                SizedBox(width: 4.0), // Add some space between icon and text
+                Text("4.5"),
+              ],
+            ),
+            SizedBox(height: 4.0), // Add some space between rows
+            Text("08:58"),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.asset(
+            "assets/장비리뷰예시6.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: const Text("아디다스 프레데터 GL PRO"),
+        subtitle: const Text("골기퍼장갑"),
+        trailing: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                SizedBox(width: 4.0), // Add some space between icon and text
+                Text("4.6"),
+              ],
+            ),
+            SizedBox(height: 4.0), // Add some space between rows
+            Text("08:34"),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.asset(
+            "assets/장비리뷰예시7.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: const Text("아디다스 UCL 프로 23/24 녹아웃 볼"),
+        subtitle: const Text("축구공"),
+        trailing: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                SizedBox(width: 4.0), // Add some space between icon and text
+                Text("4.0"),
+              ],
+            ),
+            SizedBox(height: 4.0), // Add some space between rows
+            Text("08:13"),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.asset(
+            "assets/장비리뷰예시8.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: const Text("미즈노 모나르시다 네오 살라 클럽 TF"),
+        subtitle: const Text("축구화"),
+        trailing: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                SizedBox(width: 4.0), // Add some space between icon and text
+                Text("4.3"),
+              ],
+            ),
+            SizedBox(height: 4.0), // Add some space between rows
+            Text("08:02"),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.asset(
+            "assets/장비리뷰예시9.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: const Text("나이키 플라이트 매치볼"),
+        subtitle: const Text("축구공"),
+        trailing: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                SizedBox(width: 4.0), // Add some space between icon and text
+                Text("4.8"),
+              ],
+            ),
+            SizedBox(height: 4.0), // Add some space between rows
+            Text("07:46"),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.asset(
+            "assets/장비리뷰예시10.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: const Text("푸마 울트라 얼티메이트 케이지 TF"),
+        subtitle: const Text("축구화"),
+        trailing: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                SizedBox(width: 4.0), // Add some space between icon and text
+                Text("4.7"),
+              ],
+            ),
+            SizedBox(height: 4.0), // Add some space between rows
+            Text("07:31"),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.asset(
+            "assets/장비리뷰예시11.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+        title: const Text("푸마 울트라 얼티메이트 1 NC"),
+        subtitle: const Text("골기퍼장갑"),
+        trailing: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                SizedBox(width: 4.0), // Add some space between icon and text
+                Text("4.5"),
+              ],
+            ),
+            SizedBox(height: 4.0), // Add some space between rows
+            Text("07:09"),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewDetailPage(),
+            ),
+          );
+        },
+      )
     ]);
   }
 }

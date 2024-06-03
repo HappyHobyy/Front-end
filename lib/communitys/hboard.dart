@@ -88,7 +88,13 @@ class _HboardPageState extends State<HboardPage> {
     List<PostData> postDataList = [
       PostData(title: "오늘의 풋살 후기", author: "드리븐마스터", time: "09:41"),
       PostData(title: "안녕하세요!", author: "터치마에스트로", time: "09:30"),
-      PostData(title: "게시물 예시_2", author: "작성자이름", time: "08:16"),
+      PostData(title: "올 것이 왔습니다...(feat 찰리 tf)", author: "SIUUUU", time: "08:16"),
+      PostData(title: "풋살 시작한지 1년이 지났네~^^", author: "Apple", time: "08:06"),
+      PostData(title: "무릎 부상 후기", author: "케하", time: "07:49"),
+      PostData(title: "공인구 예약 구매 문의", author: "사무엘디", time: "07:35"),
+      PostData(title: "드리블 훈련 어떻게 하면 될까요?", author: "꼬부기맥부기팀쿠기", time: "07:24"),
+      PostData(title: "안산 풋살장 추천 부탁드립니다.", author: "ReasoN", time: "07:11"),
+      PostData(title: "안녕하세요~~:)", author: "lumina름", time: "06:58")
     ];
 
     return ListView.separated(
