@@ -37,7 +37,9 @@ class _SecondRootPageState extends State<SecondRootPage> {
       CommunityHomePage(
         authManager: widget.authManager, communityName: widget.communityName, communityID: widget.communityID,
       ),
-      const HboardPage(),
+      HboardPage(
+        communityName: widget.communityName,
+      ),
       ReviewPage(
         communityName: widget.communityName,
       ),
