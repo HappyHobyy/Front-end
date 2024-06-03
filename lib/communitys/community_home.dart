@@ -124,8 +124,21 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => RootPage(authManager: _authManager, initialIndex: 1),
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => RootPage(authManager: _authManager, initialIndex: 1),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  const begin = Offset(-1.0, 0.0); // 왼쪽에서 시작
+                  const end = Offset.zero; // 제자리
+                  const curve = Curves.ease;
+
+                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                  var offsetAnimation = animation.drive(tween);
+
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  );
+                },
               ),
             );
           },
