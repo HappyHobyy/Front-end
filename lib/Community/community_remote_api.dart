@@ -10,8 +10,7 @@ class CommunityRemoteApi {
   CommunityRemoteApi() {
     httpClient = http.Client();
   }
-
-  //객체로 받아와야함 차우
+  
   Future<bool> getCommunityPopularContents(JwtToken jwtToken) async {
     var uri = Uri.http('52.79.143.36:8000',
         'community-service/api/community/popular/contents');

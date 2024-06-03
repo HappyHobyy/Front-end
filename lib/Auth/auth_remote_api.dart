@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:hobbyhobby/Auth/user_model.dart';
 import 'package:http/http.dart' as http;
-
 import 'jwt_token_model.dart';
 
 class AuthRemoteApi {
@@ -103,6 +101,25 @@ class AuthRemoteApi {
       return JwtToken.fromJson(data);
     } else {
       throw Exception();
+    }
+  }
+  Future<bool> checkNicknameDuplicate(String nickname) async {
+    var uri = Uri.http('52.79.143.36:8000', 'user-service/api/auth/register/nickName');
+    String jsonData = jsonEncode({'nickname': nickname});
+
+    final response = await httpClient.post(
+      uri,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonData,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      return data['isDuplicate'] ?? false;
+    } else {
+      return true;
     }
   }
 }

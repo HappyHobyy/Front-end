@@ -34,13 +34,17 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
   var _birthInputText = TextEditingController();
   var _phoneInputText = TextEditingController();
   var _phoneAuthText = TextEditingController();
+  late String phoneNum = _phoneInputText.text.replaceAll('-', '');
   late AuthRepository _authRepository;
   late AuthManager _authManager;
   DateTime? _selectedDate;
+  bool _isNicknameDuplicate = false;
+  late AuthRemoteApi _authRemoteApi;
 
   @override
   void initState() {
     super.initState();
+    _authRemoteApi = AuthRemoteApi();
     _authRepository = widget.authRepository;
     _password = widget.password;
     _email = widget.email;
@@ -78,6 +82,35 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
         );
       },
     );
+  }
+  Future<void> _checkNicknameDuplicate() async {
+    try {
+      bool isDuplicate = await _authRemoteApi.checkNicknameDuplicate(
+          _nicknameInputText.text);
+      setState(() {
+        _isNicknameDuplicate = isDuplicate;
+      });
+      if (_isNicknameDuplicate) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('중복된 닉네임입니다.'),
+            backgroundColor: Constants.primaryColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('사용 가능한 닉네임 입니다.'),
+            backgroundColor: Constants.primaryColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (error) {
+      print('$error');
+    }
   }
 
   @override
@@ -131,28 +164,26 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
                   hintText: ' 닉네임',
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.grey.withOpacity(0.3), // 변경할 색상 설정
-                      width: 2.0, // 테두리 두께 설정
+                      color: _isNicknameDuplicate ? Colors.red : Colors.grey.withOpacity(0.3),
+                      width: 2.0
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Constants.primaryColor, // 변경할 색상 설정
-                      width: 2.0, // 테두리 두께 설정
+                      color: _isNicknameDuplicate ? Colors.red : Constants.primaryColor,
+                      width: 2.0,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   suffixIcon: InkWell(
-                    onTap: () {
-                      // 중복 확인 기능 추가
-                    },
+                    onTap: _checkNicknameDuplicate,
                     child: Padding(
                       padding: EdgeInsets.only(right: 5),
                       child: Container(
                         padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
-                          color: Constants.primaryColor,
+                          color: _isNicknameDuplicate ? Colors.red : Constants.primaryColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(
@@ -217,6 +248,29 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
               const SizedBox(height: 10),
               TextField(
                 controller: _phoneInputText,
+                onChanged: (value) {
+                  // 입력된 문자열에서 숫자만 필터링하여 새로운 문자열을 만듭니다.
+                  String digitsOnly = value.replaceAll(RegExp(r'[^0-9]'), ''); // 숫자와 '-' 제거
+
+                  // 사용자가 '-'를 추가하거나 제거할 때, 휴대폰 번호 형식을 유지합니다.
+                  if (digitsOnly.length > 3 && digitsOnly.length <= 7) {
+                    // 010-xxxx 형식
+                    _phoneInputText.value = TextEditingValue(
+                      text: '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3)}',
+                      selection: TextSelection.collapsed(offset: '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3)}'.length),
+                    );
+                  } else if (digitsOnly.length > 7) {
+                    // 010-xxxx-xxxx 형식
+                    _phoneInputText.value = TextEditingValue(
+                      text: '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3, 7)}-${digitsOnly.substring(7)}',
+                      selection: TextSelection.collapsed(offset: '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3, 7)}-${digitsOnly.substring(7)}'.length),
+                    );
+                  }
+                },
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(11), // 전화번호 최대 길이 제한
+                ],
                 decoration: InputDecoration(
                   hintText: ' 휴대폰 번호',
                   enabledBorder: OutlineInputBorder(
@@ -303,7 +357,7 @@ class _CreateDetailPageState extends State<CreateDetailPage> {
                     userEmail: _email,
                     userType: _userType,
                     userNickName: _nicknameInputText.text,
-                    phoneNumber: int.parse(_phoneInputText.text),
+                    phoneNumber: phoneNum,
                     userName: _nameInputText.text,
                     // 문자열을 정수로 변환
                     birth: _birthInputText.text,

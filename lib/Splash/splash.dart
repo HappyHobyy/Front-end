@@ -8,8 +8,6 @@ import 'package:hobbyhobby/Community/community_remote_api.dart';
 import 'package:hobbyhobby/DataSource/local_data_storage.dart';
 import 'package:hobbyhobby/root_page.dart';
 import 'package:hobbyhobby/Splash/splash_view_model.dart';
-import 'dart:async';
-
 import '../Auth/auth_remote_api.dart';
 import '../Community/community_repository.dart';
 

@@ -152,8 +152,6 @@ class _CreatePageState extends State<CreatePage> {
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   hintText: ' Confirm Password',
-                  filled: true, // 수정된 부분
-                  fillColor: _passInputText.text != _confirmPassInputText.text ? Colors.red.withOpacity(0.1) : Colors.white, // 수정된 부분
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: _passInputText.text != _confirmPassInputText.text ? Colors.red : Colors.grey.withOpacity(0.3),
