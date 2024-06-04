@@ -153,7 +153,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
                               fontSize: 15,
                             ),
                           ),
-                          const SizedBox(width: 80),
+                          Spacer(),
                           _buildTag('${getCommunityName(_meetings.tag1)}'),
                           const SizedBox(width: 10),
                           if (_meetings is UnionMeeting)
