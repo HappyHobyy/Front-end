@@ -68,6 +68,7 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
         final details = await _unionViewModel.getSingleMeetingDetail(_meetings.articleId);
         setState(() {
           date = details.meetingDate;
+          displayDate = '${date?.year}년 ${date?.month}월 ${date?.day}일 ${date?.hour}시 ${date?.minute.toString().padLeft(2, '0')}분';
           location = details.location;
           text = details.mainText;
           openTalkLink = details.openTalkLink;
