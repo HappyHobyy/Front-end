@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../Auth/auth_manager.dart';
 import '../constants.dart';
@@ -39,6 +40,8 @@ class _HboardPageState extends State<HboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {

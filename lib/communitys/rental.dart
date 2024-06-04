@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hobbyhobby/constants.dart';
 import 'package:intl/intl.dart';
 
@@ -15,6 +16,8 @@ class _RentalPageState extends State<RentalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
