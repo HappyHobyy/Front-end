@@ -119,6 +119,7 @@ class _UnionPageState extends State<UnionPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
           '모임',
@@ -195,8 +196,7 @@ class _UnionPageState extends State<UnionPage>
                 context,
                 MaterialPageRoute(builder: (BuildContext context) {
                   return TagPage(
-                      authManager: _authManager,
-                      isMaxOne: isSingleMeeting);
+                      authManager: _authManager, isMaxOne: isSingleMeeting);
                 }),
               ).then((result) async {
                 // 반환된 값으로 처리
@@ -287,7 +287,7 @@ class MeetingTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-           width: 50,
+            width: 50,
             child: Text(
               truncateText(meeting.userNickname, 8),
               overflow: TextOverflow.ellipsis,
@@ -359,6 +359,7 @@ class CreateUnionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           '모임 생성',
           style: TextStyle(
