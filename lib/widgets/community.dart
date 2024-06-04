@@ -208,6 +208,7 @@ class _CommunityPageState extends State<CommunityPage>
         length: hobbyTabs.length,
         child: Scaffold(
           appBar: AppBar(
+            scrolledUnderElevation: 0,
             surfaceTintColor: Colors.transparent,
             automaticallyImplyLeading: false,
             title: Text(
@@ -448,6 +449,7 @@ class GroupedCommunityPage extends StatelessWidget {
       ),
       child: Scaffold(
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
