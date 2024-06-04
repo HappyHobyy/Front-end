@@ -14,7 +14,11 @@ class CommunityHomePage extends StatefulWidget {
   final String communityName;
   final int communityID;
 
-  const CommunityHomePage({super.key, required this.authManager, required this.communityName, required this.communityID});
+  const CommunityHomePage(
+      {super.key,
+      required this.authManager,
+      required this.communityName,
+      required this.communityID});
 
   @override
   _CommunityHomePageState createState() => _CommunityHomePageState();
@@ -40,7 +44,10 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
     _hlogRemoteApi = HlogRemoteApi();
     _loadRecentArticles();
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent && !isLoading && hasMoreArticles) {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent &&
+          !isLoading &&
+          hasMoreArticles) {
         _loadMoreArticles();
       }
     });
@@ -59,7 +66,8 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
     });
     try {
       JwtToken jwtToken = await jwtTokenFuture;
-      await _hlogRemoteApi.fetchRecentArticles(jwtToken, currentPage, widget.communityID);
+      await _hlogRemoteApi.fetchRecentArticles(
+          jwtToken, currentPage, widget.communityID);
       setState(() {
         articles = _hlogRemoteApi.articles;
         currentPage++;
@@ -82,7 +90,8 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
     });
     try {
       JwtToken jwtToken = await jwtTokenFuture;
-      await _hlogRemoteApi.fetchRecentArticles(jwtToken, currentPage, widget.communityID);
+      await _hlogRemoteApi.fetchRecentArticles(
+          jwtToken, currentPage, widget.communityID);
       setState(() {
         articles.addAll(_hlogRemoteApi.articles);
         currentPage++;
@@ -103,12 +112,17 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
     final pickedImages = await picker.pickMultiImage();
 
     if (pickedImages != null && pickedImages.isNotEmpty) {
-      List<File> images = pickedImages.map((pickedFile) => File(pickedFile.path)).toList();
+      List<File> images =
+          pickedImages.map((pickedFile) => File(pickedFile.path)).toList();
 
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => HlogWritePage(images: images, authManager: _authManager, communityName: widget.communityName, communityID: widget.communityID),
+          builder: (context) => HlogWritePage(
+              images: images,
+              authManager: _authManager,
+              communityName: widget.communityName,
+              communityID: widget.communityID),
         ),
       );
     } else {
@@ -120,18 +134,22 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.push(
               context,
               PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => RootPage(authManager: _authManager, initialIndex: 1),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    RootPage(authManager: _authManager, initialIndex: 1),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
                   const begin = Offset(-1.0, 0.0); // 왼쪽에서 시작
                   const end = Offset.zero; // 제자리
                   const curve = Curves.ease;
 
-                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                  var tween = Tween(begin: begin, end: end)
+                      .chain(CurveTween(curve: curve));
                   var offsetAnimation = animation.drive(tween);
 
                   return SlideTransition(
@@ -150,7 +168,6 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        scrolledUnderElevation: 0,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -206,7 +223,8 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
               authManager: _authManager,
               isUserLiked: article.isUserLiked,
               isUserArticleOwner: article.isUserArticleOwner,
-              onDelete: _loadRecentArticles, // 게시물이 삭제되면 _loadRecentArticles를 호출하여 다시 로드
+              onDelete:
+                  _loadRecentArticles, // 게시물이 삭제되면 _loadRecentArticles를 호출하여 다시 로드
             );
           }
         },

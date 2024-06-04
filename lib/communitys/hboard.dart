@@ -39,6 +39,7 @@ class _HboardPageState extends State<HboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.push(
@@ -57,7 +58,6 @@ class _HboardPageState extends State<HboardPage> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        scrolledUnderElevation: 0,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

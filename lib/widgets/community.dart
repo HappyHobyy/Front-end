@@ -208,6 +208,7 @@ class _CommunityPageState extends State<CommunityPage>
         length: hobbyTabs.length,
         child: Scaffold(
           appBar: AppBar(
+            surfaceTintColor: Colors.transparent,
             automaticallyImplyLeading: false,
             title: Text(
               '커뮤니티',

@@ -14,6 +14,7 @@ import 'package:hobbyhobby/constants.dart';
 
 class HomePage extends StatefulWidget {
   final AuthManager authManager;
+
   const HomePage({super.key, required this.authManager});
 
   @override
@@ -24,8 +25,8 @@ class _HomePageState extends State<HomePage> {
   late AuthManager _authManager;
   late Future<JwtToken> jwtTokenFuture;
   late HomeRemoteApi _homeRemoteApi;
-  List<int> _currentList = List.generate(
-      4, (index) => 0); // 4개의 캐러셀 슬라이더를 위한 리스트
+  List<int> _currentList =
+      List.generate(4, (index) => 0); // 4개의 캐러셀 슬라이더를 위한 리스트
   HomeModel? homeData;
   bool isLoading = true;
 
@@ -56,14 +57,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     if (isLoading) {
       return Scaffold(
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Row(
             children: [
@@ -71,9 +70,7 @@ class _HomePageState extends State<HomePage> {
               Image.asset('assets/logo.png', width: 130),
             ],
           ),
-          backgroundColor: Theme
-              .of(context)
-              .scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0.0,
           actions: [
             IconButton(
@@ -97,6 +94,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: Row(
           children: [
@@ -104,9 +102,7 @@ class _HomePageState extends State<HomePage> {
             Image.asset('assets/logo.png', width: 130),
           ],
         ),
-        backgroundColor: Theme
-            .of(context)
-            .scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0.0,
         actions: [
           IconButton(
@@ -212,8 +208,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildPhotoCarouselSlider(List<PhotoArticle> articles,
-      double screenWidth, int sliderIndex) {
+  Widget _buildPhotoCarouselSlider(
+      List<PhotoArticle> articles, double screenWidth, int sliderIndex) {
     if (articles.isEmpty) {
       return Container();
     }
@@ -292,7 +288,7 @@ class _HomePageState extends State<HomePage> {
               Text('${articles[_currentList[sliderIndex]].userNickName}'),
               Spacer(),
               Text(
-                  '좋아요 ${articles[_currentList[sliderIndex]].likes}개',
+                '좋아요 ${articles[_currentList[sliderIndex]].likes}개',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -325,8 +321,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildGatheringCarouselSlider(List<GatheringArticle> articles,
-      double screenWidth, int sliderIndex) {
+  Widget _buildGatheringCarouselSlider(
+      List<GatheringArticle> articles, double screenWidth, int sliderIndex) {
     if (articles.isEmpty) {
       return Container();
     }
@@ -406,10 +402,10 @@ class _HomePageState extends State<HomePage> {
               Text('${articles[_currentList[sliderIndex]].userNickname}'),
               Spacer(),
               Text(
-                  '좋아요 ${articles[_currentList[sliderIndex]].likes}개',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+                '좋아요 ${articles[_currentList[sliderIndex]].likes}개',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -428,10 +424,7 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             children: [
               Text(
-                  '모집 인원 : ${articles[_currentList[sliderIndex]]
-                      .joinCount} / ${articles[_currentList[sliderIndex]]
-                      .joinMax}명'
-              ),
+                  '모집 인원 : ${articles[_currentList[sliderIndex]].joinCount} / ${articles[_currentList[sliderIndex]].joinMax}명'),
               Spacer(),
               Text(
                 '${articles[_currentList[sliderIndex]].createdAt.toLocal()}',

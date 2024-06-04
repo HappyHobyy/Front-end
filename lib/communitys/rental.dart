@@ -15,6 +15,7 @@ class _RentalPageState extends State<RentalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -73,7 +74,7 @@ class _RentalPageState extends State<RentalPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image.asset(
-                  'assets/홈카페2.png',
+                'assets/홈카페2.png',
               ),
               const SizedBox(height: 10),
               Padding(
@@ -114,6 +115,7 @@ class _RentalPageState extends State<RentalPage> {
       ),
     );
   }
+
   Widget body2(BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -212,7 +214,8 @@ class Detail1Page extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                   child: Image.asset(
                     'assets/홈카페2.png',
-                    fit: BoxFit.cover, // Ensures the image covers the entire container
+                    fit: BoxFit
+                        .cover, // Ensures the image covers the entire container
                   ),
                 ),
               ),
@@ -318,7 +321,8 @@ class Detail1Page extends StatelessWidget {
                   color: Colors.grey,
                   fontSize: 16,
                 ),
-              ),Text(
+              ),
+              Text(
                 ' 나노. 아카이아보다 작은 사이즈로 머신에 바로 올릴',
                 style: TextStyle(
                   color: Colors.grey,
@@ -337,7 +341,8 @@ class Detail1Page extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 30.0, left: 25, right: 25, top: 16),
+        padding:
+            const EdgeInsets.only(bottom: 30.0, left: 25, right: 25, top: 16),
         child: ElevatedButton(
           onPressed: () {
             showModalBottomSheet(
@@ -352,9 +357,10 @@ class Detail1Page extends StatelessWidget {
             backgroundColor: Constants.textColor,
           ),
           child: Padding(
-            padding: EdgeInsets.only(top:10,bottom: 10),
-          child: Text('대여하기', style: TextStyle(color: Colors.white, fontSize: 20)),
-        ),
+            padding: EdgeInsets.only(top: 10, bottom: 10),
+            child: Text('대여하기',
+                style: TextStyle(color: Colors.white, fontSize: 20)),
+          ),
         ),
       ),
     );
@@ -389,7 +395,8 @@ class Detail2Page extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                   child: Image.asset(
                     'assets/홈카페1.png',
-                    fit: BoxFit.cover, // Ensures the image covers the entire container
+                    fit: BoxFit
+                        .cover, // Ensures the image covers the entire container
                   ),
                 ),
               ),
@@ -495,7 +502,8 @@ class Detail2Page extends StatelessWidget {
                   color: Colors.grey,
                   fontSize: 16,
                 ),
-              ),Text(
+              ),
+              Text(
                 ' 나노. 아카이아보다 작은 사이즈로 머신에 바로 올릴',
                 style: TextStyle(
                   color: Colors.grey,
@@ -514,7 +522,8 @@ class Detail2Page extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 30.0, left: 25, right: 25, top: 16),
+        padding:
+            const EdgeInsets.only(bottom: 30.0, left: 25, right: 25, top: 16),
         child: ElevatedButton(
           onPressed: () {
             showModalBottomSheet(
@@ -529,8 +538,9 @@ class Detail2Page extends StatelessWidget {
             backgroundColor: Constants.textColor,
           ),
           child: Padding(
-            padding: EdgeInsets.only(top:10,bottom: 10),
-            child: Text('대여하기', style: TextStyle(color: Colors.white, fontSize: 20)),
+            padding: EdgeInsets.only(top: 10, bottom: 10),
+            child: Text('대여하기',
+                style: TextStyle(color: Colors.white, fontSize: 20)),
           ),
         ),
       ),
@@ -573,10 +583,14 @@ class _RentalBottomSheetState extends State<RentalBottomSheet> {
             onDateTimeChanged: (DateTime newDateTime) {
               setState(() {
                 if (isStartDate) {
-                  selectedStartDate = newDateTime.isBefore(minimumDate) ? minimumDate : newDateTime;
+                  selectedStartDate = newDateTime.isBefore(minimumDate)
+                      ? minimumDate
+                      : newDateTime;
                   selectedEndDate = selectedStartDate.add(Duration(days: 1));
                 } else {
-                  selectedEndDate = newDateTime.isBefore(selectedStartDate) ? selectedStartDate.add(Duration(days: 1)) : newDateTime;
+                  selectedEndDate = newDateTime.isBefore(selectedStartDate)
+                      ? selectedStartDate.add(Duration(days: 1))
+                      : newDateTime;
                 }
               });
             },
@@ -617,7 +631,9 @@ class _RentalBottomSheetState extends State<RentalBottomSheet> {
 
   String _formatTimeOfDay(TimeOfDay timeOfDay) {
     final period = timeOfDay.period == DayPeriod.am ? '오전' : '오후';
-    final hours = (timeOfDay.hourOfPeriod == 0 ? 12 : timeOfDay.hourOfPeriod).toString().padLeft(2, '0');
+    final hours = (timeOfDay.hourOfPeriod == 0 ? 12 : timeOfDay.hourOfPeriod)
+        .toString()
+        .padLeft(2, '0');
     return "$period $hours:00";
   }
 
@@ -645,7 +661,8 @@ class _RentalBottomSheetState extends State<RentalBottomSheet> {
     );
 
     final rentalPeriodInHours = endDateTime.difference(startDateTime).inHours;
-    final rentalCost = ((rentalPeriodInHours / 24) * rentalRate).toInt(); // Example cost calculation based on 24 hours
+    final rentalCost = ((rentalPeriodInHours / 24) * rentalRate)
+        .toInt(); // Example cost calculation based on 24 hours
     final formattedRentalCost = _formatCurrency(rentalCost);
 
     return FractionallySizedBox(
@@ -674,36 +691,39 @@ class _RentalBottomSheetState extends State<RentalBottomSheet> {
               ),
             ),
             const SizedBox(height: 20),
-            Padding(padding: EdgeInsets.only(left: 20, right: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '대여일',
-                  style: TextStyle(fontSize: 20),
-                ),
-                GestureDetector(
-                  onTap: () => _showCupertinoDatePicker(context, true),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Text(
-                      "${selectedStartDate.toLocal()}".split(' ')[0],
-                      style: TextStyle(fontSize: 20),
+            Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '대여일',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  GestureDetector(
+                    onTap: () => _showCupertinoDatePicker(context, true),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      child: Text(
+                        "${selectedStartDate.toLocal()}".split(' ')[0],
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () => _showCupertinoTimePicker(context),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Text(
-                      _formatTimeOfDay(selectedTime),
-                      style: TextStyle(fontSize: 20),
+                  GestureDetector(
+                    onTap: () => _showCupertinoTimePicker(context),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      child: Text(
+                        _formatTimeOfDay(selectedTime),
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             ),
             Container(
               height: 1,
@@ -714,34 +734,36 @@ class _RentalBottomSheetState extends State<RentalBottomSheet> {
             Padding(
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '반납일',
-                  style: TextStyle(fontSize: 20),
-                ),
-                GestureDetector(
-                  onTap: () => _showCupertinoDatePicker(context, false),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Text(
-                      "${selectedEndDate.toLocal()}".split(' ')[0],
-                      style: TextStyle(fontSize: 20),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '반납일',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  GestureDetector(
+                    onTap: () => _showCupertinoDatePicker(context, false),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      child: Text(
+                        "${selectedEndDate.toLocal()}".split(' ')[0],
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () => _showCupertinoTimePicker(context),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Text(
-                      _formatTimeOfDay(selectedTime),
-                      style: TextStyle(fontSize: 20),
+                  GestureDetector(
+                    onTap: () => _showCupertinoTimePicker(context),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      child: Text(
+                        _formatTimeOfDay(selectedTime),
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             ),
             Container(
               height: 1,
@@ -750,27 +772,27 @@ class _RentalBottomSheetState extends State<RentalBottomSheet> {
             ),
             const Spacer(),
             Padding(
-                padding: EdgeInsets.only(left: 20, right:20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${rentalPeriodInHours}시간',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${rentalPeriodInHours}시간',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-                Text(
-                  '${formattedRentalCost}원',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
+                  Text(
+                    '${formattedRentalCost}원',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             ),
             const SizedBox(height: 35),
             ElevatedButton(
