@@ -268,7 +268,6 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
   Widget _buildTag(String tag) {
     return Container(
       height: 20,
-      width: 60,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -281,12 +280,16 @@ class _UnionDetailPageState extends State<UnionDetailPage> {
           ),
         ],
       ),
-      child: Align(
-        alignment: Alignment.center,
-        child: Text(tag),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(tag),
+        ),
       ),
     );
   }
+
 
   Widget _buildDetailSection(String title, String content) {
     return Column(
