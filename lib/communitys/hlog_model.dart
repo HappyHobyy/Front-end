@@ -58,7 +58,7 @@ class HLogLikeRequest {
 
 class HLogArticle {
   final int photoArticleId;
-  final DateTime date;
+  final String date;
   final String nickname;
   final int likes;
   final int comments;
@@ -84,7 +84,7 @@ class HLogArticle {
   factory HLogArticle.fromJson(Map<String, dynamic> json) {
     return HLogArticle(
       photoArticleId: json['photoArticleId'],
-      date: DateTime.parse(json['date']),
+      date: parseToCustomizeDate(DateTime.parse(json['date'])),
       nickname: json['nickname'],
       likes: json['likes'],
       comments: json['comments'],
@@ -96,6 +96,20 @@ class HLogArticle {
       isUserLiked: json['isUserLiked'],
       userImageUrl: json['userImageUrl']
     );
+  }
+
+
+  static String parseToCustomizeDate(DateTime date) {
+    DateTime now = DateTime.now();
+    if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day) {
+      // 오늘 생성된 경우 시, 분 표시
+      return '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } else {
+      // 그 외의 경우 월, 일 표시
+      return '${date.month}/${date.day}';
+    }
   }
 }
 

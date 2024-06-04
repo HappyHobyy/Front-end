@@ -216,7 +216,7 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
               userName: article.nickname,
               images: article.images.map((img) => img.path).toList(),
               countLikes: article.likes,
-              writeTime: article.date.toString(),
+              writeTime: article.date,
               articleText: article.text,
               communityName: widget.communityName,
               articleId: article.photoArticleId,

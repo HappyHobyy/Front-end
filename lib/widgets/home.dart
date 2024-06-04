@@ -14,7 +14,6 @@ import 'package:hobbyhobby/constants.dart';
 
 class HomePage extends StatefulWidget {
   final AuthManager authManager;
-
   const HomePage({super.key, required this.authManager});
 
   @override
@@ -299,7 +298,7 @@ class _HomePageState extends State<HomePage> {
         Padding(
           padding: EdgeInsets.all(8.0),
           child: Text(
-            '${articles[_currentList[sliderIndex]].comments}',
+            '${articles[_currentList[sliderIndex]].content}',
             style: TextStyle(fontSize: 16),
           ),
         ),
@@ -424,13 +423,16 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             children: [
               Text(
-                  '모집 인원 : ${articles[_currentList[sliderIndex]].joinCount} / ${articles[_currentList[sliderIndex]].joinMax}명'),
-              Spacer(),
-              Text(
-                '${articles[_currentList[sliderIndex]].createdAt.toLocal()}',
+                '${articles[_currentList[sliderIndex]].createdAt}',
                 style: TextStyle(
                   fontSize: 12,
                 ),
+              ),
+              Spacer(),
+              Text(
+                  '모집 인원 : ${articles[_currentList[sliderIndex]]
+                      .joinCount} / ${articles[_currentList[sliderIndex]]
+                      .joinMax}명'
               ),
             ],
           ),

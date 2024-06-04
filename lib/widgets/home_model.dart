@@ -28,28 +28,18 @@ class HomeModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'photoArticles': {
-        'popularPhotoArticle': popularPhotoArticles.map((i) => i.toJson()).toList(),
-        'nonePopularPhotoArticle': nonePopularPhotoArticles.map((i) => i.toJson()).toList(),
-      },
-      'GatheringArticles': {
-        'popularGatheringArticle': popularGatheringArticles.map((i) => i.toJson()).toList(),
-        'nonePopularGatheringArticle': nonePopularGatheringArticles.map((i) => i.toJson()).toList(),
-      },
-    };
-  }
+
 }
 
 class PhotoArticle {
   final int articleId;
-  final DateTime date;
+  final String date;
   final int userId;
   final String userNickName;
   final String userImagePath;
   final int likes;
   final int comments;
+  final String content;
   final String firstImageUrl;
   final int communityId;
   final String communityName;
@@ -65,42 +55,42 @@ class PhotoArticle {
     required this.firstImageUrl,
     required this.communityId,
     required this.communityName,
+    required this.content
   });
 
   factory PhotoArticle.fromJson(Map<String, dynamic> json) {
     return PhotoArticle(
-      articleId: json['articleId'],
-      date: DateTime.parse(json['date'].split('.')[0]),
-      userId: json['userId'],
-      userNickName: json['userNickName'],
-      userImagePath: json['userImagePath'],
-      likes: json['likes'],
-      comments: json['comments'],
-      firstImageUrl: json['firstImageUrl'],
-      communityId: json['communityId'],
-      communityName: json['communityName'],
+        articleId: json['articleId'],
+        date: parseToCustomizeDate(DateTime.parse(json['date'].split('.')[0])),
+        userId: json['userId'],
+        userNickName: json['userNickName'],
+        userImagePath: json['userImagePath'],
+        likes: json['likes'],
+        comments: json['comments'],
+        firstImageUrl: json['firstImageUrl'],
+        communityId: json['communityId'],
+        communityName: json['communityName'],
+        content: json['content']
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'articleId': articleId,
-      'date': date.toIso8601String(),
-      'userId': userId,
-      'userNickName': userNickName,
-      'userImagePath': userImagePath,
-      'likes': likes,
-      'comments': comments,
-      'firstImageUrl': firstImageUrl,
-      'communityId': communityId,
-      'communityName': communityName,
-    };
+  static String parseToCustomizeDate(DateTime date) {
+    DateTime now = DateTime.now();
+    if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day) {
+      // 오늘 생성된 경우 시, 분 표시
+      return '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } else {
+      // 그 외의 경우 월, 일 표시
+      return '${date.month}/${date.day}';
+    }
   }
 }
 
 class GatheringArticle {
   final int gatheringArticleId;
-  final DateTime createdAt;
+  final String createdAt;
   final String title;
   final String userNickname;
   final int likes;
@@ -126,7 +116,7 @@ class GatheringArticle {
   factory GatheringArticle.fromJson(Map<String, dynamic> json) {
     return GatheringArticle(
       gatheringArticleId: json['gatheringArticleId'],
-      createdAt: DateTime.parse(json['createdAt'].split('.')[0]),
+      createdAt: parseToCustomizeDate(DateTime.parse(json['createdAt'].split('.')[0])),
       title: json['title'],
       userNickname: json['userNickname'],
       likes: json['likes'],
@@ -138,18 +128,16 @@ class GatheringArticle {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'gatheringArticleId': gatheringArticleId,
-      'createdAt': createdAt.toIso8601String(),
-      'title': title,
-      'userNickname': userNickname,
-      'likes': likes,
-      'joinMax': joinMax,
-      'joinCount': joinCount,
-      'communityId1': communityId1,
-      'communityId2': communityId2,
-      'imageUrl': imageUrl,
-    };
+  static String parseToCustomizeDate(DateTime date) {
+    DateTime now = DateTime.now();
+    if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day) {
+      // 오늘 생성된 경우 시, 분 표시
+      return '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } else {
+      // 그 외의 경우 월, 일 표시
+      return '${date.month}/${date.day}';
+    }
   }
 }
