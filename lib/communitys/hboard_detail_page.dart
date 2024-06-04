@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 String postContent = """안녕하세요, 풋살 커뮤니티 여러분! 
 
@@ -29,6 +30,9 @@ class DetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         title: Text(communityName),
       ),
       body: Padding(

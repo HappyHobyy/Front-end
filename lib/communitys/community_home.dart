@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hobbyhobby/communitys/hlog.dart';
 import 'package:hobbyhobby/communitys/hlog_write.dart';
 import 'package:image_picker/image_picker.dart';
@@ -134,6 +135,8 @@ class _CommunityHomePageState extends State<CommunityHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
