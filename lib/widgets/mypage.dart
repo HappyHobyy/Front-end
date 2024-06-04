@@ -46,6 +46,7 @@ class _MyPageState extends State<MyPage> {
           ),
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text(
             '마이페이지',
             style: Constants.titleTextStyle,
