@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # hobbyhobby
 
 A new Flutter project.
